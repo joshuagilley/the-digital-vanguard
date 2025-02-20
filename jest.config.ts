@@ -1,4 +1,3 @@
-// jest.config.ts
 import type { Config } from "@jest/types";
 
 const config: Config.InitialOptions = {
@@ -6,7 +5,10 @@ const config: Config.InitialOptions = {
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
+    "^src/(.*)$": "<rootDir>/src/$1",
+    "^components/(.*)$": "<rootDir>/src/components/$1",
+    "^pages/(.*)$": "<rootDir>/src/pages/$1",
+    "^assets/(.*)$": "<rootDir>/src/assets/$1",
   },
 };
 

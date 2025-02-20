@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
-import App from "./App";
+import HomePage from "pages/home";
 
-describe("App.tsx testing suite", () => {
-  test("App loads with home page displayed", () => {
-    render(<App />);
+describe("Home Page", () => {
+  test("renders ExampleComponent with correct text", () => {
+    render(<HomePage />);
     const textElement = screen.getByText("Welcome to The Digital Vanguard");
     expect(textElement).toBeInTheDocument();
   });
