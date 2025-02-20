@@ -4,10 +4,10 @@ const Home = () => {
   return (
     <Box
       data-testid="home-page"
-      sx={{ backgroundImage: "public/matrix.jpg", backgroundSize: "xs" }}
+      sx={{ backgroundImage: "matrix.jpg", backgroundSize: "xs" }}
     >
       <Center>
-        <Image src="public/tdv.png" />
+        <Image src="tdv.png" />
       </Center>
     </Box>
   );
