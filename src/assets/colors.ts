@@ -1,5 +1,5 @@
 const colors = {
-  primary: "#0D1F2D", // Deep Navy Blue
+  primary: "#010e1a", // Deep Navy Blue
   accent: "#1F77FF", // Electric Blue
   secondary: "#E63946", // Vanguard Red
   neutral: "#F4F4F4", // Light Gray

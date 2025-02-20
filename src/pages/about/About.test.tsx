@@ -4,7 +4,7 @@ import About from "pages/about";
 describe("About Page", () => {
   test("renders ExampleComponent with correct text", () => {
     render(<About />);
-    const textElement = screen.getByText("About Page");
+    const textElement = screen.getByText("Vision");
     expect(textElement).toBeInTheDocument();
   });
 });

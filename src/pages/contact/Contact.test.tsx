@@ -4,7 +4,7 @@ import Contact from "pages/contact";
 describe("Contact Page", () => {
   test("renders ExampleComponent with correct text", () => {
     render(<Contact />);
-    const textElement = screen.getByText("Contact Page");
+    const textElement = screen.getByText("Contact");
     expect(textElement).toBeInTheDocument();
   });
 });
