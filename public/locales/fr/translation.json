@@ -1,0 +1,9 @@
+{
+  "greeting": "Bonjour",
+  "description": "Bienvenue sur notre site web",
+  "languages": {
+    "changeLanguage": "Changer de langue",
+    "english": "Anglais",
+    "french": "Francais"
+  }
+}

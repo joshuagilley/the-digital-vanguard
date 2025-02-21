@@ -26,6 +26,7 @@ const Contact = () => {
     <Container
       bg={colors.neutral}
       maxW="full"
+      height="100vh"
       mt={0}
       centerContent
       overflow="hidden"

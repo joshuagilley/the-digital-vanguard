@@ -6,7 +6,7 @@ import About from "pages/about";
 import Contact from "pages/contact";
 import NavigationBar from "components/navigation-bar/NavigationBar";
 import colors from "assets/colors";
-
+import Footer from "components/footer";
 const queryClient = new QueryClient();
 
 function App() {
@@ -22,6 +22,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
             </Routes>
           </Router>
+          <Footer />
         </Box>
       </ChakraProvider>
     </QueryClientProvider>
