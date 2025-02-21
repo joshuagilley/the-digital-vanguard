@@ -2,8 +2,18 @@ import { Flex, Spacer, Box, Button, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import colors from "assets/colors";
 import { ABOUT, CONTACT, GHOST_VARIANT, HOME, TDV } from "assets/constants";
+import { useQuery } from "@tanstack/react-query";
 
 const NavigationBar = () => {
+  const { isPending, error, data, isFetching } = useQuery({
+    queryKey: [],
+    queryFn: async () => {
+      const response = await fetch("/api");
+      return await response.json();
+    },
+  });
+  console.log(isPending, error, data, isFetching);
+
   return (
     <Flex
       as="nav"
