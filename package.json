@@ -6,7 +6,6 @@
     "cz-conventional-changelog": "^3.3.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cd client && npm run dev",
     "commit": "git cz"
   },
@@ -24,5 +23,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
   }
 }
