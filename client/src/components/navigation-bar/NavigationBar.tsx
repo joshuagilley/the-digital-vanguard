@@ -8,7 +8,9 @@ const NavigationBar = () => {
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: [],
     queryFn: async () => {
-      const response = await fetch("/api");
+      const response = await fetch(
+        `/api/users/${process.env.JOSH_USER_ID}/articles`
+      );
       return await response.json();
     },
   });

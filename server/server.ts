@@ -1,32 +1,23 @@
-require("dotenv").config();
 import Fastify from "fastify";
-const server = Fastify({ logger: true });
+import dotenv from "dotenv";
+dotenv.config();
+const fastify = Fastify({ logger: true });
+const uri = process.env.MONGO_DB_CONNECTION_STRING || "";
+import articles from "./routes/articles/index";
+import dbConnector from "./config/index";
+import handleCors from "./config/cors";
 
-server.addHook("onRequest", async (request, reply) => {
-  reply.header("Access-Control-Allow-Origin", process.env.ALLOW_ORIGIN);
-  reply.header("Access-Control-Allow-Credentials", true);
-  reply.header(
-    "Access-Control-Allow-Headers",
-    "Authorization, Origin, X-Requested-With, Content-Type, Accept, X-Slug, X-UID"
-  );
-  reply.header(
-    "Access-Control-Allow-Methods",
-    "OPTIONS, POST, PUT, PATCH, GET, DELETE"
-  );
-  if (request.method === "OPTIONS") {
-    reply.send();
-  }
-});
+handleCors(fastify);
 
-server.get("/api", async (request, reply) => {
-  reply.send({ fruits: ["apple", "orange", "banana"] });
-});
+fastify.register(dbConnector);
+
+fastify.register(articles);
 
 const start = async () => {
   try {
-    await server.listen({ port: 8080 });
+    await fastify.listen({ port: 8080 });
   } catch (err) {
-    server.log.error(err);
+    fastify.log.error(err);
     process.exit(1);
   }
 };
