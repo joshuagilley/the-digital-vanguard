@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 import { Server } from "http";
 import { IParams, IHeaders, IReply } from "./query";
 
-const articles = async (fastify: FastifyInstance<Server>) => {
+const articleRoutes = async (fastify: FastifyInstance<Server>) => {
   fastify.get<{
     Params: IParams;
     Headers: IHeaders;
@@ -18,4 +18,4 @@ const articles = async (fastify: FastifyInstance<Server>) => {
   });
 };
 
-export default articles;
+export default articleRoutes;

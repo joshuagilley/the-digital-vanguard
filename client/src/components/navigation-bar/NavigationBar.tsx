@@ -9,7 +9,7 @@ const NavigationBar = () => {
     queryKey: [],
     queryFn: async () => {
       const response = await fetch(
-        `/api/users/${process.env.JOSH_USER_ID}/articles`
+        `/api/users/${import.meta.env.VITE_JOSH_USER_ID}/articles`
       );
       return await response.json();
     },

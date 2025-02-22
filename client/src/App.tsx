@@ -7,6 +7,7 @@ import Contact from "pages/contact";
 import NavigationBar from "components/navigation-bar/NavigationBar";
 import colors from "assets/colors";
 import Footer from "components/footer";
+
 const queryClient = new QueryClient();
 
 function App() {
