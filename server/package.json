@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node server.ts",
-    "dev": "nodemon server.ts"
+    "dev": "nodemon server.ts",
+    "lint": "eslint . --ext .ts"
   },
   "keywords": [],
   "author": "",
@@ -21,14 +22,20 @@
     "mongodb": "^6.13.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.21.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.4",
+    "@typescript-eslint/eslint-plugin": "^8.24.1",
+    "@typescript-eslint/parser": "^8.24.1",
+    "eslint": "^9.21.0",
     "express": "^4.21.2",
+    "globals": "^16.0.0",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "tslib": "^2.8.1",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.24.1"
   }
 }
