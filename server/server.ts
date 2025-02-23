@@ -3,18 +3,26 @@ import dotenv from "dotenv";
 import handleCors from "config/cors";
 import fastifyRegister from "config/register";
 
-const fastify = Fastify({ logger: true });
-dotenv.config();
-handleCors(fastify);
-fastifyRegister(fastify);
+export async function createServer() {
+  const fastify = Fastify({ logger: true });
+  dotenv.config();
+  handleCors(fastify);
+  fastifyRegister(fastify);
+  return fastify;
+}
 
-const start = async () => {
+export const start = async () => {
+  const server = await createServer();
   try {
-    await fastify.listen({ port: Number(process.env.PORT) });
+    await server.listen({ port: Number(process.env.PORT) });
   } catch (err) {
-    fastify.log.error(err);
+    server.log.error(err);
     process.exit(1);
   }
 };
 
-start();
+if (require.main === module) {
+  start();
+}
+
+export default createServer;
