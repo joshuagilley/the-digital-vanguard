@@ -1,12 +1,21 @@
 {
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
+    "baseUrl": "./",
     "target": "ESNext",
     "module": "CommonJS",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "outDir": "./dist"
+  },
+  "paths": {
+    "config/*": ["config/*"],
+    "routes/*": ["routes/*"]
   },
   "include": ["./*.ts", "server.js"],
   "exclude": ["node_modules"]

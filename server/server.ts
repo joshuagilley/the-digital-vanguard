@@ -1,7 +1,7 @@
 import Fastify from "fastify";
 import dotenv from "dotenv";
-import handleCors from "./config/cors";
-import fastifyRegister from "./config/register";
+import handleCors from "config/cors";
+import fastifyRegister from "config/register";
 
 const fastify = Fastify({ logger: true });
 dotenv.config();
