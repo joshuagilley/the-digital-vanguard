@@ -5,5 +5,16 @@
     "changeLanguage": "Change Language",
     "english": "English",
     "french": "French"
+  },
+  "portfolio": {
+    "userDataFetchFail": "Something went wrong when trying to pull your articles..",
+    "email": "Email",
+    "tryAgain": "Please try again..",
+    "portfolio": "Portfolio",
+    "call": "Call",
+    "emailing": "Emailing"
+  },
+  "articleItem": {
+    "explore": "Explore"
   }
 }
