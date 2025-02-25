@@ -4,6 +4,11 @@ import EnvironmentPlugin from "vite-plugin-environment";
 
 export default defineConfig({
   plugins: [react(), EnvironmentPlugin("all")],
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./setupTests.js"],
+  },
   resolve: {
     alias: {
       src: "/src",
