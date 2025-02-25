@@ -17,7 +17,7 @@ const NavigationBar = () => {
       </Text>
       <Spacer />
       <Box>
-        <Link to="/" style={styles.homeLink}>
+        <Link to="/">
           <Button color={colors.accent} variant={GHOST_VARIANT}>
             {HOME}
           </Button>
@@ -35,12 +35,6 @@ const NavigationBar = () => {
       </Box>
     </Flex>
   );
-};
-
-const styles = {
-  homeLink: {
-    marginRight: "1rem",
-  },
 };
 
 export default NavigationBar;

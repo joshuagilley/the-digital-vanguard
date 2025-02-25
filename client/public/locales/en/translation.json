@@ -15,6 +15,7 @@
     "emailing": "Emailing"
   },
   "articleItem": {
-    "explore": "Explore"
+    "explore": "Explore",
+    "summary": "Summary"
   }
 }

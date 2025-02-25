@@ -19,11 +19,12 @@ import { PhoneIcon, EmailIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import ArticleItem from "components/article-item";
 import { useTranslation } from "react-i18next";
-import { Article } from "types/pages";
+import { ArticleProps } from "types/user";
 
 const Portfolio = () => {
   const { id } = useParams();
   const { t } = useTranslation();
+  const toast = useToast();
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: [],
     queryFn: async () => {
@@ -31,22 +32,20 @@ const Portfolio = () => {
       return await response.json();
     },
   });
-
-  const toast = useToast();
   const [isCalling, setIsCalling] = useState(false);
   const [isEmailing, setIsEmailing] = useState(false);
-  const handleCall = (phone_number: string) => {
+  const handleCall = (phoneNumber: string) => {
     setIsCalling(true);
     setTimeout(() => {
       setIsCalling(false);
       toast({
         title: "Calling...",
-        description: `Calling ${phone_number}`,
+        description: `Calling ${phoneNumber}`,
         status: "info",
         duration: 3000,
         isClosable: true,
       });
-      window.location.href = `tel:${phone_number}`;
+      window.location.href = `tel:${phoneNumber}`;
     }, 1000);
   };
 
@@ -69,8 +68,10 @@ const Portfolio = () => {
     }, 1000);
   };
 
+  console.log(error, isPending, isFetching);
+
   return (
-    <Box>
+    <Box data-testid="portfolio-page" sx={styles.wrapper}>
       {error && (
         <Alert status="error">
           <AlertIcon />
@@ -86,16 +87,16 @@ const Portfolio = () => {
         </Stack>
       )}
       {!isPending && !isFetching && !error && (
-        <Box data-testid="portfolio-page" sx={styles.wrapper}>
+        <Box data-testid="portfolio-page">
           <Box bg="gray.100" p={4}>
             <Flex align="center">
-              <Heading size="lg">{`${data.user_name}'s ${t("portfolio.portfolio")}`}</Heading>
+              <Heading size="lg">{`${data.username}'s ${t("portfolio.portfolio")}`}</Heading>
               <Spacer />
               <Flex>
                 <IconButton
                   icon={<PhoneIcon />}
-                  aria-label={`${t("portfolio.call")} ${data.phone_number}`}
-                  onClick={() => handleCall(data.phone_number)}
+                  aria-label={`${t("portfolio.call")} ${data.phoneNumber}`}
+                  onClick={() => handleCall(data.phoneNumber)}
                   isLoading={isCalling}
                   colorScheme="blackAlpha"
                   sx={styles.iconButton}
@@ -112,12 +113,14 @@ const Portfolio = () => {
             </Flex>
           </Box>
           <SimpleGrid columns={2} spacing={10} margin={5}>
-            {data?.articles.map((article: Article) => {
-              const { article_name } = article;
+            {data?.articles.map((article: ArticleProps) => {
+              const { articleName, articleId } = article;
               return (
                 <ArticleItem
-                  text={article_name}
-                  image_url={article.image_url}
+                  text={articleName}
+                  imageUrl={article.imageUrl}
+                  userId={data.userId}
+                  articleId={articleId}
                 />
               );
             })}
