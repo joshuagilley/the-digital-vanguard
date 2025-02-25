@@ -8,6 +8,8 @@ describe("Articles Page", () => {
     ...jest.requireActual("react-router-dom"),
     useNavigate: () => mockUsedNavigate,
   }));
+  jest.mock("react-markdown", () => "div");
+
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {

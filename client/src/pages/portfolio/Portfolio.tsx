@@ -19,7 +19,7 @@ import { PhoneIcon, EmailIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import ArticleItem from "components/article-item";
 import { useTranslation } from "react-i18next";
-import { ArticleProps } from "types/pages";
+import { ArticleProps } from "types/user";
 
 const Portfolio = () => {
   const { id } = useParams();
@@ -68,8 +68,10 @@ const Portfolio = () => {
     }, 1000);
   };
 
+  console.log(error, isPending, isFetching);
+
   return (
-    <Box data-testid="portfolio-page">
+    <Box data-testid="portfolio-page" sx={styles.wrapper}>
       {error && (
         <Alert status="error">
           <AlertIcon />
@@ -85,7 +87,7 @@ const Portfolio = () => {
         </Stack>
       )}
       {!isPending && !isFetching && !error && (
-        <Box data-testid="portfolio-page" sx={styles.wrapper}>
+        <Box data-testid="portfolio-page">
           <Box bg="gray.100" p={4}>
             <Flex align="center">
               <Heading size="lg">{`${data.username}'s ${t("portfolio.portfolio")}`}</Heading>

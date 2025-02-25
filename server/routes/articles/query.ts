@@ -1,5 +1,6 @@
 export interface IParams {
   id: string;
+  aid: string;
 }
 
 export interface IHeaders {
