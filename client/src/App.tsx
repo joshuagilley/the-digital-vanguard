@@ -8,6 +8,7 @@ import NavigationBar from "components/navigation-bar/NavigationBar";
 import colors from "assets/colors";
 import Footer from "components/footer";
 import Portfolio from "pages/portfolio";
+import Article from "pages/article";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,10 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/portfolio/:id" element={<Portfolio />} />
+              <Route
+                path="/portfolio/:id/articles/:aId"
+                element={<Article />}
+              />
             </Routes>
           </Router>
           <Footer />

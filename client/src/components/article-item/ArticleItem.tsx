@@ -8,18 +8,21 @@ import {
   Image,
 } from "@chakra-ui/react";
 import colors from "assets/colors";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
-const ArticleItem = ({
-  text,
-  image_url,
-}: {
+type Props = {
   text: string;
-  image_url: string;
-}) => {
+  imageUrl: string;
+  userId: string;
+  articleId: string;
+};
+
+const ArticleItem = ({ text, imageUrl, userId, articleId }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const handleMouseEnter = () => {
     setIsHovering(true);
@@ -41,7 +44,7 @@ const ArticleItem = ({
       <Image
         objectFit="scale-down"
         maxW={{ base: "100%", sm: "200px" }}
-        src={image_url}
+        src={imageUrl}
         alt="Caffe Latte"
       />
 
@@ -51,7 +54,13 @@ const ArticleItem = ({
         </CardBody>
 
         <CardFooter>
-          <Button variant="solid" colorScheme="blue">
+          <Button
+            onClick={() =>
+              navigate(`/portfolio/${userId}/articles/${articleId}`)
+            }
+            variant="solid"
+            colorScheme="blue"
+          >
             {t("articleItem.explore")}
           </Button>
         </CardFooter>

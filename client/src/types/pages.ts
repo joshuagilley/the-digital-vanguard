@@ -1,7 +1,7 @@
-export type Article = {
-  id: string;
-  article_name: string;
+export type ArticleProps = {
+  articleId: string;
+  articleName: string;
   url: string;
-  image_url: string;
-  article_details: string[];
+  imageUrl: string;
+  articleDetails: string[];
 };
