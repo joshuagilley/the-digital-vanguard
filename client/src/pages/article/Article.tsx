@@ -33,7 +33,6 @@ import {
   PaginationContainer,
   PaginationPageGroup,
 } from "@ajna/pagination";
-import colors from "assets/colors";
 
 const Article = () => {
   const { id, aId } = useParams();
@@ -52,35 +51,32 @@ const Article = () => {
     },
   });
 
-  const article =
-    data &&
-    data.articles.find(({ articleId }: ArticleProps) => articleId === aId);
-
-  // const { url, summary, imageUrl, articleName, articleId, articleDetails } =
-  //   article
+  const article = data?.articles.find(
+    ({ articleId }: ArticleProps) => articleId === aId
+  );
 
   return (
     <Box data-testid="article-page" sx={styles.wrapper}>
       {error && (
-        <Alert status="error">
+        <Alert status="error" data-testid="error">
           <AlertIcon />
           <AlertTitle>{t("portfolio.userDataFetchFail")}</AlertTitle>
           <AlertDescription>{t("portfolio.tryAgain")}</AlertDescription>
         </Alert>
       )}
       {(isPending || isFetching) && (
-        <Stack>
+        <Stack data-testid="skeleton">
           <Skeleton height="20px" />
           <Skeleton height="20px" />
           <Skeleton height="20px" />
         </Stack>
       )}
       {!isPending && !isFetching && !error && (
-        <Box>
+        <Box data-test="article">
           <Card sx={styles.header}>
             <CardHeader>
               <Flex>
-                <Heading size="md">{article.articleName}</Heading>
+                <Heading size="md">{article?.articleName}</Heading>
                 <Spacer />
                 <Button size="sm" onClick={() => navigate(`/portfolio/${id}`)}>
                   {`${data?.username}'s ${t("portfolio.portfolio")}`}
@@ -95,7 +91,7 @@ const Article = () => {
                     {t("articleItem.summary")}
                   </Heading>
                   <Text pt="2" fontSize="sm">
-                    {article.summary}
+                    {article?.summary}
                   </Text>
                 </Box>
               </Stack>
@@ -104,14 +100,14 @@ const Article = () => {
           <Divider />
           <Box>
             {/* Instead of a player, you could actually house the project here */}
-            <ReactPlayer width="100%" url={article.url} style={styles.url} />
+            <ReactPlayer width="100%" url={article?.url} style={styles.url} />
           </Box>
           <Divider />
           <Box>
             <Card sx={styles.markdown}>
               <ReactMarkdown
                 components={ChakraUIRenderer()}
-                children={article.articleDetails[currentPage - 1]}
+                children={article?.articleDetails[currentPage - 1]}
                 skipHtml
               />
             </Card>
@@ -121,7 +117,9 @@ const Article = () => {
               onPageChange={setCurrentPage}
             >
               <PaginationContainer>
-                <PaginationPrevious>Previous</PaginationPrevious>
+                <PaginationPrevious>
+                  {t("articleItem.previous")}
+                </PaginationPrevious>
                 <PaginationPageGroup>
                   {pages.map((page: number) => (
                     <PaginationPage
@@ -130,11 +128,11 @@ const Article = () => {
                       w={7}
                       fontSize="sm"
                       _hover={{
-                        bg: colors.accent,
+                        bg: "brand.200",
                       }}
                       _current={{
                         w: 7,
-                        bg: colors.accent,
+                        bg: "brand.200",
                         fontSize: "sm",
                         _hover: {
                           bg: "blue.300",
@@ -143,7 +141,7 @@ const Article = () => {
                     />
                   ))}
                 </PaginationPageGroup>
-                <PaginationNext>Next</PaginationNext>
+                <PaginationNext>{t("articleItem.next")}</PaginationNext>
               </PaginationContainer>
             </Pagination>
           </Box>

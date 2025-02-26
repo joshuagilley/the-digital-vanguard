@@ -16,6 +16,7 @@ export default defineConfig({
       assets: "/src/assets",
       pages: "/src/pages",
       utils: "/src/utils",
+      mock: "/src/mock",
     },
   },
   server: {

@@ -15,6 +15,22 @@
     "emailing": "Envoi par courrier électronique"
   },
   "articleItem": {
-    "explore": "Explorer"
+    "explore": "Explorer",
+    "summary": "Résumé",
+    "previous": "Précédente",
+    "next": "Suivante"
+  },
+  "about": {
+    "vision": "Vision",
+    "problem": "Le problème",
+    "problemText": "Rester à jour avec la technologie est une tâche écrasante. Les ressources sont dispersées et les plateformes comme YouTube inondent les utilisateurs de didacticiels obsolètes ou non pertinents. The Digital Vanguard (TDV) résout ce problème en organisant tout dans un seul écosystème, en classant le contenu via un système alimenté par l'IA qui donne la priorité à la valeur, en gardant les informations à jour, pertinentes et largement applicables.",
+    "how": "Comment fonctionne'The Digital Vanguard'",
+    "howText": "Les utilisateurs peuvent s'inscrire en tant que développeurs ou consommateurs. Les développeurs marquent leurs intérêts (React, Full Stack, Blockchain, etc.) et bénéficient d'une expérience personnalisée. Les consommateurs peuvent parcourir, rechercher des sujets ou suivre des développeurs spécifiques. TDV agit comme un portefeuille vivant. Au lieu de blogs et de portfolios personnels fragmentés, les développeurs bénéficient d'un profil unifié (par exemple, thedigitalvanguard.io/johndoe), reliant tous leurs articles, réflexions et projets en un seul endroit. Cela favorise une communauté forte et exclusive – faisant partie de Vanguard.",
+    "consumers": "FPour les consommateurs",
+    "consumersText": "TDV mélange des éléments de GitHub, Reddit et Medium. Les utilisateurs peuvent explorer des sujets tels que « Full Stack » ou « FinTech » et découvrir les développeurs les mieux classés en fonction de leur engagement (j'aime, partages et commentaires « utiles »). Plus un développeur contribue, plus son classement est élevé.",
+    "tracking": "Suivi de projet et constitution de portefeuille",
+    "trackingText": "TDV assure un suivi structuré des projets. Au lieu d'abandonner les idées après une brève expérimentation, les développeurs créent des entités : des pages de projet structurées avec : • Un nom et des balises techniques • Un éditeur de démarques pour le suivi de la progression • Un endroit pour lier le projet terminé (par exemple, un site hébergé ou une vidéo de démonstration) TDV guide même les utilisateurs dans le déploiement de projets au moindre coût, garantissant que le travail n'est pas perdu mais devient un élément de portefeuille partageable.",
+    "medium": "Pourquoi ne pas simplement utiliser quelque chose comme Medium ?",
+    "mediumText": "Medium est large et flou : n'importe qui peut écrire sur n'importe quoi. TDV est centré sur le développeur. Un comité de révision AI/ML garantit que le contenu reste axé sur la technologie, en filtrant les sujets sans rapport. TDV n'est pas seulement une plateforme de blogs ; c'est un espace structuré permettant aux professionnels passionnés de la technologie de suivre les progrès, de constituer des portefeuilles et de garder une longueur d'avance dans leur domaine."
   }
 }

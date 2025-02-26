@@ -7,7 +7,6 @@ import {
   Button,
   Image,
 } from "@chakra-ui/react";
-import colors from "assets/colors";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -70,8 +69,8 @@ const ArticleItem = ({ text, imageUrl, userId, articleId }: Props) => {
 };
 const styles = {
   card: {
-    backgroundColor: colors.white,
-    color: colors.black,
+    backgroundColor: "brand.600",
+    color: "brand.700",
     border: "2px solid transparent",
     cursor: "pointer",
     boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",

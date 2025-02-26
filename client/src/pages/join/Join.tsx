@@ -15,7 +15,6 @@ import {
   Image,
   useToast,
 } from "@chakra-ui/react";
-import colors from "assets/colors";
 import { useState } from "react";
 import { EmailResponse, Status } from "types/user";
 import emailjs from "@emailjs/browser";
@@ -108,11 +107,11 @@ const Join = () => {
   };
 
   return (
-    <Container bg={colors.neutral} maxW="full" centerContent overflow="hidden">
+    <Container bg="brand.400" maxW="full" centerContent overflow="hidden">
       <Flex>
         <Box
-          bg={colors.primary}
-          color={colors.white}
+          bg="brand.500"
+          color="brand.600"
           borderRadius="lg"
           m={{ sm: 4, md: 16, lg: 10 }}
           p={{ sm: 5, md: 5, lg: 10 }}
@@ -190,7 +189,7 @@ const Join = () => {
                     <Button
                       onClick={handleSubmit}
                       variant="solid"
-                      bg={colors.accent}
+                      bg="brand.200"
                       color="white"
                       _hover={{}}
                     >

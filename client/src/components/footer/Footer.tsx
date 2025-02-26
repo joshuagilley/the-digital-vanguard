@@ -1,5 +1,4 @@
 import { Flex } from "@chakra-ui/react";
-import colors from "assets/colors";
 import LanguageChanger from "components/language-changer";
 
 const Footer = () => {
@@ -7,7 +6,7 @@ const Footer = () => {
     <Flex
       as="nav"
       p={4}
-      bg={colors.primary}
+      bg="brand.100"
       alignItems="left"
       data-testid="navigation-bar"
       sx={styles}

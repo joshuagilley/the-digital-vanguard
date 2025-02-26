@@ -33,24 +33,21 @@ const Home = () => {
   return (
     <Box data-testid="home-page" sx={styles.wrapper}>
       {error && (
-        <Alert status="error">
+        <Alert status="error" data-testid="error">
           <AlertIcon />
           <AlertTitle>{t("portfolio.userDataFetchFail")}</AlertTitle>
           <AlertDescription>{t("portfolio.tryAgain")}</AlertDescription>
         </Alert>
       )}
       {(isPending || isFetching) && (
-        <Stack>
+        <Stack data-testid="skeleton">
           <Skeleton height="20px" />
           <Skeleton height="20px" />
           <Skeleton height="20px" />
         </Stack>
       )}
       {!isPending && !isFetching && !error && (
-        <Box
-          data-testid="home-page"
-          sx={{ backgroundImage: "matrix.jpg", backgroundSize: "xs" }}
-        >
+        <Box sx={{ backgroundImage: "matrix.jpg", backgroundSize: "xs" }}>
           <Center>
             <Image src="tdv.png" />
           </Center>

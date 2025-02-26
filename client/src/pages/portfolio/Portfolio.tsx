@@ -69,23 +69,23 @@ const Portfolio = () => {
   };
 
   return (
-    <Box data-testid="portfolio-page" sx={styles.wrapper}>
+    <Box sx={styles.wrapper} data-testid="portfolio-page">
       {error && (
-        <Alert status="error">
+        <Alert status="error" data-testid="error">
           <AlertIcon />
           <AlertTitle>{t("portfolio.userDataFetchFail")}</AlertTitle>
           <AlertDescription>{t("portfolio.tryAgain")}</AlertDescription>
         </Alert>
       )}
       {(isPending || isFetching) && (
-        <Stack>
+        <Stack data-testid="skeleton">
           <Skeleton height="20px" />
           <Skeleton height="20px" />
           <Skeleton height="20px" />
         </Stack>
       )}
       {!isPending && !isFetching && !error && (
-        <Box data-testid="portfolio-page">
+        <Box>
           <Box bg="gray.100" p={4}>
             <Flex align="center">
               <Heading size="lg">{`${data.username}'s ${t("portfolio.portfolio")}`}</Heading>
@@ -98,6 +98,7 @@ const Portfolio = () => {
                   isLoading={isCalling}
                   colorScheme="blackAlpha"
                   sx={styles.iconButton}
+                  data-testid={"phone"}
                 />
                 <IconButton
                   icon={<EmailIcon />}
@@ -106,12 +107,13 @@ const Portfolio = () => {
                   isLoading={isEmailing}
                   colorScheme="blackAlpha"
                   sx={styles.iconButton}
+                  data-testid={"email"}
                 />
               </Flex>
             </Flex>
           </Box>
           <SimpleGrid columns={2} spacing={10} margin={5}>
-            {data?.articles.map((article: ArticleProps) => {
+            {data?.articles?.map((article: ArticleProps) => {
               const { articleName, articleId } = article;
               return (
                 <ArticleItem

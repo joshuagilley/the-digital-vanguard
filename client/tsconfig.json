@@ -21,7 +21,8 @@
       "components": ["src/components/*"],
       "assets": ["src/assets/*"],
       "pages": ["src/pages/*"],
-      "utils": ["src/utils/*"]
+      "utils": ["src/utils/*"],
+      "mock": ["src/mock/*"]
     }
   },
   "include": ["src"]

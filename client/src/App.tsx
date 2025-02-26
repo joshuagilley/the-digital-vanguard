@@ -5,18 +5,18 @@ import Home from "pages/home";
 import About from "pages/about";
 import Join from "pages/join";
 import NavigationBar from "components/navigation-bar/NavigationBar";
-import colors from "assets/colors";
 import Footer from "components/footer";
 import Portfolio from "pages/portfolio";
 import Article from "pages/article";
+import { theme } from "./theme";
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider>
-        <Box sx={styles.wrapper}>
+      <ChakraProvider theme={theme}>
+        <Box bg="brand.400">
           <Router>
             <NavigationBar />
             <Routes>
@@ -36,11 +36,5 @@ function App() {
     </QueryClientProvider>
   );
 }
-
-const styles = {
-  wrapper: {
-    backgroundColor: colors.neutral,
-  },
-};
 
 export default App;
