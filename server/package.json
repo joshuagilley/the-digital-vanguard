@@ -8,7 +8,10 @@
     "dev": "nodemon server.ts",
     "lint": "eslint . --ext .ts",
     "test": "vitest --coverage",
-    "vercel-build": "echo hello"
+    "postinstall": "npm run build"
+  },
+  "engines": {
+    "node": ">=16"
   },
   "keywords": [],
   "author": "",
