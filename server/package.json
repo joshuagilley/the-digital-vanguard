@@ -7,7 +7,7 @@
     "start": "node server.ts",
     "dev": "nodemon server.ts",
     "lint": "eslint . --ext .ts",
-    "test": "vitest"
+    "test": "vitest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +32,7 @@
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.24.1",
     "@typescript-eslint/parser": "^8.24.1",
+    "@vitest/coverage-v8": "^3.0.7",
     "eslint": "^9.21.0",
     "express": "^4.21.2",
     "globals": "^16.0.0",
