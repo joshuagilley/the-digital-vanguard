@@ -12,9 +12,12 @@ const NavigationBar = () => {
       alignItems="center"
       data-testid="navigation-bar"
     >
-      <Text color={colors.accent} fontSize="lg" fontWeight="bold">
-        {TDV}
-      </Text>
+      <Link to="/">
+        <Text color={colors.accent} fontSize="lg" fontWeight="bold">
+          {TDV}
+        </Text>
+      </Link>
+
       <Spacer />
       <Box>
         <Link to="/">

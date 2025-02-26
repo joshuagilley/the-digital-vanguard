@@ -68,8 +68,6 @@ const Portfolio = () => {
     }, 1000);
   };
 
-  console.log(error, isPending, isFetching);
-
   return (
     <Box data-testid="portfolio-page" sx={styles.wrapper}>
       {error && (
