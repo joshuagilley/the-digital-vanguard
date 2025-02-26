@@ -1,7 +1,7 @@
 import { Flex, Spacer, Box, Button, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import colors from "assets/colors";
-import { ABOUT, CONTACT, GHOST_VARIANT, HOME, TDV } from "assets/constants";
+import { ABOUT, JOIN, GHOST_VARIANT, HOME, TDV } from "assets/constants";
 
 const NavigationBar = () => {
   return (
@@ -30,9 +30,9 @@ const NavigationBar = () => {
             {ABOUT}
           </Button>
         </Link>
-        <Link to="/contact">
+        <Link to="/join">
           <Button color={colors.accent} variant={GHOST_VARIANT}>
-            {CONTACT}
+            {JOIN}
           </Button>
         </Link>
       </Box>

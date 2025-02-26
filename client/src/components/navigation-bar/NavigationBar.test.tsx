@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { ABOUT, CONTACT, HOME, TDV } from "assets/constants";
+import { ABOUT, JOIN, HOME, TDV } from "assets/constants";
 import NavigationBar from "components/navigation-bar";
 import { BrowserRouter } from "react-router-dom";
 
@@ -13,6 +13,6 @@ describe("Navigation Bar testing suite", () => {
     expect(screen.getByText(TDV)).toBeInTheDocument();
     expect(screen.getByText(HOME)).toBeInTheDocument();
     expect(screen.getByText(ABOUT)).toBeInTheDocument();
-    expect(screen.getByText(CONTACT)).toBeInTheDocument();
+    expect(screen.getByText(JOIN)).toBeInTheDocument();
   });
 });
