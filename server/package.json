@@ -7,7 +7,8 @@
     "start": "node server.ts",
     "dev": "nodemon server.ts",
     "lint": "eslint . --ext .ts",
-    "test": "vitest --coverage"
+    "test": "vitest --coverage",
+    "vercel-build": "echo hello"
   },
   "keywords": [],
   "author": "",
