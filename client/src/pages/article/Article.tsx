@@ -33,7 +33,6 @@ import {
   PaginationContainer,
   PaginationPageGroup,
 } from "@ajna/pagination";
-import colors from "assets/colors";
 
 const Article = () => {
   const { id, aId } = useParams();
@@ -130,11 +129,11 @@ const Article = () => {
                       w={7}
                       fontSize="sm"
                       _hover={{
-                        bg: colors.accent,
+                        bg: "brand.200",
                       }}
                       _current={{
                         w: 7,
-                        bg: colors.accent,
+                        bg: "brand.200",
                         fontSize: "sm",
                         _hover: {
                           bg: "blue.300",

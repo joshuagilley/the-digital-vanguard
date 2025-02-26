@@ -8,7 +8,8 @@
   "scripts": {
     "start": "cd client && npm run dev",
     "commit": "git cz",
-    "test_client": "cd client && npm test"
+    "test_client": "cd client && npm test",
+    "test_server": "cd server && npm test"
   },
   "repository": {
     "type": "git",
