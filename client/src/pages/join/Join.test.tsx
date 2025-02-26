@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import Contact from "pages/contact";
+import Join from "pages/join";
 
-describe("Contact Page", () => {
+describe("Join Page", () => {
   test("renders ExampleComponent with correct text", () => {
-    render(<Contact />);
-    const textElement = screen.getByText("Contact");
+    render(<Join />);
+    const textElement = screen.getByText("Join");
     expect(textElement).toBeInTheDocument();
   });
 });

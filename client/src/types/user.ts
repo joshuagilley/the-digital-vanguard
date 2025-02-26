@@ -18,3 +18,13 @@ export type ArticleProps = {
   articleDetails: string[];
   summary: string;
 };
+
+export type Status =
+  | "info"
+  | "warning"
+  | "success"
+  | "error"
+  | "loading"
+  | undefined;
+
+export type EmailResponse = { status: number; text: string };

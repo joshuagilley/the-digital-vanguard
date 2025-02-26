@@ -3,7 +3,7 @@ import { Box, ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Home from "pages/home";
 import About from "pages/about";
-import Contact from "pages/contact";
+import Join from "pages/join";
 import NavigationBar from "components/navigation-bar/NavigationBar";
 import colors from "assets/colors";
 import Footer from "components/footer";
@@ -22,7 +22,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
+              <Route path="/join" element={<Join />} />
               <Route path="/portfolio/:id" element={<Portfolio />} />
               <Route
                 path="/portfolio/:id/articles/:aId"
