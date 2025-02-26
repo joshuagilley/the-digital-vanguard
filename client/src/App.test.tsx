@@ -1,5 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import App from "./App";
+import { vi } from "vitest";
+
+vi.mock("react-i18next", () => ({
+  useTranslation: () => {
+    return {
+      t: (str: string) => str,
+      i18n: {
+        changeLanguage: () => new Promise(() => {}),
+      },
+    };
+  },
+}));
 
 describe("App.tsx testing suite", () => {
   test("App loads with home page displayed", () => {

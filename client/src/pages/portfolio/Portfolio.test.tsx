@@ -16,6 +16,17 @@ const queryClient = new QueryClient({
   },
 });
 
+vi.mock("react-i18next", () => ({
+  useTranslation: () => {
+    return {
+      t: (str: string) => str,
+      i18n: {
+        changeLanguage: () => new Promise(() => {}),
+      },
+    };
+  },
+}));
+
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {
