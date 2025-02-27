@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client/src:/app/src
+      - ./client/public:/app/public
+    depends_on:
+      - server
+    env_file:
+      - path: ./client/.env
+        required: true
+  server:
+    container_name: "tdv-fastify"
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/app
+    env_file:
+      - path: ./server/.env
+        required: true

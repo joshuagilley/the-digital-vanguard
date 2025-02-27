@@ -3,7 +3,7 @@ import { Server } from "http";
 
 const handleCors = (fastify: FastifyInstance<Server>) => {
   fastify.addHook("onRequest", async (request, reply) => {
-    reply.header("Access-Control-Allow-Origin", process.env.ALLOW_ORIGIN);
+    reply.header("Access-Control-Allow-Origin", "*");
     reply.header("Access-Control-Allow-Credentials", true);
     reply.header(
       "Access-Control-Allow-Headers",
