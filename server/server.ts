@@ -14,7 +14,11 @@ export async function createServer() {
 export const start = async () => {
   const server = await createServer();
   try {
-    await server.listen({ port: Number(process.env.PORT) });
+    console.log(`Listening on port: ${process.env.PORT}`);
+    await server.listen({
+      port: Number(process.env.PORT),
+      host: process.env.HOST,
+    });
   } catch (err) {
     server.log.error(err);
     process.exit(1);
