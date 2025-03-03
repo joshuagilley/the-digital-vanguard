@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   client:
+    restart: "always"
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -15,6 +16,7 @@ services:
       - path: ./client/.env
         required: true
   server:
+    restart: "always"
     container_name: "tdv-fastify"
     build:
       context: ./server
