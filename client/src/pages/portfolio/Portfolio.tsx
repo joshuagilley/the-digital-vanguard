@@ -86,7 +86,6 @@ const Portfolio = () => {
       )}
       {!isPending && !isFetching && !error && (
         <Box>
-          <h1>{"hello dinosaur"}</h1>
           <Box bg="gray.100" p={4}>
             <Flex align="center">
               <Heading size="lg">{`${data.username}'s ${t("portfolio.portfolio")}`}</Heading>
