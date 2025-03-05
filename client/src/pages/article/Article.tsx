@@ -16,6 +16,9 @@ import {
   Spacer,
   Button,
   Divider,
+  FormControl,
+  FormLabel,
+  Switch,
 } from "@chakra-ui/react";
 import ReactPlayer from "react-player";
 import { useQuery } from "@tanstack/react-query";
@@ -33,17 +36,15 @@ import {
   PaginationContainer,
   PaginationPageGroup,
 } from "@ajna/pagination";
+import { AddDetailModal } from "components/add-detail-modal/AddDetailModal";
+import { useState } from "react";
 
 const Article = () => {
   const { id, aId } = useParams();
   const navigate = useNavigate();
+  const [showDemo, setShowDemo] = useState(false);
 
-  const { currentPage, setCurrentPage, pagesCount, pages } = usePagination({
-    pagesCount: 2,
-    initialState: { currentPage: 1 },
-  });
-
-  const { isPending, error, data, isFetching } = useQuery({
+  const { isPending, error, data, isFetching, refetch } = useQuery({
     queryKey: [],
     queryFn: async () => {
       const response = await fetch(`/api/users/${id}/articles/${aId}`);
@@ -51,9 +52,15 @@ const Article = () => {
     },
   });
 
+  // should handle this in the query, workaround for now
   const article = data?.articles.find(
     ({ articleId }: ArticleProps) => articleId === aId
   );
+
+  const { currentPage, setCurrentPage, pagesCount, pages } = usePagination({
+    pagesCount: article?.articleDetails.length,
+    initialState: { currentPage: 1 },
+  });
 
   return (
     <Box data-testid="article-page" sx={styles.wrapper}>
@@ -98,53 +105,69 @@ const Article = () => {
             </CardBody>
           </Card>
           <Divider />
-          <Box>
-            {/* Instead of a player, you could actually house the project here */}
-            <ReactPlayer width="100%" url={article?.url} style={styles.url} />
-          </Box>
-          <Divider />
-          <Box>
-            <Card sx={styles.markdown}>
-              <ReactMarkdown
-                components={ChakraUIRenderer()}
-                children={article?.articleDetails[currentPage - 1]}
-                skipHtml
+          <Box m="10px">
+            <FormControl display="flex" alignItems="center">
+              <FormLabel htmlFor="email-alerts" mb="0">
+                Demo
+              </FormLabel>
+              <Switch
+                id="email-alerts"
+                onChange={() => setShowDemo(!showDemo)}
               />
-            </Card>
-            <Pagination
-              pagesCount={pagesCount}
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-            >
-              <PaginationContainer>
-                <PaginationPrevious>
-                  {t("articleItem.previous")}
-                </PaginationPrevious>
-                <PaginationPageGroup>
-                  {pages.map((page: number) => (
-                    <PaginationPage
-                      key={`pagination_page_${page}`}
-                      page={page}
-                      w={7}
-                      fontSize="sm"
-                      _hover={{
-                        bg: "brand.200",
-                      }}
-                      _current={{
-                        w: 7,
-                        bg: "brand.200",
-                        fontSize: "sm",
-                        _hover: {
-                          bg: "blue.300",
-                        },
-                      }}
-                    />
-                  ))}
-                </PaginationPageGroup>
-                <PaginationNext>{t("articleItem.next")}</PaginationNext>
-              </PaginationContainer>
-            </Pagination>
+            </FormControl>
+            {/* Instead of a player, you could actually house the project here */}
+            {showDemo && <ReactPlayer url={article?.url} style={styles.url} />}
           </Box>
+          {!showDemo && (
+            <Box>
+              <Box>
+                <Card sx={styles.markdown} height="500px" overflow={"scroll"}>
+                  <ReactMarkdown
+                    components={ChakraUIRenderer()}
+                    children={article?.articleDetails[currentPage - 1]}
+                    skipHtml
+                  />
+                </Card>
+              </Box>
+              <Flex m="10px">
+                <Pagination
+                  pagesCount={pagesCount}
+                  currentPage={currentPage}
+                  onPageChange={setCurrentPage}
+                >
+                  <PaginationContainer>
+                    <PaginationPrevious>
+                      {t("articleItem.previous")}
+                    </PaginationPrevious>
+                    <PaginationPageGroup>
+                      {pages.map((page: number) => (
+                        <PaginationPage
+                          key={`pagination_page_${page}`}
+                          page={page}
+                          w={7}
+                          fontSize="sm"
+                          _hover={{
+                            bg: "brand.200",
+                          }}
+                          _current={{
+                            w: 7,
+                            bg: "brand.200",
+                            fontSize: "sm",
+                            _hover: {
+                              bg: "blue.300",
+                            },
+                          }}
+                        />
+                      ))}
+                    </PaginationPageGroup>
+                    <PaginationNext>{t("articleItem.next")}</PaginationNext>
+                  </PaginationContainer>
+                </Pagination>
+                <Spacer />
+                <AddDetailModal refetch={refetch} />
+              </Flex>
+            </Box>
+          )}
         </Box>
       )}
     </Box>
@@ -160,7 +183,7 @@ const styles = {
   },
   url: {
     margin: "auto",
-    padding: "10px",
+    paddingTop: "10px",
     borderRadius: "25px",
   },
   markdown: {

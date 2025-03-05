@@ -12,3 +12,18 @@ export interface IReply {
   302: { url: string };
   "4xx": { error: string };
 }
+
+export interface NewArticleBody {
+  articleName: string;
+  articleSummary: string;
+  articleUrl: string;
+}
+
+export interface NewFileBody {
+  markdownText: string;
+}
+
+export interface ParamsType {
+  id: string;
+  aid?: string;
+}

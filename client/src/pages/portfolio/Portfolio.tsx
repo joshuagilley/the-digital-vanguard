@@ -20,12 +20,13 @@ import { useState } from "react";
 import ArticleItem from "components/article-item";
 import { useTranslation } from "react-i18next";
 import { ArticleProps } from "types/user";
+import NewArticleItem from "components/new-article-item";
 
 const Portfolio = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
-  const { isPending, error, data, isFetching } = useQuery({
+  const { isPending, error, data, isFetching, refetch } = useQuery({
     queryKey: [],
     queryFn: async () => {
       const response = await fetch(`/api/users/${id}/articles`);
@@ -124,6 +125,8 @@ const Portfolio = () => {
                 />
               );
             })}
+
+            <NewArticleItem text={"Add Article"} refetch={refetch} />
           </SimpleGrid>
         </Box>
       )}
