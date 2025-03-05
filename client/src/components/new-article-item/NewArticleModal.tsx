@@ -46,6 +46,7 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
   const [articleName, setArticleName] = useState("");
   const [articleSummary, setArticleSummary] = useState("");
   const [articleUrl, setArticleUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   const handleArticleUrl = (url: string) => {
     const youtubeRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/;
@@ -65,6 +66,7 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
         articleName,
         articleSummary,
         articleUrl,
+        imageUrl,
       }),
     });
     refetch();
@@ -76,9 +78,10 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
       <PlusSquareIcon
         fontSize="90px"
         color={isHovering ? "gray.600" : "gray.400"}
-        onClick={() => {
+        onClick={(e) => {
           setOverlay(<OverlayTwo />);
           onOpen();
+          e.stopPropagation();
         }}
       />
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
@@ -94,6 +97,10 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
             <FormControl sx={styles.input} isRequired>
               <FormLabel>Youtube URL</FormLabel>
               <Input onChange={(e) => handleArticleUrl(e.target.value)} />
+            </FormControl>
+            <FormControl sx={styles.input} isRequired>
+              <FormLabel>Image Url</FormLabel>
+              <Textarea onChange={(e) => setImageUrl(e.target.value)} />
             </FormControl>
             <FormControl sx={styles.input} isRequired>
               <FormLabel>Summary</FormLabel>

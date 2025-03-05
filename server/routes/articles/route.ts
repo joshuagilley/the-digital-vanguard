@@ -64,7 +64,8 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       reply
     ) => {
       const { id: userId } = request.params;
-      const { articleName, articleSummary, articleUrl } = request.body;
+      const { articleName, articleSummary, articleUrl, imageUrl } =
+        request.body;
       const users = fastify.mongo.client.db("users");
       const collection = users.collection("articles");
       const updateResponse = await collection.updateOne(
@@ -78,8 +79,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
                   articleName,
                   url: articleUrl,
                   articleDetails: [],
-                  imageUrl:
-                    "https://miro.medium.com/v2/resize:fit:1400/format:webp/1*TI11C91gChmUyO4vC9gTUQ.jpeg",
+                  imageUrl,
                   summary: articleSummary,
                 },
               ],

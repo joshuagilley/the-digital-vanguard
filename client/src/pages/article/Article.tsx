@@ -60,7 +60,7 @@ const Article = () => {
   });
 
   const { currentPage, setCurrentPage, pagesCount, pages } = usePagination({
-    pagesCount: article?.articleDetails,
+    pagesCount: article?.articleDetails?.length,
     initialState: { currentPage: 1 },
   });
 

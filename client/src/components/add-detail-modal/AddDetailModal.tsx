@@ -71,7 +71,7 @@ export const AddDetailModal = ({ refetch }: Props) => {
   };
 
   const onSubmit = async () => {
-    await fetch(`/api/users/${id}/articles/${aId}`, {
+    const res = await fetch(`/api/users/${id}/articles/${aId}`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -79,6 +79,7 @@ export const AddDetailModal = ({ refetch }: Props) => {
       },
       body: JSON.stringify({ markdownText }),
     });
+    console.log(res);
     refetch();
     onClose();
   };
