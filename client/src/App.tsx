@@ -5,7 +5,7 @@ import Home from "pages/home";
 import About from "pages/about";
 import Join from "pages/join";
 import NavigationBar from "components/navigation-bar/NavigationBar";
-import Footer from "components/footer";
+// import Footer from "components/footer";
 import Portfolio from "pages/portfolio";
 import Article from "pages/article";
 import { theme } from "./theme";

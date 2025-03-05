@@ -19,12 +19,13 @@ import {
   FormControl,
   FormLabel,
   Switch,
+  Center,
+  Image,
 } from "@chakra-ui/react";
 import ReactPlayer from "react-player";
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArticleProps } from "types/user";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import ReactMarkdown from "react-markdown";
 import {
@@ -44,7 +45,13 @@ const Article = () => {
   const navigate = useNavigate();
   const [showDemo, setShowDemo] = useState(false);
 
-  const { isPending, error, data, isFetching, refetch } = useQuery({
+  const {
+    isPending,
+    error,
+    data: article,
+    isFetching,
+    refetch,
+  } = useQuery({
     queryKey: [],
     queryFn: async () => {
       const response = await fetch(`/api/users/${id}/articles/${aId}`);
@@ -52,15 +59,12 @@ const Article = () => {
     },
   });
 
-  // should handle this in the query, workaround for now
-  const article = data?.articles.find(
-    ({ articleId }: ArticleProps) => articleId === aId
-  );
-
   const { currentPage, setCurrentPage, pagesCount, pages } = usePagination({
-    pagesCount: article?.articleDetails.length,
+    pagesCount: article?.articleDetails,
     initialState: { currentPage: 1 },
   });
+
+  const hasDetails = article?.articleDetails?.length > 0;
 
   return (
     <Box data-testid="article-page" sx={styles.wrapper}>
@@ -86,7 +90,7 @@ const Article = () => {
                 <Heading size="md">{article?.articleName}</Heading>
                 <Spacer />
                 <Button size="sm" onClick={() => navigate(`/portfolio/${id}`)}>
-                  {`${data?.username}'s ${t("portfolio.portfolio")}`}
+                  {`Back`}
                 </Button>
               </Flex>
             </CardHeader>
@@ -121,48 +125,60 @@ const Article = () => {
           {!showDemo && (
             <Box>
               <Box>
-                <Card sx={styles.markdown} height="500px" overflow={"scroll"}>
-                  <ReactMarkdown
-                    components={ChakraUIRenderer()}
-                    children={article?.articleDetails[currentPage - 1]}
-                    skipHtml
-                  />
+                <Card sx={styles.markdown}>
+                  {hasDetails ? (
+                    <ReactMarkdown
+                      components={ChakraUIRenderer()}
+                      children={article?.articleDetails[currentPage - 1]}
+                      skipHtml
+                    />
+                  ) : (
+                    <Center m="auto">
+                      <Image
+                        color="gray.300"
+                        w="100px"
+                        src="https://cdn-icons-png.flaticon.com/512/1092/1092216.png"
+                      />
+                    </Center>
+                  )}
                 </Card>
               </Box>
               <Flex m="10px">
-                <Pagination
-                  pagesCount={pagesCount}
-                  currentPage={currentPage}
-                  onPageChange={setCurrentPage}
-                >
-                  <PaginationContainer>
-                    <PaginationPrevious>
-                      {t("articleItem.previous")}
-                    </PaginationPrevious>
-                    <PaginationPageGroup>
-                      {pages.map((page: number) => (
-                        <PaginationPage
-                          key={`pagination_page_${page}`}
-                          page={page}
-                          w={7}
-                          fontSize="sm"
-                          _hover={{
-                            bg: "brand.200",
-                          }}
-                          _current={{
-                            w: 7,
-                            bg: "brand.200",
-                            fontSize: "sm",
-                            _hover: {
-                              bg: "blue.300",
-                            },
-                          }}
-                        />
-                      ))}
-                    </PaginationPageGroup>
-                    <PaginationNext>{t("articleItem.next")}</PaginationNext>
-                  </PaginationContainer>
-                </Pagination>
+                {hasDetails && (
+                  <Pagination
+                    pagesCount={pagesCount}
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                  >
+                    <PaginationContainer>
+                      <PaginationPrevious>
+                        {t("articleItem.previous")}
+                      </PaginationPrevious>
+                      <PaginationPageGroup>
+                        {pages.map((page: number) => (
+                          <PaginationPage
+                            key={`pagination_page_${page}`}
+                            page={page}
+                            w={7}
+                            fontSize="sm"
+                            _hover={{
+                              bg: "brand.200",
+                            }}
+                            _current={{
+                              w: 7,
+                              bg: "brand.200",
+                              fontSize: "sm",
+                              _hover: {
+                                bg: "blue.300",
+                              },
+                            }}
+                          />
+                        ))}
+                      </PaginationPageGroup>
+                      <PaginationNext>{t("articleItem.next")}</PaginationNext>
+                    </PaginationContainer>
+                  </Pagination>
+                )}
                 <Spacer />
                 <AddDetailModal refetch={refetch} />
               </Flex>
@@ -189,6 +205,8 @@ const styles = {
   markdown: {
     margin: "10px",
     padding: "10px",
+    height: "500px",
+    overflow: "scroll",
   },
 };
 

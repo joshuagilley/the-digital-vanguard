@@ -31,15 +31,18 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     Headers: IHeaders;
     Reply: IReply;
   }>("/api/users/:id/articles/:aid", async (request, reply) => {
-    // const { id: userId, aid: articleId } = request.params;
-    // need to filter single article to send back
-    const { id: userId } = request.params;
+    const { id: userId, aid: articleId } = request.params;
     const users = fastify.mongo.client.db("users");
     const collection = users.collection("articles");
-    const result = await collection.find({ userId: userId }).toArray();
-    if (!result || result.length === 0)
+    const result = await collection
+      .find(
+        { userId, "articles.articleId": articleId },
+        { projection: { "articles.$": 1 } }
+      )
+      .toArray();
+    if (!result || result.length === 0 || result[0].articles.length === 0)
       reply.code(404).send({ error: "Not found" });
-    else reply.code(200).send(JSON.stringify(result[0]));
+    else reply.code(200).send(JSON.stringify(result[0].articles[0]));
   });
 
   fastify.get<{
@@ -108,7 +111,6 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
           } as unknown as PushOperator<Document>,
         }
       );
-      console.log(updateResponse);
 
       if (!updateResponse.acknowledged)
         reply.code(404).send({ error: "Not found" });
