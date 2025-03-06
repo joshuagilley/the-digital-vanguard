@@ -37,7 +37,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     const { id: userId } = request.params;
     const client = await fastify.pg.connect();
     const { rows }: { rows: { [key: string]: string }[] } = await client.query(
-      `  SELECT * FROM articles WHERE user_id = '${userId}';`
+      `  SELECT * FROM users LEFT JOIN articles ON articles.user_id = users.user_id WHERE users.user_id = '${userId}';`
     );
     const convertedCaseRows = rows.map((row) =>
       simpleObjectKeyConversion(row, true)

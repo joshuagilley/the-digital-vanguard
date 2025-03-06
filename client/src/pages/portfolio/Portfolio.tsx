@@ -49,6 +49,7 @@ const Portfolio = () => {
       window.location.href = `tel:${phoneNumber}`;
     }, 1000);
   };
+  console.log(data);
 
   const handleEmail = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -85,17 +86,17 @@ const Portfolio = () => {
           <Skeleton height="20px" />
         </Stack>
       )}
-      {!isPending && !isFetching && !error && (
+      {!isPending && !isFetching && !error && data && (
         <Box>
           <Box bg="gray.100" p={4}>
             <Flex align="center">
-              <Heading size="lg">{`${data.username}'s ${t("portfolio.portfolio")}`}</Heading>
+              <Heading size="lg">{`${data[0].username}'s ${t("portfolio.portfolio")}`}</Heading>
               <Spacer />
               <Flex>
                 <IconButton
                   icon={<PhoneIcon />}
-                  aria-label={`${t("portfolio.call")} ${data.phoneNumber}`}
-                  onClick={() => handleCall(data.phoneNumber)}
+                  aria-label={`${t("portfolio.call")} ${data[0].phoneNumber}`}
+                  onClick={() => handleCall(data[0].phoneNumber)}
                   isLoading={isCalling}
                   colorScheme="blackAlpha"
                   sx={styles.iconButton}
@@ -103,8 +104,8 @@ const Portfolio = () => {
                 />
                 <IconButton
                   icon={<EmailIcon />}
-                  aria-label={`${t("portfolio.email")} ${data.email}`}
-                  onClick={(e) => handleEmail(e, data.email)}
+                  aria-label={`${t("portfolio.email")} ${data[0].email}`}
+                  onClick={(e) => handleEmail(e, data[0].email)}
                   isLoading={isEmailing}
                   colorScheme="blackAlpha"
                   sx={styles.iconButton}
