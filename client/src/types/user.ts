@@ -17,6 +17,7 @@ export type ArticleProps = {
   imageUrl: string;
   articleDetails: string[];
   summary: string;
+  userId: string;
 };
 
 export type Status =

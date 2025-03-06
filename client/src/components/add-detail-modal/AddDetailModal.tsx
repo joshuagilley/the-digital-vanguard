@@ -33,6 +33,7 @@ const OverlayTwo = () => (
 
 type Props = {
   refetch: () => Promise<QueryObserverResult<any, Error>>;
+  sortValue: number;
 };
 
 function readFileAsync(file: File) {
@@ -51,7 +52,7 @@ function readFileAsync(file: File) {
   });
 }
 
-export const AddDetailModal = ({ refetch }: Props) => {
+export const AddDetailModal = ({ refetch, sortValue }: Props) => {
   const { id, aId } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = useState(<OverlayOne />);
@@ -77,8 +78,9 @@ export const AddDetailModal = ({ refetch }: Props) => {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ markdownText }),
+      body: JSON.stringify({ markdownText, sortValue }),
     });
+    //add a toast here
     console.log(res);
     refetch();
     onClose();

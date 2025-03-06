@@ -8,22 +8,44 @@ import {
   NewArticleBody,
   NewFileBody,
 } from "./query";
-import { v4 as uuidv4 } from "uuid";
-import { PushOperator } from "mongodb";
+import { simpleObjectKeyConversion } from "utils";
 
 const articleRoutes = async (fastify: FastifyInstance<Server>) => {
   fastify.get<{
     Params: IParams;
     Headers: IHeaders;
     Reply: IReply;
+  }>("/api/users", async (request, reply) => {
+    const client = await fastify.pg.connect();
+    const { rows }: { rows: { [key: string]: string }[] } = await client.query(
+      `SELECT * FROM users;`
+    );
+    const convertedCaseRows = rows.map((row) =>
+      simpleObjectKeyConversion(row, true)
+    );
+    // Note: avoid doing expensive computation here, this will block releasing the client
+    client.release();
+    if (!rows || rows.length === 0)
+      reply.code(404).send({ error: "Not found" });
+    else reply.code(200).send(JSON.stringify(convertedCaseRows));
+  });
+
+  fastify.get<{
+    Params: IParams;
+    Headers: IHeaders;
+    Reply: IReply;
   }>("/api/users/:id/articles", async (request, reply) => {
     const { id: userId } = request.params;
-    const users = fastify.mongo.client.db("users");
-    const collection = users.collection("articles");
-    const query = { userId };
-    const result = await collection.findOne(query);
-    if (!result) reply.code(404).send({ error: "Not found" });
-    else reply.code(200).send(JSON.stringify(result));
+    const client = await fastify.pg.connect();
+    const { rows }: { rows: { [key: string]: string }[] } = await client.query(
+      `  SELECT * FROM articles WHERE user_id = '${userId}';`
+    );
+    const convertedCaseRows = rows.map((row) =>
+      simpleObjectKeyConversion(row, true)
+    );
+    client.release();
+    if (!convertedCaseRows) reply.code(404).send({ error: "Not found" });
+    else reply.code(200).send(JSON.stringify(convertedCaseRows));
   });
 
   fastify.get<{
@@ -32,30 +54,20 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     Reply: IReply;
   }>("/api/users/:id/articles/:aid", async (request, reply) => {
     const { id: userId, aid: articleId } = request.params;
-    const users = fastify.mongo.client.db("users");
-    const collection = users.collection("articles");
-    const result = await collection
-      .find(
-        { userId, "articles.articleId": articleId },
-        { projection: { "articles.$": 1 } }
-      )
-      .toArray();
-    if (!result || result.length === 0 || result[0].articles.length === 0)
-      reply.code(404).send({ error: "Not found" });
-    else reply.code(200).send(JSON.stringify(result[0].articles[0]));
-  });
-
-  fastify.get<{
-    Params: IParams;
-    Headers: IHeaders;
-    Reply: IReply;
-  }>("/api/users", async (request, reply) => {
-    const users = fastify.mongo.client.db("users");
-    const collection = users.collection("articles");
-    const result = await collection.find().toArray();
-    if (!result || result.length === 0)
-      reply.code(404).send({ error: "Not found" });
-    else reply.code(200).send(JSON.stringify(result));
+    const client = await fastify.pg.connect();
+    const { rows }: { rows: { [key: string]: string }[] } = await client.query(
+      `SELECT * FROM articles 
+      LEFT JOIN details 
+      ON details.article_id = '${articleId}'
+      WHERE user_id = '${userId}' 
+      AND articles.article_id = '${articleId}';`
+    );
+    const convertedCaseRows = rows.map((row) =>
+      simpleObjectKeyConversion(row, true)
+    );
+    client.release();
+    if (!convertedCaseRows) reply.code(404).send({ error: "Not found" });
+    else reply.code(200).send(JSON.stringify(convertedCaseRows));
   });
 
   fastify.post("/api/users/:id", {
@@ -66,30 +78,24 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       const { id: userId } = request.params;
       const { articleName, articleSummary, articleUrl, imageUrl } =
         request.body;
-      const users = fastify.mongo.client.db("users");
-      const collection = users.collection("articles");
-      const updateResponse = await collection.updateOne(
-        { userId },
-        {
-          $push: {
-            articles: {
-              $each: [
-                {
-                  articleId: uuidv4(),
-                  articleName,
-                  url: articleUrl,
-                  articleDetails: [],
-                  imageUrl,
-                  summary: articleSummary,
-                },
-              ],
-            },
-          } as unknown as PushOperator<Document>,
-        }
+      const client = await fastify.pg.connect();
+      const { rows }: { rows: { [key: string]: string }[] } =
+        await client.query(
+          `INSERT INTO articles (user_id, url, article_name, image_url, summary) 
+          VALUES (
+          '${userId}', 
+          '${articleUrl}',
+          '${articleName}',
+          '${imageUrl}',
+          '${articleSummary}'
+          );`
+        );
+      const convertedCaseRows = rows.map((row) =>
+        simpleObjectKeyConversion(row, true)
       );
-      if (!updateResponse.acknowledged)
-        reply.code(404).send({ error: "Not found" });
-      else reply.code(200).send(JSON.stringify(updateResponse));
+      client.release();
+      if (!convertedCaseRows) reply.code(404).send({ error: "Not found" });
+      else reply.code(200).send(JSON.stringify(convertedCaseRows));
     },
   });
 
@@ -98,23 +104,21 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       request: FastifyRequest<{ Params: ParamsType; Body: NewFileBody }>,
       reply
     ) => {
-      const { id: userId, aid: articleId } = request.params;
-      const { markdownText } = request.body;
-      const users = fastify.mongo.client.db("users");
-      const collection = users.collection("articles");
-
-      const updateResponse = await collection.updateOne(
-        { userId, "articles.articleId": articleId },
-        {
-          $push: {
-            "articles.$[].articleDetails": markdownText,
-          } as unknown as PushOperator<Document>,
-        }
+      const { aid: articleId } = request.params;
+      const { markdownText, sortValue } = request.body;
+      const client = await fastify.pg.connect();
+      const { rows }: { rows: { [key: string]: string }[] } =
+        await client.query(
+          `INSERT INTO details (article_id, markdown, sort_value) 
+            VALUES ('${articleId}', '${markdownText}', ${sortValue});`
+        );
+      const convertedCaseRows = rows.map((row) =>
+        simpleObjectKeyConversion(row, true)
       );
+      client.release();
 
-      if (!updateResponse.acknowledged)
-        reply.code(404).send({ error: "Not found" });
-      else reply.code(200).send(JSON.stringify(updateResponse));
+      if (!convertedCaseRows) reply.code(404).send({ error: "Not found" });
+      else reply.code(200).send(JSON.stringify(convertedCaseRows));
     },
   });
 };

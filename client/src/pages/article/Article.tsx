@@ -45,13 +45,7 @@ const Article = () => {
   const navigate = useNavigate();
   const [showDemo, setShowDemo] = useState(false);
 
-  const {
-    isPending,
-    error,
-    data: article,
-    isFetching,
-    refetch,
-  } = useQuery({
+  const { isPending, error, data, isFetching, refetch } = useQuery({
     queryKey: [],
     queryFn: async () => {
       const response = await fetch(`/api/users/${id}/articles/${aId}`);
@@ -60,11 +54,13 @@ const Article = () => {
   });
 
   const { currentPage, setCurrentPage, pagesCount, pages } = usePagination({
-    pagesCount: article?.articleDetails?.length,
+    pagesCount: data?.length,
     initialState: { currentPage: 1 },
   });
 
-  const hasDetails = article?.articleDetails?.length > 0;
+  const hasDetails = data?.find(
+    ({ detailId }: { detailId: string }) => detailId !== null
+  );
 
   return (
     <Box data-testid="article-page" sx={styles.wrapper}>
@@ -82,12 +78,12 @@ const Article = () => {
           <Skeleton height="20px" />
         </Stack>
       )}
-      {!isPending && !isFetching && !error && (
+      {!isPending && !isFetching && !error && data && (
         <Box data-test="article">
           <Card sx={styles.header}>
             <CardHeader>
               <Flex>
-                <Heading size="md">{article?.articleName}</Heading>
+                <Heading size="md">{data[0]?.articleName}</Heading>
                 <Spacer />
                 <Button size="sm" onClick={() => navigate(`/portfolio/${id}`)}>
                   {`Back`}
@@ -102,7 +98,7 @@ const Article = () => {
                     {t("articleItem.summary")}
                   </Heading>
                   <Text pt="2" fontSize="sm">
-                    {article?.summary}
+                    {data[0]?.summary}
                   </Text>
                 </Box>
               </Stack>
@@ -120,29 +116,27 @@ const Article = () => {
               />
             </FormControl>
             {/* Instead of a player, you could actually house the project here */}
-            {showDemo && <ReactPlayer url={article?.url} style={styles.url} />}
+            {showDemo && <ReactPlayer url={data[0]?.url} style={styles.url} />}
           </Box>
           {!showDemo && (
             <Box>
-              <Box>
-                <Card sx={styles.markdown}>
-                  {hasDetails ? (
-                    <ReactMarkdown
-                      components={ChakraUIRenderer()}
-                      children={article?.articleDetails[currentPage - 1]}
-                      skipHtml
+              <Card sx={styles.markdown}>
+                {hasDetails ? (
+                  <ReactMarkdown
+                    components={ChakraUIRenderer()}
+                    children={data[currentPage - 1].markdown}
+                    skipHtml
+                  />
+                ) : (
+                  <Center m="auto">
+                    <Image
+                      color="gray.300"
+                      w="100px"
+                      src="https://cdn-icons-png.flaticon.com/512/1092/1092216.png"
                     />
-                  ) : (
-                    <Center m="auto">
-                      <Image
-                        color="gray.300"
-                        w="100px"
-                        src="https://cdn-icons-png.flaticon.com/512/1092/1092216.png"
-                      />
-                    </Center>
-                  )}
-                </Card>
-              </Box>
+                  </Center>
+                )}
+              </Card>
               <Flex m="10px">
                 {hasDetails && (
                   <Pagination
@@ -180,7 +174,10 @@ const Article = () => {
                   </Pagination>
                 )}
                 <Spacer />
-                <AddDetailModal refetch={refetch} />
+                <AddDetailModal
+                  refetch={refetch}
+                  sortValue={hasDetails ? data.length + 1 : 1}
+                />
               </Flex>
             </Box>
           )}

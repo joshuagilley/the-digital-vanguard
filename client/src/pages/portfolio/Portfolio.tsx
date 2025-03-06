@@ -114,13 +114,13 @@ const Portfolio = () => {
             </Flex>
           </Box>
           <SimpleGrid columns={2} spacing={10} margin={5}>
-            {data?.articles?.map((article: ArticleProps) => {
-              const { articleName, articleId } = article;
+            {data?.map((article: ArticleProps) => {
+              const { articleName, articleId, userId, imageUrl } = article;
               return (
                 <ArticleItem
                   text={articleName}
-                  imageUrl={article.imageUrl}
-                  userId={data.userId}
+                  imageUrl={imageUrl}
+                  userId={userId}
                   articleId={articleId}
                 />
               );

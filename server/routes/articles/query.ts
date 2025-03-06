@@ -22,6 +22,7 @@ export interface NewArticleBody {
 
 export interface NewFileBody {
   markdownText: string;
+  sortValue: number;
 }
 
 export interface ParamsType {
