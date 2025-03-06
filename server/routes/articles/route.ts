@@ -4,7 +4,6 @@ import {
   IParams,
   IHeaders,
   IReply,
-  ParamsType,
   NewArticleBody,
   NewFileBody,
 } from "./query";
@@ -72,7 +71,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
 
   fastify.post("/api/users/:id", {
     handler: async (
-      request: FastifyRequest<{ Params: ParamsType; Body: NewArticleBody }>,
+      request: FastifyRequest<{ Params: IParams; Body: NewArticleBody }>,
       reply
     ) => {
       const { id: userId } = request.params;
@@ -99,9 +98,9 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     },
   });
 
-  fastify.post("/api/users/:id/articles/:aid", {
+  fastify.post("/api/articles/:aid", {
     handler: async (
-      request: FastifyRequest<{ Params: ParamsType; Body: NewFileBody }>,
+      request: FastifyRequest<{ Params: IParams; Body: NewFileBody }>,
       reply
     ) => {
       const { aid: articleId } = request.params;
@@ -120,6 +119,36 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       if (!convertedCaseRows) reply.code(404).send({ error: "Not found" });
       else reply.code(200).send(JSON.stringify(convertedCaseRows));
     },
+  });
+
+  fastify.delete<{
+    Params: IParams;
+    Headers: IHeaders;
+    Reply: IReply;
+  }>("/api/articles/:aid", async (request, reply) => {
+    const { aid: articleId } = request.params;
+    const client = await fastify.pg.connect();
+    const res = await client.query(
+      `DELETE FROM articles WHERE article_id = '${articleId}';`
+    );
+    client.release();
+    if (!res) reply.code(404).send({ error: "Not found" });
+    else reply.code(200).send(JSON.stringify(res));
+  });
+
+  fastify.delete<{
+    Params: IParams;
+    Headers: IHeaders;
+    Reply: IReply;
+  }>("/api/details/:did", async (request, reply) => {
+    const { did: detailId } = request.params;
+    const client = await fastify.pg.connect();
+    const res = await client.query(
+      `DELETE FROM details WHERE detail_id = '${detailId}';`
+    );
+    client.release();
+    if (!res) reply.code(404).send({ error: "Not found" });
+    else reply.code(200).send(JSON.stringify(res));
   });
 };
 

@@ -1,6 +1,7 @@
 export interface IParams {
   id: string;
-  aid: string;
+  aid?: string;
+  did?: string;
 }
 
 export interface IHeaders {
@@ -23,9 +24,4 @@ export interface NewArticleBody {
 export interface NewFileBody {
   markdownText: string;
   sortValue: number;
-}
-
-export interface ParamsType {
-  id: string;
-  aid?: string;
 }

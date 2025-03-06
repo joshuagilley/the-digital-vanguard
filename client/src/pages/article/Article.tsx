@@ -39,6 +39,7 @@ import {
 } from "@ajna/pagination";
 import { AddDetailModal } from "components/add-detail-modal/AddDetailModal";
 import { useState } from "react";
+import AlertDialogPopUp from "components/alert-dialog-popup";
 
 const Article = () => {
   const { id, aId } = useParams();
@@ -61,6 +62,15 @@ const Article = () => {
   const hasDetails = data?.find(
     ({ detailId }: { detailId: string }) => detailId !== null
   );
+
+  const deleteDetail = async () => {
+    const detailId = data[currentPage - 1].detailId;
+    const res = await fetch(`/api/details/${detailId}`, {
+      method: "DELETE",
+    });
+    refetch();
+    console.log(res);
+  };
 
   return (
     <Box data-testid="article-page" sx={styles.wrapper}>
@@ -121,6 +131,12 @@ const Article = () => {
           {!showDemo && (
             <Box>
               <Card sx={styles.markdown}>
+                <Box mr="10px">
+                  <AlertDialogPopUp
+                    deleteText="Delete Detail"
+                    apiCall={deleteDetail}
+                  />
+                </Box>
                 {hasDetails ? (
                   <ReactMarkdown
                     components={ChakraUIRenderer()}

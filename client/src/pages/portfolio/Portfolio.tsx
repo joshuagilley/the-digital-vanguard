@@ -122,6 +122,7 @@ const Portfolio = () => {
                   imageUrl={imageUrl}
                   userId={userId}
                   articleId={articleId}
+                  refetch={refetch}
                 />
               );
             })}

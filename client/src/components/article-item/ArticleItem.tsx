@@ -10,15 +10,18 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import AlertDialogPopUp from "components/alert-dialog-popup";
+import { QueryObserverResult } from "@tanstack/react-query";
 
 type Props = {
   text: string;
   imageUrl: string;
   userId: string;
   articleId: string;
+  refetch: () => Promise<QueryObserverResult<any, Error>>;
 };
 
-const ArticleItem = ({ text, imageUrl, userId, articleId }: Props) => {
+const ArticleItem = ({ text, imageUrl, userId, articleId, refetch }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -31,6 +34,14 @@ const ArticleItem = ({ text, imageUrl, userId, articleId }: Props) => {
     setIsHovering(false);
   };
 
+  const deleteArticle = async () => {
+    const res = await fetch(`/api/articles/${articleId}`, {
+      method: "DELETE",
+    });
+    refetch();
+    console.log(res);
+  };
+
   return (
     <Card
       direction={{ base: "column", sm: "row" }}
@@ -40,13 +51,13 @@ const ArticleItem = ({ text, imageUrl, userId, articleId }: Props) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      <AlertDialogPopUp deleteText="Delete Article" apiCall={deleteArticle} />
       <Image
         objectFit="scale-down"
         maxW={{ base: "100%", sm: "200px" }}
         src={imageUrl}
         alt="Caffe Latte"
       />
-
       <Stack>
         <CardBody>
           <Heading size="md">{text}</Heading>

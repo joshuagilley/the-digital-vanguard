@@ -2,8 +2,6 @@ import { Card, CardBody, Heading, Center } from "@chakra-ui/react";
 import { useState } from "react";
 import { NewArticleModal } from "./NewArticleModal";
 import { QueryObserverResult } from "@tanstack/react-query";
-// import { useTranslation } from "react-i18next";
-// import { useNavigate } from "react-router-dom";
 
 type Props = {
   text: string;
@@ -12,8 +10,6 @@ type Props = {
 
 const ArticleItem = ({ text, refetch }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
-  // const { t } = useTranslation();
-  // const navigate = useNavigate();
 
   const handleMouseEnter = () => {
     setIsHovering(true);

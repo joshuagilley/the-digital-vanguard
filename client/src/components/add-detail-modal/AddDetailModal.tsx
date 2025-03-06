@@ -53,7 +53,7 @@ function readFileAsync(file: File) {
 }
 
 export const AddDetailModal = ({ refetch, sortValue }: Props) => {
-  const { id, aId } = useParams();
+  const { aId } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = useState(<OverlayOne />);
   const [markdownText, setMarkdownText] = useState("");
@@ -72,7 +72,7 @@ export const AddDetailModal = ({ refetch, sortValue }: Props) => {
   };
 
   const onSubmit = async () => {
-    const res = await fetch(`/api/users/${id}/articles/${aId}`, {
+    const res = await fetch(`/api/articles/${aId}`, {
       method: "POST",
       headers: {
         Accept: "application/json",
