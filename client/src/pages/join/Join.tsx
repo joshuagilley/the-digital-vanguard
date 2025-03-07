@@ -201,8 +201,8 @@ const Join = () => {
                 </VStack>
               </Box>
               <Text m={"18px"} color="gray.500">
-                Note: This is a manual verification process for now, so give a
-                few business days to be added to the system.
+                {`Note: This is a manual verification process for now, so give a
+                few business days to be added to the system.`}
               </Text>
             </Box>
           </Box>

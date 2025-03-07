@@ -7,32 +7,64 @@ import {
   Flex,
   Heading,
   IconButton,
-  SimpleGrid,
   Spacer,
   useToast,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { PhoneIcon, EmailIcon } from "@chakra-ui/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ArticleItem from "components/article-item";
 import { useTranslation } from "react-i18next";
-import { ArticleProps } from "types/user";
 import NewArticleItem from "components/new-article-item";
+
+type Props = {
+  articleId: string;
+  articleName: string;
+  date: string;
+  email: string;
+  github: string;
+  linkedIn: string;
+  password: string;
+  phoneNumber: string;
+  phrase: string;
+  summary: string;
+  url: string;
+  userId: string;
+  username: string;
+};
 
 const Portfolio = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
-  const { isPending, error, data, isFetching, refetch } = useQuery({
+  const [isCalling, setIsCalling] = useState(false);
+  const [isEmailing, setIsEmailing] = useState(false);
+  const [response, setResponse] = useState<Props[]>([]);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+
+  const { isPending, error, data, isFetching, refetch } = useQuery<
+    Props[],
+    Error
+  >({
     queryKey: [],
     queryFn: async () => {
       const response = await fetch(`/api/users/${id}/articles`);
       return await response.json();
     },
   });
-  const [isCalling, setIsCalling] = useState(false);
-  const [isEmailing, setIsEmailing] = useState(false);
+
+  useEffect(() => {
+    if (data && data?.length > 0) {
+      setResponse(data);
+      setPhoneNumber(data[0]?.phoneNumber);
+      setUsername(data[0]?.username);
+      setEmail(data[0]?.email);
+    }
+  }, [data]);
+
   const handleCall = (phoneNumber: string) => {
     setIsCalling(true);
     setTimeout(() => {
@@ -47,7 +79,6 @@ const Portfolio = () => {
       window.location.href = `tel:${phoneNumber}`;
     }, 1000);
   };
-  console.log(data);
 
   const handleEmail = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -84,22 +115,22 @@ const Portfolio = () => {
               <Heading
                 color="#f0f6fc"
                 size="lg"
-              >{`${data[0].username}'s ${t("portfolio.portfolio")}`}</Heading>
+              >{`${username}'s ${t("portfolio.portfolio")}`}</Heading>
               <Spacer />
               <Flex>
                 <IconButton
                   icon={<PhoneIcon />}
-                  aria-label={`${t("portfolio.call")} ${data[0].phoneNumber}`}
-                  onClick={() => handleCall(data[0].phoneNumber)}
+                  aria-label={`${t("portfolio.call")} ${phoneNumber}`}
+                  onClick={() => handleCall(phoneNumber)}
                   isLoading={isCalling}
                   colorScheme="whiteAlpha"
-                  sx={styles.iconButton}
                   data-testid={"phone"}
+                  sx={styles.iconButton}
                 />
                 <IconButton
                   icon={<EmailIcon />}
-                  aria-label={`${t("portfolio.email")} ${data[0].email}`}
-                  onClick={(e) => handleEmail(e, data[0].email)}
+                  aria-label={`${t("portfolio.email")} ${email}`}
+                  onClick={(e) => handleEmail(e, email)}
                   isLoading={isEmailing}
                   colorScheme="whiteAlpha"
                   sx={styles.iconButton}
@@ -109,19 +140,19 @@ const Portfolio = () => {
             </Flex>
           </Box>
           <Flex flexWrap="wrap">
-            {data?.map((article: ArticleProps) => {
-              const { articleName, articleId, userId, phrase } = article;
-              return (
-                <ArticleItem
-                  text={articleName}
-                  phrase={phrase}
-                  userId={userId}
-                  articleId={articleId}
-                  refetch={refetch}
-                />
-              );
-            })}
-
+            {Array.from(response)?.map(
+              ({ articleName, articleId, userId, phrase }: Props) => {
+                return (
+                  <ArticleItem
+                    text={articleName}
+                    phrase={phrase}
+                    userId={userId}
+                    articleId={articleId}
+                    refetch={refetch}
+                  />
+                );
+              }
+            )}
             <NewArticleItem text={"Add Article"} refetch={refetch} />
           </Flex>
         </Box>

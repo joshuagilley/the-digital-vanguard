@@ -45,9 +45,12 @@ const Article = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const [showDemo, setShowDemo] = useState(false);
-  const [articleNameEdit, setArticleNameEdit] = useState("");
-  const [summary, setSummary] = useState("");
+  const [editedArticleName, setEditArticleName] = useState("");
+  const [editedSummary, setEditSummary] = useState("");
   const [hasDetails, setHasDetails] = useState(false);
+  const [articleName, setArticleName] = useState("");
+  const [summary, setSummary] = useState("");
+  const [url, setUrl] = useState("");
 
   type Props = {
     articleId: string;
@@ -79,6 +82,9 @@ const Article = () => {
         ({ detailId }: { detailId: string }) => detailId !== null
       );
       setHasDetails(hasD !== undefined);
+      setUrl(data[0]?.url);
+      setArticleName(data[0]?.articleName);
+      setSummary(data[0]?.summary);
     }
   }, [data]);
 
@@ -99,9 +105,9 @@ const Article = () => {
 
   const handleChange = (str: string, isSummary: boolean) => {
     if (isSummary) {
-      setSummary(str);
+      setEditSummary(str);
     } else {
-      setArticleNameEdit(str);
+      setEditArticleName(str);
     }
   };
 
@@ -162,7 +168,7 @@ const Article = () => {
                 </Link>
               </Text>
             </Flex>
-            {showDemo && <ReactPlayer url={data[0].url} style={styles.url} />}
+            {showDemo && <ReactPlayer url={url} style={styles.url} />}
           </Box>
           {!showDemo && (
             <Box>
@@ -173,11 +179,11 @@ const Article = () => {
                       fontSize="2xl"
                       fontWeight="bold"
                       color="brand.300"
-                      defaultValue={data[0]?.articleName}
+                      defaultValue={articleName}
                       onKeyDown={(e) =>
                         handleKeyDown(
                           e,
-                          articleNameEdit,
+                          editedArticleName,
                           t("articlePage.articleName")
                         )
                       }
@@ -200,9 +206,13 @@ const Article = () => {
                     <Editable
                       fontSize="xs"
                       fontWeight="none"
-                      defaultValue={data[0]?.summary}
+                      defaultValue={summary}
                       onKeyDown={(e) =>
-                        handleKeyDown(e, summary, t("articlePage.summary"))
+                        handleKeyDown(
+                          e,
+                          editedSummary,
+                          t("articlePage.summary")
+                        )
                       }
                       onChange={(e) => handleChange(e, true)}
                     >
