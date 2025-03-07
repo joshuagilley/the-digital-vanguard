@@ -24,6 +24,7 @@ export default defineConfig(({ mode }) => {
         pages: "/src/pages",
         utils: "/src/utils",
         mock: "/src/mock",
+        public: "/public",
       },
     },
     server: {

@@ -20,7 +20,7 @@ describe("Article Item Page", () => {
       <BrowserRouter>
         <ArticleItem
           text="hello world"
-          imageUrl="www.google.com"
+          phrase="react.js"
           userId=""
           articleId=""
         />

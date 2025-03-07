@@ -18,7 +18,7 @@ export interface NewArticleBody {
   articleName: string;
   articleSummary: string;
   articleUrl: string;
-  imageUrl: string;
+  phrase: string;
 }
 
 export interface NewFileBody {

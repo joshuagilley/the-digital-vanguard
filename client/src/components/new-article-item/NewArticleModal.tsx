@@ -1,4 +1,4 @@
-import { PlusSquareIcon } from "@chakra-ui/icons";
+import { PlusSquareIcon, AddIcon } from "@chakra-ui/icons";
 import {
   ModalOverlay,
   useDisclosure,
@@ -46,7 +46,7 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
   const [articleName, setArticleName] = useState("");
   const [articleSummary, setArticleSummary] = useState("");
   const [articleUrl, setArticleUrl] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [phrase, setPhrase] = useState("");
 
   const handleArticleUrl = (url: string) => {
     const youtubeRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/;
@@ -66,7 +66,7 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
         articleName,
         articleSummary,
         articleUrl,
-        imageUrl,
+        phrase,
       }),
     });
     refetch();
@@ -75,9 +75,10 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
 
   return (
     <>
-      <PlusSquareIcon
-        fontSize="90px"
-        color={isHovering ? "gray.600" : "gray.400"}
+      <AddIcon
+        fontSize="30px"
+        mt="20px"
+        color={isHovering ? "#f0f6fc" : "#919192"}
         onClick={(e) => {
           setOverlay(<OverlayTwo />);
           onOpen();
@@ -96,11 +97,17 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
             </FormControl>
             <FormControl sx={styles.input} isRequired>
               <FormLabel>Youtube URL</FormLabel>
-              <Input onChange={(e) => handleArticleUrl(e.target.value)} />
+              <Input
+                placeholder="Video of your project"
+                onChange={(e) => handleArticleUrl(e.target.value)}
+              />
             </FormControl>
             <FormControl sx={styles.input} isRequired>
-              <FormLabel>Image Url</FormLabel>
-              <Textarea onChange={(e) => setImageUrl(e.target.value)} />
+              <FormLabel>Phrase</FormLabel>
+              <Input
+                placeholder="i.e. Full-stack Development"
+                onChange={(e) => setPhrase(e.target.value)}
+              />
             </FormControl>
             <FormControl sx={styles.input} isRequired>
               <FormLabel>Summary</FormLabel>

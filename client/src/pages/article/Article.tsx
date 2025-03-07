@@ -71,7 +71,6 @@ const Article = () => {
     refetch();
     console.log(res);
   };
-
   return (
     <Box data-testid="article-page" sx={styles.wrapper}>
       {error && (

@@ -4,11 +4,7 @@ import {
   AlertIcon,
   AlertTitle,
   Box,
-  Center,
-  Image,
   Select,
-  Skeleton,
-  Stack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
@@ -39,31 +35,20 @@ const Home = () => {
           <AlertDescription>{t("portfolio.tryAgain")}</AlertDescription>
         </Alert>
       )}
-      {(isPending || isFetching) && (
-        <Stack data-testid="skeleton">
-          <Skeleton height="20px" />
-          <Skeleton height="20px" />
-          <Skeleton height="20px" />
-        </Stack>
-      )}
       {!isPending && !isFetching && !error && (
-        <Box sx={{ backgroundImage: "matrix.jpg", backgroundSize: "xs" }}>
-          <Center>
-            <Image src="tdv.png" />
-          </Center>
-          <Box sx={styles.dropdown}>
-            <Select
-              placeholder="Select a dev"
-              onChange={handleNavigate}
-              variant="filled"
-            >
-              {data.map(({ username, userId }: User, index: number) => (
-                <option value={userId} key={index}>
-                  {username}
-                </option>
-              ))}
-            </Select>
-          </Box>
+        <Box sx={styles.dropdown}>
+          <Select
+            placeholder={"</>"}
+            onChange={handleNavigate}
+            variant="filled"
+            backgroundColor="#e0ceb5"
+          >
+            {data.map(({ username, userId }: User, index: number) => (
+              <option value={userId} key={index}>
+                {username}
+              </option>
+            ))}
+          </Select>
         </Box>
       )}
     </Box>
@@ -72,12 +57,13 @@ const Home = () => {
 
 const styles = {
   wrapper: {
-    height: "100vh",
+    h: "100vh",
+    "place-content": "center",
+    background: "#080808",
   },
   dropdown: {
-    position: "absolute",
-    top: "75px",
-    margin: "10px",
+    w: "200px",
+    m: "auto auto 150px auto",
   },
 };
 

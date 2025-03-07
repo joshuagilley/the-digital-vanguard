@@ -8,9 +8,7 @@ import {
   Heading,
   IconButton,
   SimpleGrid,
-  Skeleton,
   Spacer,
-  Stack,
   useToast,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
@@ -79,18 +77,14 @@ const Portfolio = () => {
           <AlertDescription>{t("portfolio.tryAgain")}</AlertDescription>
         </Alert>
       )}
-      {(isPending || isFetching) && (
-        <Stack data-testid="skeleton">
-          <Skeleton height="20px" />
-          <Skeleton height="20px" />
-          <Skeleton height="20px" />
-        </Stack>
-      )}
       {!isPending && !isFetching && !error && data && (
         <Box>
-          <Box bg="gray.100" p={4}>
+          <Box p={4}>
             <Flex align="center">
-              <Heading size="lg">{`${data[0].username}'s ${t("portfolio.portfolio")}`}</Heading>
+              <Heading
+                color="#f0f6fc"
+                size="lg"
+              >{`${data[0].username}'s ${t("portfolio.portfolio")}`}</Heading>
               <Spacer />
               <Flex>
                 <IconButton
@@ -98,7 +92,7 @@ const Portfolio = () => {
                   aria-label={`${t("portfolio.call")} ${data[0].phoneNumber}`}
                   onClick={() => handleCall(data[0].phoneNumber)}
                   isLoading={isCalling}
-                  colorScheme="blackAlpha"
+                  colorScheme="whiteAlpha"
                   sx={styles.iconButton}
                   data-testid={"phone"}
                 />
@@ -107,20 +101,20 @@ const Portfolio = () => {
                   aria-label={`${t("portfolio.email")} ${data[0].email}`}
                   onClick={(e) => handleEmail(e, data[0].email)}
                   isLoading={isEmailing}
-                  colorScheme="blackAlpha"
+                  colorScheme="whiteAlpha"
                   sx={styles.iconButton}
                   data-testid={"email"}
                 />
               </Flex>
             </Flex>
           </Box>
-          <SimpleGrid columns={2} spacing={10} margin={5}>
+          <Flex flexWrap="wrap">
             {data?.map((article: ArticleProps) => {
-              const { articleName, articleId, userId, imageUrl } = article;
+              const { articleName, articleId, userId, phrase } = article;
               return (
                 <ArticleItem
                   text={articleName}
-                  imageUrl={imageUrl}
+                  phrase={phrase}
                   userId={userId}
                   articleId={articleId}
                   refetch={refetch}
@@ -129,7 +123,7 @@ const Portfolio = () => {
             })}
 
             <NewArticleItem text={"Add Article"} refetch={refetch} />
-          </SimpleGrid>
+          </Flex>
         </Box>
       )}
     </Box>

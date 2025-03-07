@@ -18,14 +18,21 @@ type Props = {
 function AlertDialogPopUp({ deleteText, apiCall }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef(null);
-  const deleteDetail = () => {
+  const handleDelete = () => {
     apiCall();
     onClose();
   };
 
   return (
     <>
-      <CloseButton position="absolute" right="0" onClick={onOpen} />
+      <Button
+        cursor="pointer"
+        variant="ghost"
+        colorScheme="whiteAlpha"
+        onClick={onOpen}
+      >
+        Delete
+      </Button>
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -45,7 +52,7 @@ function AlertDialogPopUp({ deleteText, apiCall }: Props) {
               <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="red" onClick={deleteDetail} ml={3}>
+              <Button colorScheme="red" onClick={handleDelete} ml={3}>
                 Delete
               </Button>
             </AlertDialogFooter>

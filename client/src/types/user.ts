@@ -14,7 +14,7 @@ export type ArticleProps = {
   articleId: string;
   articleName: string;
   url: string;
-  imageUrl: string;
+  phrase: string;
   articleDetails: string[];
   summary: string;
   userId: string;

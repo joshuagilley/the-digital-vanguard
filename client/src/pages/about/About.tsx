@@ -1,4 +1,4 @@
-import { Box, Divider, Heading, Text } from "@chakra-ui/react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
 const About = () => {
@@ -7,7 +7,6 @@ const About = () => {
     <Box sx={styles.wrapper} data-testid="about-page">
       <Box sx={styles.mainText}>
         <Heading size="xl">{t("about.vision")}</Heading>
-        <Divider />
         <Heading size="md" sx={styles.subHeader}>
           {t("about.problem")}
         </Heading>
@@ -40,8 +39,7 @@ const styles = {
   mainText: {
     margin: "20px",
     padding: "20px",
-    border: "1px solid black",
-    borderRadius: "10px",
+    color: "#e0ceb5",
   },
   subHeader: {
     mt: "15px",

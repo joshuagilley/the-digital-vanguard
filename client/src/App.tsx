@@ -16,7 +16,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <Box bg="brand.400">
+        <Box bg="#080808">
           <Router>
             <NavigationBar />
             <Routes>

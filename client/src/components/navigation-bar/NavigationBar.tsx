@@ -1,40 +1,82 @@
-import { Flex, Spacer, Box, Button, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Spacer,
+  Box,
+  Button,
+  Image,
+  IconButton,
+  Stack,
+  Card,
+  CloseButton,
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { ABOUT, JOIN, GHOST_VARIANT, HOME, TDV } from "assets/constants";
+import { ABOUT, JOIN, GHOST_VARIANT, HOME } from "assets/constants";
+import { HamburgerIcon } from "@chakra-ui/icons";
+import { useState } from "react";
 
 const NavigationBar = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <Flex
       as="nav"
       p={4}
-      bg="brand.100"
+      bg="#080808"
       alignItems="center"
       data-testid="navigation-bar"
     >
-      <Link to="/">
-        <Text color={"brand.200"} fontSize="lg" fontWeight="bold">
-          {TDV}
-        </Text>
+      <Link to="/" onClick={() => setOpen(false)}>
+        <Image w="40px" borderRadius="5px" src="public/knight.png" />
       </Link>
 
       <Spacer />
-      <Box>
-        <Link to="/">
-          <Button color={"brand.200"} variant={GHOST_VARIANT}>
-            {HOME}
-          </Button>
-        </Link>
-        <Link to="/about">
-          <Button color={"brand.200"} variant={GHOST_VARIANT}>
-            {ABOUT}
-          </Button>
-        </Link>
-        <Link to="/join">
-          <Button color={"brand.200"} variant={GHOST_VARIANT}>
-            {JOIN}
-          </Button>
-        </Link>
-      </Box>
+      {open && (
+        <Stack
+          backgroundColor="#e0ceb5"
+          position="fixed"
+          right="24px"
+          top="80px"
+          width="140px"
+          padding="10px"
+          zIndex={1}
+        >
+          <CloseButton
+            position="absolute"
+            right="0"
+            top="0"
+            onClick={() => setOpen(!open)}
+          />
+          <Box m="auto">
+            <Link to="/" onClick={() => setOpen(false)}>
+              <Button fontWeight="bold" variant={GHOST_VARIANT}>
+                {HOME}
+              </Button>
+            </Link>
+          </Box>
+          <Box m="auto">
+            <Link to="/about" onClick={() => setOpen(false)}>
+              <Button fontWeight="bold" variant={GHOST_VARIANT}>
+                {ABOUT}
+              </Button>
+            </Link>
+          </Box>
+          <Box margin="auto">
+            <Link to="/join" onClick={() => setOpen(false)}>
+              <Button fontWeight="bold" variant={GHOST_VARIANT}>
+                {JOIN}
+              </Button>
+            </Link>
+          </Box>
+        </Stack>
+      )}
+      <IconButton
+        aria-label="Open Menu"
+        size="md"
+        mr={2}
+        backgroundColor="#e0ceb5"
+        icon={<HamburgerIcon />}
+        onClick={() => setOpen(!open)}
+      />
     </Flex>
   );
 };

@@ -107,10 +107,9 @@ const Join = () => {
   };
 
   return (
-    <Container bg="brand.400" maxW="full" centerContent overflow="hidden">
+    <Container maxW="full" centerContent overflow="hidden">
       <Flex>
         <Box
-          bg="brand.500"
           color="brand.600"
           borderRadius="lg"
           m={{ sm: 4, md: 16, lg: 10 }}
