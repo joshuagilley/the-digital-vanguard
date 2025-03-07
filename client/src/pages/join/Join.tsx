@@ -110,7 +110,7 @@ const Join = () => {
     <Container maxW="full" centerContent overflow="hidden">
       <Flex>
         <Box
-          color="brand.600"
+          color="#f0f6fc"
           borderRadius="lg"
           m={{ sm: 4, md: 16, lg: 10 }}
           p={{ sm: 5, md: 5, lg: 10 }}
@@ -123,12 +123,13 @@ const Join = () => {
                 Fill out the form to join The Digital Vanguard as a developer
               </Text>
             </Box>
-            <Box bg="white" borderRadius="lg" p={1} mt={5}>
-              <Box m={8} color="#0B0E3F">
+            <Box bg="#18181a" borderRadius="lg" p={1} mt={5}>
+              <Box m={8}>
                 <VStack spacing={5}>
                   <FormControl id="name">
                     <FormLabel>Full Name</FormLabel>
                     <Input
+                      focusBorderColor="#e0ceb5"
                       onChange={(e) => setName(e.target.value)}
                       type="text"
                       size="md"
@@ -137,6 +138,7 @@ const Join = () => {
                   <FormControl id="name">
                     <FormLabel>Email</FormLabel>
                     <Input
+                      focusBorderColor="#e0ceb5"
                       onChange={(e) => handleEmailChange(e.target.value)}
                       type="text"
                       size="md"
@@ -152,6 +154,7 @@ const Join = () => {
                       />
                     </Flex>
                     <Input
+                      focusBorderColor="#e0ceb5"
                       onChange={(e) => setLinkedIn(e.target.value)}
                       type="text"
                       size="md"
@@ -168,6 +171,7 @@ const Join = () => {
                       />
                     </Flex>
                     <Input
+                      focusBorderColor="#e0ceb5"
                       onChange={(e) => setGithub(e.target.value)}
                       type="text"
                       size="md"
@@ -176,6 +180,7 @@ const Join = () => {
                   <FormControl id="name">
                     <FormLabel>Tell us about you</FormLabel>
                     <Textarea
+                      focusBorderColor="#e0ceb5"
                       onChange={(e) => setMessage(e.target.value)}
                       borderColor="gray.300"
                       _hover={{
@@ -188,9 +193,7 @@ const Join = () => {
                     <Button
                       onClick={handleSubmit}
                       variant="solid"
-                      bg="brand.200"
-                      color="white"
-                      _hover={{}}
+                      colorScheme="whiteAlpha"
                     >
                       {"Submit"}
                     </Button>

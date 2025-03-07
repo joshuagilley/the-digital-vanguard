@@ -7,7 +7,6 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   AlertDialog,
-  CloseButton,
 } from "@chakra-ui/react";
 import React, { useRef } from "react";
 
@@ -30,8 +29,10 @@ function AlertDialogPopUp({ deleteText, apiCall }: Props) {
         variant="ghost"
         colorScheme="whiteAlpha"
         onClick={onOpen}
+        w={"100px"}
+        p={"20px"}
       >
-        Delete
+        Delete File
       </Button>
       <AlertDialog
         isOpen={isOpen}

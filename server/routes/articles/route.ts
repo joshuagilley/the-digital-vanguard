@@ -104,6 +104,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     ) => {
       const { aid: articleId } = request.params;
       const { markdownText, sortValue } = request.body;
+
       const client = await fastify.pg.connect();
       const { rows }: { rows: { [key: string]: string }[] } =
         await client.query(
@@ -148,6 +149,28 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     client.release();
     if (!res) reply.code(404).send({ error: "Not found" });
     else reply.code(200).send(JSON.stringify(res));
+  });
+
+  fastify.put("/api/articles/:aid", {
+    handler: async (
+      request: FastifyRequest<{
+        Params: IParams;
+        Body: { changeText: string; property: string };
+      }>,
+      reply
+    ) => {
+      const { aid: articleId } = request.params;
+      const { changeText, property } = request.body;
+
+      const client = await fastify.pg.connect();
+      const res = await client.query(
+        `UPDATE articles SET ${property} = '${changeText}' WHERE article_id = '${articleId}';`
+      );
+      client.release();
+
+      if (!res) reply.code(404).send({ error: "Not found" });
+      else reply.code(200).send(JSON.stringify(res));
+    },
   });
 };
 

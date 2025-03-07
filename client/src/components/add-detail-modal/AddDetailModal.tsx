@@ -94,7 +94,7 @@ export const AddDetailModal = ({ refetch, sortValue }: Props) => {
           onOpen();
         }}
         mr="10px"
-        colorScheme="blackAlpha"
+        colorScheme="whiteAlpha"
       >
         {"Add Detail File"}
       </Button>

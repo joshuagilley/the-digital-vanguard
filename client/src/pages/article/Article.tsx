@@ -11,16 +11,17 @@ import {
   CardHeader,
   Heading,
   StackDivider,
-  Text,
   Flex,
   Spacer,
   Button,
-  Divider,
   FormControl,
   FormLabel,
   Switch,
   Center,
   Image,
+  Editable,
+  EditableInput,
+  EditablePreview,
 } from "@chakra-ui/react";
 import ReactPlayer from "react-player";
 import { useQuery } from "@tanstack/react-query";
@@ -45,6 +46,27 @@ const Article = () => {
   const { id, aId } = useParams();
   const navigate = useNavigate();
   const [showDemo, setShowDemo] = useState(false);
+  const [articleName, setArticleName] = useState("");
+  const [summary, setSummary] = useState("");
+
+  const handleKeyDown = async (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    value: string,
+    property: string
+  ) => {
+    if (event.key === "Enter") {
+      const res = await editArticle(value, property);
+      console.log(res);
+    }
+  };
+
+  const handleChange = (str: string, isSummary: boolean) => {
+    if (isSummary) {
+      setSummary(str);
+    } else {
+      setArticleName(str);
+    }
+  };
 
   const { isPending, error, data, isFetching, refetch } = useQuery({
     queryKey: [],
@@ -59,18 +81,29 @@ const Article = () => {
     initialState: { currentPage: 1 },
   });
 
-  const hasDetails = data?.find(
-    ({ detailId }: { detailId: string }) => detailId !== null
-  );
+  const editArticle = async (changeText: string, property: string) => {
+    const res = await fetch(`/api/articles/${aId}`, {
+      method: "PUT",
+      body: JSON.stringify({ changeText, property }),
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log(res);
+  };
 
-  const deleteDetail = async () => {
+  const deleteArticle = async () => {
     const detailId = data[currentPage - 1].detailId;
     const res = await fetch(`/api/details/${detailId}`, {
       method: "DELETE",
     });
+    setCurrentPage(1);
     refetch();
     console.log(res);
   };
+
+  const hasDetails = data?.find(
+    ({ detailId }: { detailId: string }) => detailId !== null
+  );
+
   return (
     <Box data-testid="article-page" sx={styles.wrapper}>
       {error && (
@@ -89,35 +122,10 @@ const Article = () => {
       )}
       {!isPending && !isFetching && !error && data && (
         <Box data-test="article">
-          <Card sx={styles.header}>
-            <CardHeader>
-              <Flex>
-                <Heading size="md">{data[0]?.articleName}</Heading>
-                <Spacer />
-                <Button size="sm" onClick={() => navigate(`/portfolio/${id}`)}>
-                  {`Back`}
-                </Button>
-              </Flex>
-            </CardHeader>
-
-            <CardBody>
-              <Stack divider={<StackDivider />} spacing="4">
-                <Box>
-                  <Heading size="xs" textTransform="uppercase">
-                    {t("articleItem.summary")}
-                  </Heading>
-                  <Text pt="2" fontSize="sm">
-                    {data[0]?.summary}
-                  </Text>
-                </Box>
-              </Stack>
-            </CardBody>
-          </Card>
-          <Divider />
           <Box m="10px">
             <FormControl display="flex" alignItems="center">
-              <FormLabel htmlFor="email-alerts" mb="0">
-                Demo
+              <FormLabel color="#f0f6fc" htmlFor="email-alerts" mb="0">
+                {"Show Demo"}
               </FormLabel>
               <Switch
                 id="email-alerts"
@@ -129,13 +137,56 @@ const Article = () => {
           </Box>
           {!showDemo && (
             <Box>
+              <Card sx={styles.header}>
+                <CardHeader>
+                  <Flex>
+                    <Editable
+                      fontSize="2xl"
+                      fontWeight="bold"
+                      color="#e0ceb5"
+                      defaultValue={data[0]?.articleName}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, articleName, "article_name")
+                      }
+                      onChange={(e) => handleChange(e, false)}
+                    >
+                      <EditablePreview />
+                      <EditableInput />
+                    </Editable>
+                    <Spacer />
+                    <Button
+                      size="sm"
+                      onClick={() => navigate(`/portfolio/${id}`)}
+                    >
+                      {`Back`}
+                    </Button>
+                  </Flex>
+                </CardHeader>
+
+                <CardBody>
+                  <Stack divider={<StackDivider />} spacing="4">
+                    <Box>
+                      <Heading size="xs" textTransform="uppercase">
+                        {t("articleItem.summary")}
+                      </Heading>
+                      <Editable
+                        fontSize="xs"
+                        defaultValue={data[0]?.summary}
+                        onKeyDown={(e) => handleKeyDown(e, summary, "summary")}
+                        onChange={(e) => handleChange(e, true)}
+                      >
+                        <EditablePreview />
+                        <EditableInput />
+                      </Editable>
+                    </Box>
+                  </Stack>
+                </CardBody>
+              </Card>
               <Card sx={styles.markdown}>
-                <Box mr="10px">
-                  <AlertDialogPopUp
-                    deleteText="Delete Detail"
-                    apiCall={deleteDetail}
-                  />
-                </Box>
+                <AlertDialogPopUp
+                  deleteText="Delete Detail"
+                  apiCall={deleteArticle}
+                />
                 {hasDetails ? (
                   <ReactMarkdown
                     components={ChakraUIRenderer()}
@@ -152,7 +203,7 @@ const Article = () => {
                   </Center>
                 )}
               </Card>
-              <Flex m="10px">
+              <Flex m="10px" position="sticky">
                 {hasDetails && (
                   <Pagination
                     pagesCount={pagesCount}
@@ -160,7 +211,7 @@ const Article = () => {
                     onPageChange={setCurrentPage}
                   >
                     <PaginationContainer>
-                      <PaginationPrevious>
+                      <PaginationPrevious mr={"4px"}>
                         {t("articleItem.previous")}
                       </PaginationPrevious>
                       <PaginationPageGroup>
@@ -184,7 +235,9 @@ const Article = () => {
                           />
                         ))}
                       </PaginationPageGroup>
-                      <PaginationNext>{t("articleItem.next")}</PaginationNext>
+                      <PaginationNext ml={"4px"}>
+                        {t("articleItem.next")}
+                      </PaginationNext>
                     </PaginationContainer>
                   </Pagination>
                 )}
@@ -207,7 +260,10 @@ const styles = {
     height: "100vh",
   },
   header: {
-    margin: "10px",
+    margin: "10px 10px 2px 10px",
+    borderRadius: "5px 5px 0px 0px",
+    backgroundColor: "#18181a",
+    color: "#f0f6fc",
   },
   url: {
     margin: "auto",
@@ -215,10 +271,13 @@ const styles = {
     borderRadius: "25px",
   },
   markdown: {
-    margin: "10px",
+    margin: "0px 10px 0px 10px",
     padding: "10px",
-    height: "500px",
+    height: "60vh",
     overflow: "scroll",
+    borderRadius: "0px",
+    backgroundColor: "#18181a",
+    color: "#f0f6fc",
   },
 };
 
