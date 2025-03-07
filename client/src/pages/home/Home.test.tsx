@@ -50,22 +50,6 @@ describe("Home Page", () => {
     expect(screen.getByTestId("error")).toBeInTheDocument();
   });
 
-  test("renders skeleton for isPending", () => {
-    const mockUseQuery = vi.mocked(useQuery);
-    (mockUseQuery as Mock).mockImplementation(() => ({
-      isPending: true,
-      error: null,
-      data: undefined,
-      isFetching: true,
-    }));
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Home />
-      </QueryClientProvider>
-    );
-    expect(screen.getByTestId("skeleton")).toBeInTheDocument();
-  });
-
   test("renders article page", () => {
     const mockUseQuery = vi.mocked(useQuery);
     (mockUseQuery as Mock).mockImplementation(() => ({

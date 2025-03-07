@@ -39,9 +39,9 @@ const Home = () => {
         <Box sx={styles.dropdown}>
           <Select
             placeholder={"</>"}
-            onChange={handleNavigate}
             variant="filled"
-            backgroundColor="#e0ceb5"
+            onChange={handleNavigate}
+            sx={styles.select}
           >
             {data.map(({ username, userId }: User, index: number) => (
               <option value={userId} key={index}>
@@ -64,6 +64,9 @@ const styles = {
   dropdown: {
     w: "200px",
     m: "auto auto 150px auto",
+  },
+  select: {
+    backgroundColor: "brand.300",
   },
 };
 
