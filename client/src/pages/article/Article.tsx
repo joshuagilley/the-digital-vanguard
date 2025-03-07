@@ -1,15 +1,9 @@
 import {
   Box,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
   Stack,
-  Skeleton,
   Card,
   CardBody,
   CardHeader,
-  Heading,
   StackDivider,
   Flex,
   Spacer,
@@ -22,6 +16,9 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
+  Link,
+  Text,
+  useToast,
 } from "@chakra-ui/react";
 import ReactPlayer from "react-player";
 import { useQuery } from "@tanstack/react-query";
@@ -39,36 +36,37 @@ import {
   PaginationPageGroup,
 } from "@ajna/pagination";
 import { AddDetailModal } from "components/add-detail-modal/AddDetailModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AlertDialogPopUp from "components/alert-dialog-popup";
+import { EditableType } from "types/article";
+import { AlertComponent, SkeletonComponent } from "utils/component-utils";
 
 const Article = () => {
   const { id, aId } = useParams();
+  const toast = useToast();
   const navigate = useNavigate();
   const [showDemo, setShowDemo] = useState(false);
-  const [articleName, setArticleName] = useState("");
+  const [articleNameEdit, setArticleNameEdit] = useState("");
   const [summary, setSummary] = useState("");
+  const [hasDetails, setHasDetails] = useState(false);
 
-  const handleKeyDown = async (
-    event: React.KeyboardEvent<HTMLDivElement>,
-    value: string,
-    property: string
-  ) => {
-    if (event.key === "Enter") {
-      const res = await editArticle(value, property);
-      console.log(res);
-    }
+  type Props = {
+    articleId: string;
+    articleName: string;
+    date: string;
+    detailId: string;
+    markdown: string;
+    phrase: string;
+    sortValue: number;
+    summary: string;
+    url: string;
+    userId: string;
   };
 
-  const handleChange = (str: string, isSummary: boolean) => {
-    if (isSummary) {
-      setSummary(str);
-    } else {
-      setArticleName(str);
-    }
-  };
-
-  const { isPending, error, data, isFetching, refetch } = useQuery({
+  const { isPending, error, data, isFetching, refetch } = useQuery<
+    Props[],
+    Error
+  >({
     queryKey: [],
     queryFn: async () => {
       const response = await fetch(`/api/users/${id}/articles/${aId}`);
@@ -76,10 +74,37 @@ const Article = () => {
     },
   });
 
+  useEffect(() => {
+    if (data && data?.length > 0) {
+      const hasD = data?.find(
+        ({ detailId }: { detailId: string }) => detailId !== null
+      );
+      setHasDetails(hasD !== undefined);
+    }
+  }, [data]);
+
   const { currentPage, setCurrentPage, pagesCount, pages } = usePagination({
     pagesCount: data?.length,
     initialState: { currentPage: 1 },
   });
+
+  const handleKeyDown = async (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    value: string,
+    property: string
+  ) => {
+    if (event.key === "Enter") {
+      editArticle(value, property);
+    }
+  };
+
+  const handleChange = (str: string, isSummary: boolean) => {
+    if (isSummary) {
+      setSummary(str);
+    } else {
+      setArticleNameEdit(str);
+    }
+  };
 
   const editArticle = async (changeText: string, property: string) => {
     const res = await fetch(`/api/articles/${aId}`, {
@@ -87,53 +112,58 @@ const Article = () => {
       body: JSON.stringify({ changeText, property }),
       headers: { "Content-Type": "application/json" },
     });
-    console.log(res);
+    if (res.status !== 200) {
+      toast({
+        title: "Error",
+        description: JSON.stringify(`Status: ${res.status} at ${res.url}`),
+        status: "error",
+        isClosable: true,
+      });
+    }
   };
 
   const deleteArticle = async () => {
-    const detailId = data[currentPage - 1].detailId;
+    const detailId = data && data[currentPage - 1].detailId;
     const res = await fetch(`/api/details/${detailId}`, {
       method: "DELETE",
     });
     setCurrentPage(1);
     refetch();
-    console.log(res);
+    if (res.status !== 200) {
+      toast({
+        title: "Error",
+        description: JSON.stringify(`Status: ${res.status} at ${res.url}`),
+        status: "error",
+        isClosable: true,
+      });
+    }
   };
-
-  const hasDetails = data?.find(
-    ({ detailId }: { detailId: string }) => detailId !== null
-  );
 
   return (
     <Box data-testid="article-page" sx={styles.wrapper}>
-      {error && (
-        <Alert status="error" data-testid="error">
-          <AlertIcon />
-          <AlertTitle>{t("portfolio.userDataFetchFail")}</AlertTitle>
-          <AlertDescription>{t("portfolio.tryAgain")}</AlertDescription>
-        </Alert>
-      )}
-      {(isPending || isFetching) && (
-        <Stack data-testid="skeleton">
-          <Skeleton height="20px" />
-          <Skeleton height="20px" />
-          <Skeleton height="20px" />
-        </Stack>
-      )}
+      {error && <AlertComponent />}
+      {(isPending || isFetching) && <SkeletonComponent />}
       {!isPending && !isFetching && !error && data && (
         <Box data-test="article">
           <Box m="10px">
-            <FormControl display="flex" alignItems="center">
-              <FormLabel color="#f0f6fc" htmlFor="email-alerts" mb="0">
-                {"Show Demo"}
-              </FormLabel>
-              <Switch
-                id="email-alerts"
-                onChange={() => setShowDemo(!showDemo)}
-              />
-            </FormControl>
-            {/* Instead of a player, you could actually house the project here */}
-            {showDemo && <ReactPlayer url={data[0]?.url} style={styles.url} />}
+            <Flex>
+              <FormControl sx={styles.showDemo}>
+                <FormLabel htmlFor="email-alerts" mb="0">
+                  {t("articlePage.showDemo")}
+                </FormLabel>
+                <Switch
+                  id="email-alerts"
+                  onChange={() => setShowDemo(!showDemo)}
+                />
+              </FormControl>
+              <Spacer />
+              <Text sx={styles.favoriteEditor}>
+                <Link href="https://stackedit.io/app#" target="_blank">
+                  {t("articlePage.favoriteEditor")}
+                </Link>
+              </Text>
+            </Flex>
+            {showDemo && <ReactPlayer url={data[0].url} style={styles.url} />}
           </Box>
           {!showDemo && (
             <Box>
@@ -143,10 +173,14 @@ const Article = () => {
                     <Editable
                       fontSize="2xl"
                       fontWeight="bold"
-                      color="#e0ceb5"
+                      color="brand.300"
                       defaultValue={data[0]?.articleName}
                       onKeyDown={(e) =>
-                        handleKeyDown(e, articleName, "article_name")
+                        handleKeyDown(
+                          e,
+                          articleNameEdit,
+                          t("articlePage.articleName")
+                        )
                       }
                       onChange={(e) => handleChange(e, false)}
                     >
@@ -158,33 +192,30 @@ const Article = () => {
                       size="sm"
                       onClick={() => navigate(`/portfolio/${id}`)}
                     >
-                      {`Back`}
+                      {t("articlePage.back")}
                     </Button>
                   </Flex>
                 </CardHeader>
-
                 <CardBody>
                   <Stack divider={<StackDivider />} spacing="4">
-                    <Box>
-                      <Heading size="xs" textTransform="uppercase">
-                        {t("articleItem.summary")}
-                      </Heading>
-                      <Editable
-                        fontSize="xs"
-                        defaultValue={data[0]?.summary}
-                        onKeyDown={(e) => handleKeyDown(e, summary, "summary")}
-                        onChange={(e) => handleChange(e, true)}
-                      >
-                        <EditablePreview />
-                        <EditableInput />
-                      </Editable>
-                    </Box>
+                    <Editable
+                      fontSize="xs"
+                      fontWeight="none"
+                      defaultValue={data[0]?.summary}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, summary, t("articlePage.summary"))
+                      }
+                      onChange={(e) => handleChange(e, true)}
+                    >
+                      <EditablePreview />
+                      <EditableInput />
+                    </Editable>
                   </Stack>
                 </CardBody>
               </Card>
               <Card sx={styles.markdown}>
                 <AlertDialogPopUp
-                  deleteText="Delete Detail"
+                  deleteText={t("articlePage.deleteDetail")}
                   apiCall={deleteArticle}
                 />
                 {hasDetails ? (
@@ -196,14 +227,13 @@ const Article = () => {
                 ) : (
                   <Center m="auto">
                     <Image
-                      color="gray.300"
-                      w="100px"
-                      src="https://cdn-icons-png.flaticon.com/512/1092/1092216.png"
+                      sx={styles.noFiles}
+                      src={t("articlePage.noFilesUrl")}
                     />
                   </Center>
                 )}
               </Card>
-              <Flex m="10px" position="sticky">
+              <Flex sx={styles.pagination}>
                 {hasDetails && (
                   <Pagination
                     pagesCount={pagesCount}
@@ -211,7 +241,7 @@ const Article = () => {
                     onPageChange={setCurrentPage}
                   >
                     <PaginationContainer>
-                      <PaginationPrevious mr={"4px"}>
+                      <PaginationPrevious sx={styles.paginationPrevious}>
                         {t("articleItem.previous")}
                       </PaginationPrevious>
                       <PaginationPageGroup>
@@ -219,23 +249,16 @@ const Article = () => {
                           <PaginationPage
                             key={`pagination_page_${page}`}
                             page={page}
-                            w={7}
-                            fontSize="sm"
-                            _hover={{
-                              bg: "brand.200",
-                            }}
+                            sx={styles.paginationPage}
+                            _hover={styles.paginationPageHover}
                             _current={{
-                              w: 7,
-                              bg: "brand.200",
-                              fontSize: "sm",
-                              _hover: {
-                                bg: "blue.300",
-                              },
+                              ...styles.paginationCurrent,
+                              _hover: styles.paginationPageHover,
                             }}
                           />
                         ))}
                       </PaginationPageGroup>
-                      <PaginationNext ml={"4px"}>
+                      <PaginationNext sx={styles.paginationNext}>
                         {t("articleItem.next")}
                       </PaginationNext>
                     </PaginationContainer>
@@ -278,6 +301,41 @@ const styles = {
     borderRadius: "0px",
     backgroundColor: "#18181a",
     color: "#f0f6fc",
+  },
+  favoriteEditor: {
+    w: "300px",
+    color: "brand.200",
+  },
+  showDemo: {
+    display: "flex",
+    alignItems: "center",
+    color: "brand.100",
+  },
+  noFiles: {
+    w: "100px",
+    m: "auto",
+  },
+  pagination: {
+    m: "10px",
+    position: "sticky",
+  },
+  paginationPrevious: {
+    mr: "4px",
+  },
+  paginationNext: {
+    ml: "4px",
+  },
+  paginationPage: {
+    w: 7,
+    fontSize: "sm",
+  },
+  paginationPageHover: {
+    bg: "brand.300",
+  },
+  paginationCurrent: {
+    w: 7,
+    bg: "brand.200",
+    fontSize: "sm",
   },
 };
 

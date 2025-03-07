@@ -14,9 +14,17 @@
     "call": "Call",
     "emailing": "Emailing"
   },
+  "articlePage": {
+    "favoriteEditor": "Our favorite markdown editor ♡",
+    "articleName": "article_name",
+    "summaryProp": "summary",
+    "deleteDetail": "Delete Detail",
+    "noFilesUrl": "https://cdn-icons-png.flaticon.com/512/1092/1092216.png",
+    "showDemo": "Show Demo",
+    "back": "Back"
+  },
   "articleItem": {
     "explore": "Explore",
-    "summary": "Summary",
     "previous": "Previous",
     "next": "Next"
   },
