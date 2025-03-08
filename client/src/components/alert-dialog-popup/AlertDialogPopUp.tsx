@@ -7,8 +7,10 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   AlertDialog,
+  Box,
 } from "@chakra-ui/react";
-import React, { useRef } from "react";
+import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   deleteText: string;
@@ -17,6 +19,7 @@ type Props = {
 
 const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { t } = useTranslation();
   const cancelRef = useRef(null);
   const handleDelete = () => {
     apiCall();
@@ -24,16 +27,14 @@ const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
   };
 
   return (
-    <>
+    <Box>
       <Button
-        cursor="pointer"
+        sx={styles.deleteFile}
         variant="ghost"
         colorScheme="whiteAlpha"
         onClick={onOpen}
-        w={"100px"}
-        p={"20px"}
       >
-        Delete File
+        {t("alertDialogPopup.deleteFile")}
       </Button>
       <AlertDialog
         isOpen={isOpen}
@@ -42,27 +43,37 @@ const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            <AlertDialogHeader sx={styles.deleteText}>
               {deleteText}
             </AlertDialogHeader>
-
             <AlertDialogBody>
-              Are you sure? You can't undo this action afterwards.
+              {t("alertDialogPopup.areYouSure")}
             </AlertDialogBody>
-
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
-                Cancel
+                {t("alertDialogPopup.cancel")}
               </Button>
               <Button colorScheme="red" onClick={handleDelete} ml={3}>
-                Delete
+                {t("alertDialogPopup.delete")}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
-    </>
+    </Box>
   );
 };
 
 export default AlertDialogPopUp;
+
+const styles = {
+  deleteFile: {
+    cursor: "pointer",
+    w: "100px",
+    p: "20px",
+  },
+  deleteText: {
+    fontSize: "lg",
+    fontWeight: "bold",
+  },
+};

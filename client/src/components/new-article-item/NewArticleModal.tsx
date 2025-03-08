@@ -1,6 +1,5 @@
 import { AddIcon } from "@chakra-ui/icons";
 import {
-  ModalOverlay,
   useDisclosure,
   Button,
   Modal,
@@ -13,26 +12,15 @@ import {
   FormLabel,
   Input,
   Textarea,
+  useToast,
+  Box,
 } from "@chakra-ui/react";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-
-const OverlayOne = () => (
-  <ModalOverlay
-    bg="blackAlpha.300"
-    backdropFilter="blur(10px) hue-rotate(90deg)"
-  />
-);
-
-const OverlayTwo = () => (
-  <ModalOverlay
-    bg="none"
-    backdropFilter="auto"
-    backdropInvert="80%"
-    backdropBlur="2px"
-  />
-);
+import { OverlayOne, OverlayTwo } from "utils/component-utils";
+import { isFirstDigitTwo } from "utils/general";
 
 type Props = {
   isHovering: boolean;
@@ -41,6 +29,8 @@ type Props = {
 
 export const NewArticleModal = ({ isHovering, refetch }: Props) => {
   const { id } = useParams();
+  const toast = useToast();
+  const { t } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = useState(<OverlayOne />);
   const [articleName, setArticleName] = useState("");
@@ -54,77 +44,95 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
       setArticleUrl(url);
     }
   };
+
   const onSubmit = async () => {
-    // need a try catch to handle errors on the backend
-    await fetch(`/api/users/${id}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        articleName,
-        articleSummary,
-        articleUrl,
-        phrase,
-      }),
-    });
-    refetch();
+    try {
+      const res = await fetch(`/api/users/${id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          articleName,
+          articleSummary,
+          articleUrl,
+          phrase,
+        }),
+      });
+      if (!isFirstDigitTwo(res.status)) {
+        throw Error;
+      }
+      refetch();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: JSON.stringify(error),
+        status: "error",
+        isClosable: true,
+        position: "top",
+      });
+    }
     onClose();
   };
 
+  const openModal = (e: React.MouseEvent) => {
+    setOverlay(<OverlayTwo />);
+    onOpen();
+    e.stopPropagation();
+  };
+
   return (
-    <>
+    <Box>
       <AddIcon
-        fontSize="30px"
-        mt="20px"
-        color={isHovering ? "#f0f6fc" : "#919192"}
-        onClick={(e) => {
-          setOverlay(<OverlayTwo />);
-          onOpen();
-          e.stopPropagation();
-        }}
+        sx={styles.addIcon}
+        color={isHovering ? "brand.100" : "brand.200"}
+        onClick={openModal}
       />
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         {overlay}
         <ModalContent>
-          <ModalHeader>Create New Article</ModalHeader>
+          <ModalHeader>{t("newArticleModal.create")}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl sx={styles.input} isRequired>
-              <FormLabel>Article title</FormLabel>
+              <FormLabel>{t("newArticleModal.title")}</FormLabel>
               <Input onChange={(e) => setArticleName(e.target.value)} />
             </FormControl>
             <FormControl sx={styles.input} isRequired>
-              <FormLabel>Youtube URL</FormLabel>
+              <FormLabel>{t("newArticleModal.url")}</FormLabel>
               <Input
-                placeholder="Video of your project"
+                placeholder={t("newArticleModal.urlPlaceholder")}
                 onChange={(e) => handleArticleUrl(e.target.value)}
               />
             </FormControl>
             <FormControl sx={styles.input} isRequired>
-              <FormLabel>Phrase</FormLabel>
+              <FormLabel>{t("newArticleModal.tag")}</FormLabel>
               <Input
                 placeholder="i.e. Full-stack Development"
                 onChange={(e) => setPhrase(e.target.value)}
               />
             </FormControl>
             <FormControl sx={styles.input} isRequired>
-              <FormLabel>Summary</FormLabel>
+              <FormLabel>{t("newArticleModal.summary")}</FormLabel>
               <Textarea onChange={(e) => setArticleSummary(e.target.value)} />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onSubmit}>Submit</Button>
+            <Button onClick={onSubmit}>{t("newArticleModal.submit")}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </Box>
   );
 };
 
 const styles = {
   input: {
+    mt: "20px",
+  },
+  addIcon: {
+    fontSize: "30px",
     mt: "20px",
   },
 };

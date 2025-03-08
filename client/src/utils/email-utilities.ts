@@ -2,6 +2,7 @@
 import emailjs from "@emailjs/browser";
 import { EmailProps, EmailResponse, Status } from "types/user";
 import { REQUIRE_EMAIL_PROPERTIES } from "./constants";
+import { isFirstDigitTwo } from "./general";
 
 const sendEmail = async ({
   name,
@@ -86,9 +87,9 @@ export const handleSubmit = async (
     });
 
     handleToast(
-      status === 200 ? "Success!" : "Failed..",
-      status === 200 ? successText : text,
-      status === 200 ? "success" : "error",
+      isFirstDigitTwo(status) ? "Success!" : "Failed..",
+      isFirstDigitTwo(status) ? successText : text,
+      isFirstDigitTwo(status) ? "success" : "error",
       5000
     );
   } else {

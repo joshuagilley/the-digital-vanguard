@@ -17,22 +17,7 @@ import { useEffect, useState } from "react";
 import ArticleItem from "components/article-item";
 import { useTranslation } from "react-i18next";
 import NewArticleItem from "components/new-article-item";
-
-type Props = {
-  articleId: string;
-  articleName: string;
-  date: string;
-  email: string;
-  github: string;
-  linkedIn: string;
-  password: string;
-  phoneNumber: string;
-  phrase: string;
-  summary: string;
-  url: string;
-  userId: string;
-  username: string;
-};
+import { PortfolioResponse } from "types/user";
 
 const Portfolio = () => {
   const { id } = useParams();
@@ -40,13 +25,13 @@ const Portfolio = () => {
   const toast = useToast();
   const [isCalling, setIsCalling] = useState(false);
   const [isEmailing, setIsEmailing] = useState(false);
-  const [response, setResponse] = useState<Props[]>([]);
+  const [response, setResponse] = useState<PortfolioResponse[]>([]);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
 
   const { isPending, error, data, isFetching, refetch } = useQuery<
-    Props[],
+    PortfolioResponse[],
     Error
   >({
     queryKey: [],
@@ -113,7 +98,7 @@ const Portfolio = () => {
           <Box p={4}>
             <Flex align="center">
               <Heading
-                color="#f0f6fc"
+                color="brand.100"
                 size="lg"
               >{`${username}'s ${t("portfolio.portfolio")}`}</Heading>
               <Spacer />
@@ -139,9 +124,14 @@ const Portfolio = () => {
               </Flex>
             </Flex>
           </Box>
-          <Flex flexWrap="wrap">
+          <Flex sx={styles.articleWrapper}>
             {Array.from(response)?.map(
-              ({ articleName, articleId, userId, phrase }: Props) => {
+              ({
+                articleName,
+                articleId,
+                userId,
+                phrase,
+              }: PortfolioResponse) => {
                 return (
                   <ArticleItem
                     text={articleName}
@@ -153,7 +143,10 @@ const Portfolio = () => {
                 );
               }
             )}
-            <NewArticleItem text={"Add Article"} refetch={refetch} />
+            <NewArticleItem
+              text={t("portfolio.addArticle")}
+              refetch={refetch}
+            />
           </Flex>
         </Box>
       )}
@@ -167,6 +160,10 @@ const styles = {
   },
   iconButton: {
     marginRight: "10px",
+  },
+  articleWrapper: {
+    flexWrap: "wrap",
+    justifyContent: "center",
   },
 };
 

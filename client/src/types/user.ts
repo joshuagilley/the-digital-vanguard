@@ -36,4 +36,23 @@ export interface EmailProps {
   message: string;
 }
 
-export type EmailResponse = { status: number; text: string };
+export interface EmailResponse {
+  status: number;
+  text: string;
+}
+
+export interface PortfolioResponse {
+  articleId: string;
+  articleName: string;
+  date: string;
+  email: string;
+  github: string;
+  linkedIn: string;
+  password: string;
+  phoneNumber: string;
+  phrase: string;
+  summary: string;
+  url: string;
+  userId: string;
+  username: string;
+}

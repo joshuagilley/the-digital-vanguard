@@ -12,7 +12,8 @@
     "tryAgain": "Please try again..",
     "portfolio": "Portfolio",
     "call": "Call",
-    "emailing": "Emailing"
+    "emailing": "Emailing",
+    "addArticle": "Add Article"
   },
   "articlePage": {
     "favoriteEditor": "Our favorite markdown editor ♡",
@@ -26,7 +27,9 @@
   "articleItem": {
     "explore": "Explore",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "deleteArticle": "Delete Article",
+    "continue": "Continue"
   },
   "about": {
     "vision": "Vision",
@@ -53,5 +56,25 @@
     "join": "Join",
     "linkedInImage": "https://banner2.cleanpng.com/20180425/caq/ave9k5bbl.webp",
     "githubImage": "https://cdn.freebiesupply.com/logos/large/2x/github-icon-logo-png-transparent.png"
+  },
+  "addDetailModal": {
+    "addDetail": "Add Detail",
+    "uploadMarkdown": "Upload Markdown File",
+    "submit": "Submit"
+  },
+  "alertDialogPopup": {
+    "deleteFile": "Delete File",
+    "areYouSure": "Are you sure? You can't undo this action afterwards.",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "newArticleModal": {
+    "create": "Create New Article",
+    "title": "Article Title",
+    "url": "Youtube URL",
+    "tag": "Tag",
+    "summary": "Summary",
+    "submit": "Submit",
+    "urlPlaceholder": "Video of your project"
   }
 }
