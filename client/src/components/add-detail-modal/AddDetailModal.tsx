@@ -20,7 +20,7 @@ import { OverlayOne, OverlayTwo } from "utils/component-utils";
 import { isFirstDigitTwo, readFileAsync } from "utils/general";
 
 type Props = {
-  refetch: () => Promise<QueryObserverResult<any, Error>>;
+  refetch?: () => Promise<QueryObserverResult<any, Error>>;
   sortValue: number;
 };
 
@@ -64,7 +64,7 @@ export const AddDetailModal = ({ refetch, sortValue }: Props) => {
       if (!isFirstDigitTwo(res.status)) {
         throw Error;
       }
-      refetch();
+      refetch && refetch();
     } catch (error) {
       toast({
         title: "Error",
@@ -83,7 +83,7 @@ export const AddDetailModal = ({ refetch, sortValue }: Props) => {
   };
 
   return (
-    <Box>
+    <Box data-testid="add-detail-modal">
       <Button
         sx={styles.addDetail}
         onClick={handleAddDetail}

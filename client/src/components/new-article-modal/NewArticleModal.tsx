@@ -24,10 +24,10 @@ import { isFirstDigitTwo } from "utils/general";
 
 type Props = {
   isHovering: boolean;
-  refetch: () => Promise<QueryObserverResult<any, Error>>;
+  refetch?: () => Promise<QueryObserverResult<any, Error>>;
 };
 
-export const NewArticleModal = ({ isHovering, refetch }: Props) => {
+const NewArticleModal = ({ isHovering, refetch }: Props) => {
   const { id } = useParams();
   const toast = useToast();
   const { t } = useTranslation();
@@ -63,7 +63,7 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
       if (!isFirstDigitTwo(res.status)) {
         throw Error;
       }
-      refetch();
+      refetch && refetch();
     } catch (error) {
       toast({
         title: "Error",
@@ -83,7 +83,7 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
   };
 
   return (
-    <Box>
+    <Box data-testid="new-article-modal">
       <AddIcon
         sx={styles.addIcon}
         color={isHovering ? "brand.100" : "brand.200"}
@@ -126,6 +126,8 @@ export const NewArticleModal = ({ isHovering, refetch }: Props) => {
     </Box>
   );
 };
+
+export default NewArticleModal;
 
 const styles = {
   input: {

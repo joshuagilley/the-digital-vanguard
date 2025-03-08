@@ -1,11 +1,11 @@
 import { Card, CardBody, Heading, Center } from "@chakra-ui/react";
 import { useState } from "react";
-import { NewArticleModal } from "./NewArticleModal";
 import { QueryObserverResult } from "@tanstack/react-query";
+import NewArticleModal from "components/new-article-modal";
 
 type Props = {
   text: string;
-  refetch: () => Promise<QueryObserverResult<any, Error>>;
+  refetch?: () => Promise<QueryObserverResult<any, Error>>;
 };
 
 const NewArticleItem = ({ text, refetch }: Props) => {
@@ -13,6 +13,7 @@ const NewArticleItem = ({ text, refetch }: Props) => {
 
   return (
     <Card
+      data-testid="new-article-item"
       sx={isHovering ? { ...styles.card, ...styles.cardHover } : styles.card}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
