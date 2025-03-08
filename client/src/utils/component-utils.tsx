@@ -1,12 +1,17 @@
+/* eslint-disable no-unused-vars */
 import {
   Alert,
   AlertDescription,
   AlertIcon,
   AlertTitle,
+  FormControl,
+  FormLabel,
+  Input,
   Skeleton,
   Stack,
 } from "@chakra-ui/react";
 import { t } from "i18next";
+import { Dispatch, SetStateAction } from "react";
 
 export const AlertComponent = () => {
   return (

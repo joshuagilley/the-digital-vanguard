@@ -42,8 +42,8 @@ import { AlertComponent, SkeletonComponent } from "utils/component-utils";
 
 const Article = () => {
   const { id, aId } = useParams();
-  const toast = useToast();
   const navigate = useNavigate();
+  const toast = useToast();
   const [showDemo, setShowDemo] = useState(false);
   const [editedArticleName, setEditArticleName] = useState("");
   const [editedSummary, setEditSummary] = useState("");
@@ -117,12 +117,14 @@ const Article = () => {
       body: JSON.stringify({ changeText, property }),
       headers: { "Content-Type": "application/json" },
     });
+    const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
     if (res.status !== 200) {
       toast({
         title: "Error",
-        description: JSON.stringify(`Status: ${res.status} at ${res.url}`),
+        description: issue,
         status: "error",
         isClosable: true,
+        position: "top",
       });
     }
   };
@@ -132,14 +134,16 @@ const Article = () => {
     const res = await fetch(`/api/details/${detailId}`, {
       method: "DELETE",
     });
+    const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
     setCurrentPage(1);
     refetch();
     if (res.status !== 200) {
       toast({
         title: "Error",
-        description: JSON.stringify(`Status: ${res.status} at ${res.url}`),
+        description: issue,
         status: "error",
         isClosable: true,
+        position: "top",
       });
     }
   };

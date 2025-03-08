@@ -28,4 +28,12 @@ export type Status =
   | "loading"
   | undefined;
 
+export interface EmailProps {
+  name: string;
+  email: string;
+  linkedIn: string;
+  github: string;
+  message: string;
+}
+
 export type EmailResponse = { status: number; text: string };

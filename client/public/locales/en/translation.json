@@ -40,5 +40,18 @@
     "trackingText": "TDV provides structured project tracking. Instead of abandoning ideas after brief experimentation, developers create entities—structured project pages with: • A name & tech tags • A markdown editor for progress tracking • A place to link the finished project (e.g., a hosted site or demo video) TDV even guides users in deploying projects at the lowest cost, ensuring work isn’t lost but becomes a shareable portfolio piece.",
     "medium": "Why not just use something like Medium?",
     "mediumText": "Medium is broad and unfocused—anyone can write about anything. TDV is developer-centric. An AI/ML review board ensures content remains tech-focused, filtering out unrelated topics. TDV isn’t just a blog platform; it’s a structured space for passionate tech professionals to track progress, build portfolios, and stay ahead in their field."
+  },
+  "joinPage": {
+    "fillOut": "Fill out the form to join The Digital Vanguard as a developer",
+    "fullName": "Full Name",
+    "email": "Email",
+    "linkedIn": "LinkedIn",
+    "github": "GitHub",
+    "tellUs": "Tell us about you",
+    "submit": "Submit",
+    "manualVerification": "Note: This is a manual verification process for now, so give a few business days to be added to the system.",
+    "join": "Join",
+    "linkedInImage": "https://banner2.cleanpng.com/20180425/caq/ave9k5bbl.webp",
+    "githubImage": "https://cdn.freebiesupply.com/logos/large/2x/github-icon-logo-png-transparent.png"
   }
 }
