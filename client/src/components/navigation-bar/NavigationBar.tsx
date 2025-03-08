@@ -6,11 +6,10 @@ import {
   Image,
   IconButton,
   Stack,
-  Card,
   CloseButton,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { ABOUT, JOIN, GHOST_VARIANT, HOME } from "assets/constants";
+import { ABOUT, JOIN, HOME } from "assets/constants";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 
@@ -48,21 +47,21 @@ const NavigationBar = () => {
           />
           <Box m="auto">
             <Link to="/" onClick={() => setOpen(false)}>
-              <Button fontWeight="bold" variant={GHOST_VARIANT}>
+              <Button fontWeight="bold" variant="ghost">
                 {HOME}
               </Button>
             </Link>
           </Box>
           <Box m="auto">
             <Link to="/about" onClick={() => setOpen(false)}>
-              <Button fontWeight="bold" variant={GHOST_VARIANT}>
+              <Button fontWeight="bold" variant="ghost">
                 {ABOUT}
               </Button>
             </Link>
           </Box>
           <Box margin="auto">
             <Link to="/join" onClick={() => setOpen(false)}>
-              <Button fontWeight="bold" variant={GHOST_VARIANT}>
+              <Button fontWeight="bold" variant="ghost">
                 {JOIN}
               </Button>
             </Link>
@@ -71,6 +70,7 @@ const NavigationBar = () => {
       )}
       <IconButton
         aria-label="Open Menu"
+        data-testid="hamburger"
         size="md"
         mr={2}
         backgroundColor="#e0ceb5"

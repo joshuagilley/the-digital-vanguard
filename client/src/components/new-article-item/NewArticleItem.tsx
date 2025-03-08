@@ -8,7 +8,7 @@ type Props = {
   refetch: () => Promise<QueryObserverResult<any, Error>>;
 };
 
-const ArticleItem = ({ text, refetch }: Props) => {
+const NewArticleItem = ({ text, refetch }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
 
   const handleMouseEnter = () => {
@@ -61,4 +61,4 @@ const styles = {
   },
 };
 
-export default ArticleItem;
+export default NewArticleItem;

@@ -9,7 +9,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import { QueryObserverResult } from "@tanstack/react-query";
@@ -19,12 +18,11 @@ type Props = {
   phrase: string;
   userId: string;
   articleId: string;
-  refetch: () => Promise<QueryObserverResult<any, Error>>;
+  refetch?: () => Promise<QueryObserverResult<any, Error>>;
 };
 
 const ArticleItem = ({ text, phrase, userId, articleId, refetch }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleMouseEnter = () => {
@@ -39,7 +37,7 @@ const ArticleItem = ({ text, phrase, userId, articleId, refetch }: Props) => {
     const res = await fetch(`/api/articles/${articleId}`, {
       method: "DELETE",
     });
-    refetch();
+    refetch && refetch();
     console.log(res);
   };
 

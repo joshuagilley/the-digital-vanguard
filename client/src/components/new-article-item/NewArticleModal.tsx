@@ -1,4 +1,4 @@
-import { PlusSquareIcon, AddIcon } from "@chakra-ui/icons";
+import { AddIcon } from "@chakra-ui/icons";
 import {
   ModalOverlay,
   useDisclosure,
