@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import ArticleItem from "./NewArticleItem";
+import ArticleItem from "components/article-item";
 import { BrowserRouter } from "react-router-dom";
 import { vi } from "vitest";
 

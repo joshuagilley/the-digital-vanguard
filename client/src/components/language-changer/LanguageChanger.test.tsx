@@ -13,8 +13,8 @@ vi.mock("react-i18next", () => ({
   },
 }));
 
-describe("About Page", () => {
-  test("renders ExampleComponent with correct text", () => {
+describe("Language Changer", () => {
+  test("renders Language Changer with correct text", () => {
     render(<LanguageChanger />);
     const textElement = screen.getByText("languages.english");
     expect(textElement).toBeInTheDocument();

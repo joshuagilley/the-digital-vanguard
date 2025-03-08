@@ -14,7 +14,8 @@ type Props = {
   deleteText: string;
   apiCall: () => Promise<void>;
 };
-function AlertDialogPopUp({ deleteText, apiCall }: Props) {
+
+const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef(null);
   const handleDelete = () => {
@@ -62,6 +63,6 @@ function AlertDialogPopUp({ deleteText, apiCall }: Props) {
       </AlertDialog>
     </>
   );
-}
+};
 
 export default AlertDialogPopUp;
