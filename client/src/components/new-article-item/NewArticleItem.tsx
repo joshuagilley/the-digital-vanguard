@@ -1,4 +1,4 @@
-import { Card, CardBody, Heading, Center } from "@chakra-ui/react";
+import { Card, CardBody, Text, Center, Stack, Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { QueryObserverResult } from "@tanstack/react-query";
 import NewArticleModal from "components/new-article-modal";
@@ -19,7 +19,9 @@ const NewArticleItem = ({ text, refetch }: Props) => {
       onMouseLeave={() => setIsHovering(false)}
     >
       <CardBody>
-        <Heading sx={styles.text}>{text}</Heading>
+        <Center>
+          <Text sx={styles.text}>{text}</Text>
+        </Center>
         <Center>
           <NewArticleModal isHovering={isHovering} refetch={refetch} />
         </Center>
@@ -51,7 +53,10 @@ const styles = {
   },
   text: {
     color: "brand.100",
-    size: "md",
+    fontSize: "20px",
+    fontWeight: "bold",
+    m: "auto",
+    mt: "10px",
   },
 };
 

@@ -166,6 +166,6 @@ const styles = {
   },
   addIcon: {
     fontSize: "30px",
-    mt: "20px",
+    mt: "10px",
   },
 };
