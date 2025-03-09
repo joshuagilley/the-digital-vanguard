@@ -1,1 +1,1 @@
-export { default } from "./NewArticleItem";
+export { default } from "./AddDetailModal";

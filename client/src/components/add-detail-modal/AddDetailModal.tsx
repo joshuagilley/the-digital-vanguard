@@ -24,7 +24,7 @@ type Props = {
   sortValue: number;
 };
 
-export const AddDetailModal = ({ refetch, sortValue }: Props) => {
+const AddDetailModal = ({ refetch, sortValue }: Props) => {
   const { aId } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
@@ -123,6 +123,8 @@ export const AddDetailModal = ({ refetch, sortValue }: Props) => {
     </Box>
   );
 };
+
+export default AddDetailModal;
 
 const styles = {
   input: {

@@ -5,7 +5,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { AddDetailModal } from "./AddDetailModal";
+import AddDetailModal from "./AddDetailModal";
 import { vi } from "vitest";
 
 vi.mock("react-i18next", () => ({

@@ -35,7 +35,7 @@ import {
   PaginationContainer,
   PaginationPageGroup,
 } from "@ajna/pagination";
-import { AddDetailModal } from "components/add-detail-modal/AddDetailModal";
+import AddDetailModal from "components/add-detail-modal";
 import { useEffect, useState } from "react";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import { AlertComponent, SkeletonComponent } from "utils/component-utils";
