@@ -1,4 +1,4 @@
-import { Card, CardBody, Text, Center, Stack, Box } from "@chakra-ui/react";
+import { Card, CardBody, Text, Center } from "@chakra-ui/react";
 import { useState } from "react";
 import { QueryObserverResult } from "@tanstack/react-query";
 import NewArticleModal from "components/new-article-modal";

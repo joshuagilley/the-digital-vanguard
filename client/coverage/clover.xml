@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1741554960443" clover="3.2.0">
-  <project timestamp="1741554960443" name="All files">
-    <metrics statements="1589" coveredstatements="1345" conditionals="92" coveredconditionals="76" methods="78" coveredmethods="43" elements="1759" coveredelements="1464" complexity="0" loc="1589" ncloc="1589" packages="18" files="38" classes="38"/>
+<coverage generated="1741556482692" clover="3.2.0">
+  <project timestamp="1741556482692" name="All files">
+    <metrics statements="1594" coveredstatements="1350" conditionals="92" coveredconditionals="76" methods="78" coveredmethods="43" elements="1764" coveredelements="1469" complexity="0" loc="1594" ncloc="1594" packages="18" files="38" classes="38"/>
     <package name="src">
       <metrics statements="89" coveredstatements="48" conditionals="3" coveredconditionals="1" methods="3" coveredmethods="1"/>
       <file name="App.tsx" path="/Users/joshuadgilley/Documents/Personal Projects/the-digital-vanguard/client/src/App.tsx">
@@ -552,9 +552,9 @@
       </file>
     </package>
     <package name="src.components.new-article-item">
-      <metrics statements="41" coveredstatements="41" conditionals="2" coveredconditionals="1" methods="3" coveredmethods="1"/>
+      <metrics statements="46" coveredstatements="46" conditionals="2" coveredconditionals="1" methods="3" coveredmethods="1"/>
       <file name="NewArticleItem.tsx" path="/Users/joshuadgilley/Documents/Personal Projects/the-digital-vanguard/client/src/components/new-article-item/NewArticleItem.tsx">
-        <metrics statements="40" coveredstatements="40" conditionals="2" coveredconditionals="1" methods="3" coveredmethods="1"/>
+        <metrics statements="45" coveredstatements="45" conditionals="2" coveredconditionals="1" methods="3" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
@@ -573,9 +573,9 @@
         <line num="25" count="7" type="stmt"/>
         <line num="26" count="7" type="stmt"/>
         <line num="27" count="7" type="stmt"/>
+        <line num="28" count="7" type="stmt"/>
         <line num="29" count="7" type="stmt"/>
-        <line num="30" count="1" type="stmt"/>
-        <line num="31" count="1" type="stmt"/>
+        <line num="31" count="7" type="stmt"/>
         <line num="32" count="1" type="stmt"/>
         <line num="33" count="1" type="stmt"/>
         <line num="34" count="1" type="stmt"/>
@@ -588,13 +588,18 @@
         <line num="41" count="1" type="stmt"/>
         <line num="42" count="1" type="stmt"/>
         <line num="43" count="1" type="stmt"/>
-        <line num="51" count="1" type="stmt"/>
-        <line num="52" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
         <line num="53" count="1" type="stmt"/>
         <line num="54" count="1" type="stmt"/>
         <line num="55" count="1" type="stmt"/>
         <line num="56" count="1" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
         <line num="58" count="1" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
       </file>
       <file name="index.ts" path="/Users/joshuadgilley/Documents/Personal Projects/the-digital-vanguard/client/src/components/new-article-item/index.ts">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>

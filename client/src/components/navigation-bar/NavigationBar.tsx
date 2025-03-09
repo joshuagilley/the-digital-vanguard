@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { ABOUT, JOIN, HOME } from "assets/constants";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
-import Knight from "public/knight.png";
+import Knight from "src/assets/images/knight.png";
 
 const NavigationBar = () => {
   const [open, setOpen] = useState(false);
