@@ -38,7 +38,7 @@ import {
 import AddDetailModal from "components/add-detail-modal";
 import { useEffect, useState } from "react";
 import AlertDialogPopUp from "components/alert-dialog-popup";
-import { AlertComponent, SkeletonComponent } from "utils/component-utils";
+import { AlertComponent } from "utils/component-utils";
 
 const Article = () => {
   const { id, aId } = useParams();
@@ -151,7 +151,6 @@ const Article = () => {
   return (
     <Box data-testid="article-page" sx={styles.wrapper}>
       {error && <AlertComponent />}
-      {(isPending || isFetching) && <SkeletonComponent />}
       {!isPending && !isFetching && !error && data && (
         <Box data-test="article">
           <Box m="10px">

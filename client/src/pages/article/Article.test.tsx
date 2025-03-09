@@ -84,16 +84,6 @@ describe("Articles Page", () => {
     expect(screen.getByTestId("error")).toBeInTheDocument();
   });
 
-  it("renders skeleton for isPending", () => {
-    mockImplementation(true, null, true);
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Article />
-      </QueryClientProvider>
-    );
-    expect(screen.getByTestId("skeleton")).toBeInTheDocument();
-  });
-
   it("renders article page", () => {
     mockImplementation(false, null, false);
     render(

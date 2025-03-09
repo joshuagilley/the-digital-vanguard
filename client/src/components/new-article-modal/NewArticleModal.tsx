@@ -19,7 +19,7 @@ import { QueryObserverResult } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { OverlayOne, OverlayTwo } from "utils/component-utils";
+import { OverlayOne } from "utils/component-utils";
 import { isFirstDigitTwo } from "utils/general";
 
 type Props = {
@@ -97,7 +97,7 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
   };
 
   const openModal = (e: React.MouseEvent) => {
-    setOverlay(<OverlayTwo />);
+    setOverlay(<OverlayOne />);
     onOpen();
     e.stopPropagation();
   };

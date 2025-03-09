@@ -16,7 +16,7 @@ import { QueryObserverResult } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { OverlayOne, OverlayTwo } from "utils/component-utils";
+import { OverlayOne } from "utils/component-utils";
 import { isFirstDigitTwo, readFileAsync } from "utils/general";
 
 type Props = {
@@ -84,7 +84,7 @@ const AddDetailModal = ({ refetch, sortValue }: Props) => {
   };
 
   const handleAddDetail = () => {
-    setOverlay(<OverlayTwo />);
+    setOverlay(<OverlayOne />);
     onOpen();
   };
 

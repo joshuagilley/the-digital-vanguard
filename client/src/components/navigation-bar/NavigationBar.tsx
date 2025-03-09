@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { ABOUT, JOIN, HOME } from "assets/constants";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
+import Knight from "public/knight.png";
 
 const NavigationBar = () => {
   const [open, setOpen] = useState(false);
@@ -25,7 +26,7 @@ const NavigationBar = () => {
       data-testid="navigation-bar"
     >
       <Link to="/" onClick={() => setOpen(false)}>
-        <Image w="40px" borderRadius="5px" src="public/knight.png" />
+        <Image w="40px" borderRadius="5px" src={Knight} />
       </Link>
       <Spacer />
       {open && (
