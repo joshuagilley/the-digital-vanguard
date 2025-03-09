@@ -1,0 +1,90 @@
+import { describe, it, expect } from "vitest";
+import supertest from "supertest";
+import createServer from "../server";
+
+describe("Server startup", async () => {
+  const app = await createServer();
+  await app.listen({ port: 8080 });
+
+  it("get all users route", async () => {
+    const request = supertest(app.server);
+    const response = await request.get("/api/users");
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("get all articles for user route", async () => {
+    const request = supertest(app.server);
+    const response = await request.get(
+      `/api/users/${process.env.TEST_USER_ID}/articles`
+    );
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("get specific article for user", async () => {
+    const request = supertest(app.server);
+    const response = await request.get(
+      `/api/users/${process.env.TEST_USER_ID}/articles/${process.env.TEST_ARTICLE_ID_WITH_DETAILS}`
+    );
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("create new article for user", async () => {
+    const request = supertest(app.server);
+    const payload = {
+      articleName: "test",
+      articleSummary: "test",
+      articleUrl: "www.google.com",
+      tag: "test",
+    };
+    const response = await request
+      .post(`/api/users/${process.env.TEST_USER_ID}`)
+      .send(payload)
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json");
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("create new detail (markdown file) for user", async () => {
+    const request = supertest(app.server);
+    const payload = {
+      markdown: "## Hello World!",
+      sortValue: 1,
+    };
+    const response = await request
+      .post(`/api/articles/${process.env.TEST_ARTICLE_ID_WITH_DETAILS}`)
+      .send(payload)
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json");
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("delete an article", async () => {
+    const request = supertest(app.server);
+    const response = await request.delete(
+      `/api/articles/${process.env.TEST_ARTICLE_ID}`
+    );
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("delete a detail", async () => {
+    const request = supertest(app.server);
+    const response = await request.delete(
+      `/api/details/${process.env.TEST_DETAIL_ID}`
+    );
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("update article props", async () => {
+    const request = supertest(app.server);
+    const payload = {
+      changeText: "hello world!",
+      property: "article_name",
+    };
+    const response = await request
+      .put(`/api/articles/${process.env.TEST_ARTICLE_ID}`)
+      .send(payload)
+      .set("Content-Type", "application/json")
+      .set("Accept", "application/json");
+    expect(response.statusCode).toBe(200);
+  });
+});
