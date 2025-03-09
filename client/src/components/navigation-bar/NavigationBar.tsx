@@ -27,7 +27,6 @@ const NavigationBar = () => {
       <Link to="/" onClick={() => setOpen(false)}>
         <Image w="40px" borderRadius="5px" src="public/knight.png" />
       </Link>
-
       <Spacer />
       {open && (
         <Stack

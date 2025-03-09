@@ -29,6 +29,7 @@ const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
   return (
     <Box>
       <Button
+        data-testid="delete-article"
         sx={styles.deleteFile}
         variant="ghost"
         colorScheme="whiteAlpha"
@@ -53,7 +54,12 @@ const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
               <Button ref={cancelRef} onClick={onClose}>
                 {t("alertDialogPopup.cancel")}
               </Button>
-              <Button colorScheme="red" onClick={handleDelete} ml={3}>
+              <Button
+                data-testid="delete"
+                colorScheme="red"
+                onClick={handleDelete}
+                ml={3}
+              >
                 {t("alertDialogPopup.delete")}
               </Button>
             </AlertDialogFooter>

@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for server/config/register.ts</title>
+    <title>Code coverage report for src/mock/portfolio.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">server/config</a> register.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/mock</a> portfolio.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>18/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>18/18</span>
             </div>
         
             
@@ -74,28 +74,55 @@
 <a name='L9'></a><a href='#L9'>9</a>
 <a name='L10'></a><a href='#L10'>10</a>
 <a name='L11'></a><a href='#L11'>11</a>
-<a name='L12'></a><a href='#L12'>12</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { FastifyInstance } from "fastify";
-import { Server } from "http";
-import articleRoutes from "routes/articles";
-import pgConnector from "config/postgres";
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { PortfolioResponse } from "types/user";
 &nbsp;
-const fastifyRegister = (fastify: FastifyInstance&lt;Server&gt;) =&gt; {
-  fastify.register(pgConnector);
-  fastify.register(articleRoutes);
-};
-&nbsp;
-export default fastifyRegister;
+export const mock: PortfolioResponse[] = [
+  {
+    username: "Joshua Gilley",
+    password: "**********",
+    email: "joshdgilley@gmail.com",
+    github: "https://github.com/TheDigitalVanguard",
+    date: "2025-03-06T20:24:39.604Z",
+    url: "https://www.youtube.com/watch?v=_T9s2K4UWaA",
+    summary:
+      "orem ipsum dolor sit amet, consectetur adipiscing elit. In lacinia sapien purus, non tempus ipsum cursus quis. Sed quis est nulla. In faucibus massa id erat tincidunt dictum quis bibendum enim. Sed eleifend dui lacus, sit amet laoreet libero viverra non. Ut eu tincidunt lacus. Aliquam dictum mauris euismod orci semper molestie. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse sed magna vitae est suscipit condimentum. Maecenas non rutrum urna. Vivamus suscipit nisl ultrices, pulvinar purus quis, ornare ligula. Aenean in leo imperdiet, fermentum lectus eget, hendrerit nibh. Integer ac erat et tortor ultricies auctor.",
+    tag: "",
+    userId: "7029cca5-0b4e-415d-82f2-00750a9a9231",
+    phoneNumber: "8432599681",
+    linkedIn: "https://www.linkedin.com/in/joshuadgilley/",
+    articleId: "16219867-b9ad-459d-8227-6d9f08b72731",
+    articleName: "How The Digital Vanguard was built today",
+  },
+];
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -103,7 +130,7 @@ export default fastifyRegister;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-03-08T02:26:10.989Z
+                at 2025-03-09T05:16:24.096Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -24,7 +24,7 @@ import { isFirstDigitTwo } from "utils/general";
 
 type Props = {
   isHovering: boolean;
-  refetch?: () => Promise<QueryObserverResult<any, Error>>;
+  refetch: () => Promise<QueryObserverResult<any, Error>>;
 };
 
 const NewArticleModal = ({ isHovering, refetch }: Props) => {
@@ -36,7 +36,7 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
   const [articleName, setArticleName] = useState("");
   const [articleSummary, setArticleSummary] = useState("");
   const [articleUrl, setArticleUrl] = useState("");
-  const [phrase, setPhrase] = useState("");
+  const [tag, setTag] = useState("");
 
   const handleArticleUrl = (url: string) => {
     const youtubeRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/;
@@ -45,7 +45,26 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
     }
   };
 
+  const inputCheck = () => {
+    if (
+      articleName === "" ||
+      articleSummary === "" ||
+      articleUrl === "" ||
+      tag === ""
+    ) {
+      toast({
+        title: "Warning",
+        description: "All inputs are required.",
+        status: "warning",
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+  };
+
   const onSubmit = async () => {
+    inputCheck();
     try {
       const res = await fetch(`/api/users/${id}`, {
         method: "POST",
@@ -57,17 +76,18 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
           articleName,
           articleSummary,
           articleUrl,
-          phrase,
+          tag,
         }),
       });
       if (!isFirstDigitTwo(res.status)) {
-        throw Error;
+        throw new Error(`Got ${res.status} at ${res.url}`);
       }
-      refetch && refetch();
+      refetch();
     } catch (error) {
+      const description = error instanceof Error ? error.message : "";
       toast({
         title: "Error",
-        description: JSON.stringify(error),
+        description,
         status: "error",
         isClosable: true,
         position: "top",
@@ -85,6 +105,7 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
   return (
     <Box data-testid="new-article-modal">
       <AddIcon
+        data-testid="create"
         sx={styles.addIcon}
         color={isHovering ? "brand.100" : "brand.200"}
         onClick={openModal}
@@ -97,11 +118,15 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
           <ModalBody>
             <FormControl sx={styles.input} isRequired>
               <FormLabel>{t("newArticleModal.title")}</FormLabel>
-              <Input onChange={(e) => setArticleName(e.target.value)} />
+              <Input
+                data-testid="name"
+                onChange={(e) => setArticleName(e.target.value)}
+              />
             </FormControl>
             <FormControl sx={styles.input} isRequired>
               <FormLabel>{t("newArticleModal.url")}</FormLabel>
               <Input
+                data-testid="url"
                 placeholder={t("newArticleModal.urlPlaceholder")}
                 onChange={(e) => handleArticleUrl(e.target.value)}
               />
@@ -109,17 +134,23 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
             <FormControl sx={styles.input} isRequired>
               <FormLabel>{t("newArticleModal.tag")}</FormLabel>
               <Input
+                data-testid="tag"
                 placeholder="i.e. Full-stack Development"
-                onChange={(e) => setPhrase(e.target.value)}
+                onChange={(e) => setTag(e.target.value)}
               />
             </FormControl>
             <FormControl sx={styles.input} isRequired>
               <FormLabel>{t("newArticleModal.summary")}</FormLabel>
-              <Textarea onChange={(e) => setArticleSummary(e.target.value)} />
+              <Textarea
+                data-testid="summary"
+                onChange={(e) => setArticleSummary(e.target.value)}
+              />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onSubmit}>{t("newArticleModal.submit")}</Button>
+            <Button data-testid="submit" onClick={onSubmit}>
+              {t("newArticleModal.submit")}
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

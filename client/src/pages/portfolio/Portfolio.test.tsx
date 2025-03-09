@@ -6,7 +6,8 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { Mock, vi } from "vitest";
-import { data, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { mock } from "mock/portfolio";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,19 +46,34 @@ vi.mock("@tanstack/react-query", async () => {
 });
 
 (useParams as Mock).mockReturnValue({
-  id: "********-****-****-****-************",
+  id: process.env.TEST_USER_ID,
 });
 
 const mockUseQuery = vi.mocked(useQuery);
+const mockImplementation = (
+  isPending: boolean,
+  error: boolean | null,
+  isFetching: boolean,
+  data?: any[]
+) => {
+  (mockUseQuery as Mock).mockImplementation(() => ({
+    isPending,
+    error,
+    data,
+    isFetching,
+    refetch: () => Promise.resolve({}),
+  }));
+};
 
 describe("Portfolio Page", () => {
-  test("renders error page", () => {
-    (mockUseQuery as Mock).mockImplementation(() => ({
-      isPending: false,
-      error: true,
-      data: undefined,
-      isFetching: false,
-    }));
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+  it("renders error page", () => {
+    mockImplementation(false, true, false);
     render(
       <QueryClientProvider client={queryClient}>
         <Portfolio />
@@ -66,13 +82,9 @@ describe("Portfolio Page", () => {
     expect(screen.getByTestId("error")).toBeInTheDocument();
   });
 
-  test("renders article page", () => {
-    (mockUseQuery as Mock).mockImplementation(() => ({
-      isPending: false,
-      error: null,
-      data,
-      isFetching: false,
-    }));
+  it("renders article page", () => {
+    mockImplementation(false, null, false, mock);
+
     render(
       <QueryClientProvider client={queryClient}>
         <Portfolio />
@@ -81,39 +93,36 @@ describe("Portfolio Page", () => {
     expect(screen.getByTestId("portfolio-page")).toBeInTheDocument();
   });
 
-  test("handle call", () => {
-    (mockUseQuery as Mock).mockImplementation(() => ({
-      isPending: false,
-      error: null,
-      data,
-      isFetching: false,
-    }));
+  it("handle call", () => {
+    const callback = vi.fn();
+    mockImplementation(false, null, false, []);
     render(
       <QueryClientProvider client={queryClient}>
         <Portfolio />
       </QueryClientProvider>
     );
     fireEvent.click(screen.getByTestId("phone"));
+    vi.advanceTimersByTime(1000);
     waitFor(() => {
-      expect(screen.getAllByText("Calling")).toBeInTheDocument();
+      expect(callback).toHaveBeenCalled();
+      expect(screen.getByText("Calling...")).toBeInTheDocument();
     });
   });
 
-  test("handle email", () => {
-    (mockUseQuery as Mock).mockImplementation(() => ({
-      isPending: false,
-      error: null,
-      data,
-      isFetching: false,
-    }));
+  it("handle email", async () => {
+    vi.spyOn(console, "warn");
+    const callback = vi.fn();
+    mockImplementation(false, null, false, []);
     render(
       <QueryClientProvider client={queryClient}>
         <Portfolio />
       </QueryClientProvider>
     );
     fireEvent.click(screen.getByTestId("email"));
+    vi.advanceTimersByTime(1000);
     waitFor(() => {
-      expect(screen.getAllByText("Emailing")).toBeInTheDocument();
+      expect(callback).toHaveBeenCalled();
+      expect(screen.getAllByText("Emailing")).toBeVisible();
     });
   });
 });

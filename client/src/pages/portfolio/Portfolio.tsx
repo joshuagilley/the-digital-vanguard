@@ -126,16 +126,11 @@ const Portfolio = () => {
           </Box>
           <Flex sx={styles.articleWrapper}>
             {Array.from(response)?.map(
-              ({
-                articleName,
-                articleId,
-                userId,
-                phrase,
-              }: PortfolioResponse) => {
+              ({ articleName, articleId, userId, tag }: PortfolioResponse) => {
                 return (
                   <ArticleItem
                     text={articleName}
-                    phrase={phrase}
+                    tag={tag}
                     userId={userId}
                     articleId={articleId}
                     refetch={refetch}

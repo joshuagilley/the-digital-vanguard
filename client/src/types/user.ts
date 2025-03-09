@@ -14,7 +14,7 @@ export type ArticleProps = {
   articleId: string;
   articleName: string;
   url: string;
-  phrase: string;
+  tag: string;
   articleDetails: string[];
   summary: string;
   userId: string;
@@ -50,7 +50,7 @@ export interface PortfolioResponse {
   linkedIn: string;
   password: string;
   phoneNumber: string;
-  phrase: string;
+  tag: string;
   summary: string;
   url: string;
   userId: string;

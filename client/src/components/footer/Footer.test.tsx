@@ -14,7 +14,7 @@ vi.mock("react-i18next", () => ({
 }));
 
 describe("Footer", () => {
-  test("renders ExampleComponent with correct text", () => {
+  it("renders ExampleComponent with correct text", () => {
     render(<Footer />);
     const textElement = screen.getByText("languages.changeLanguage");
     expect(textElement).toBeInTheDocument();

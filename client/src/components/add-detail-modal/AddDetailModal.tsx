@@ -20,7 +20,7 @@ import { OverlayOne, OverlayTwo } from "utils/component-utils";
 import { isFirstDigitTwo, readFileAsync } from "utils/general";
 
 type Props = {
-  refetch?: () => Promise<QueryObserverResult<any, Error>>;
+  refetch: () => Promise<QueryObserverResult<any, Error>>;
   sortValue: number;
 };
 
@@ -37,12 +37,17 @@ export const AddDetailModal = ({ refetch, sortValue }: Props) => {
     const files = input.files;
     if (files) {
       try {
+        const ext = files[0].name.split(".")[1];
+        if (ext !== "md") {
+          throw new Error("Currently only markdown files are accepted..");
+        }
         const fileContent = await readFileAsync(files[0]);
         setMarkdownText(String(fileContent));
       } catch (error) {
+        const description = error instanceof Error ? error.message : "";
         toast({
           title: "Error",
-          description: JSON.stringify(error),
+          description,
           status: "error",
           isClosable: true,
           position: "top",
@@ -62,13 +67,14 @@ export const AddDetailModal = ({ refetch, sortValue }: Props) => {
         body: JSON.stringify({ markdownText, sortValue }),
       });
       if (!isFirstDigitTwo(res.status)) {
-        throw Error;
+        throw new Error(`Got ${res.status} at ${res.url}`);
       }
-      refetch && refetch();
+      refetch();
     } catch (error) {
+      const description = error instanceof Error ? error.message : "";
       toast({
         title: "Error",
-        description: JSON.stringify(error),
+        description,
         status: "error",
         isClosable: true,
         position: "top",
@@ -85,6 +91,7 @@ export const AddDetailModal = ({ refetch, sortValue }: Props) => {
   return (
     <Box data-testid="add-detail-modal">
       <Button
+        data-testid={"add-detail"}
         sx={styles.addDetail}
         onClick={handleAddDetail}
         colorScheme="whiteAlpha"
@@ -99,11 +106,17 @@ export const AddDetailModal = ({ refetch, sortValue }: Props) => {
           <ModalBody>
             <FormControl sx={styles.input} isRequired>
               <FormLabel>{t("addDetailModal.uploadMarkdown")}</FormLabel>
-              <input type="file" onChange={handleFileChange} />
+              <input
+                data-testid="file-upload"
+                type="file"
+                onChange={handleFileChange}
+              />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onSubmit}>{t("addDetailModal.submit")}</Button>
+            <Button data-testid="submit-file" onClick={onSubmit}>
+              {t("addDetailModal.submit")}
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

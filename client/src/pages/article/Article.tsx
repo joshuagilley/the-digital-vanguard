@@ -58,7 +58,7 @@ const Article = () => {
     date: string;
     detailId: string;
     markdown: string;
-    phrase: string;
+    tag: string;
     sortValue: number;
     summary: string;
     url: string;
@@ -130,7 +130,7 @@ const Article = () => {
   };
 
   const deleteArticle = async () => {
-    const detailId = data && data[currentPage - 1].detailId;
+    const detailId = data && data[currentPage - 1]?.detailId;
     const res = await fetch(`/api/details/${detailId}`, {
       method: "DELETE",
     });
@@ -180,6 +180,7 @@ const Article = () => {
                 <CardHeader>
                   <Flex>
                     <Editable
+                      data-testid="editable-input-name"
                       fontSize="2xl"
                       fontWeight="bold"
                       color="brand.300"
@@ -208,6 +209,7 @@ const Article = () => {
                 <CardBody>
                   <Stack divider={<StackDivider />} spacing="4">
                     <Editable
+                      data-testid="editable-input-summary"
                       fontSize="xs"
                       fontWeight="none"
                       defaultValue={summary}
@@ -227,10 +229,12 @@ const Article = () => {
                 </CardBody>
               </Card>
               <Card sx={styles.markdown}>
-                <AlertDialogPopUp
-                  deleteText={t("articlePage.deleteDetail")}
-                  apiCall={deleteArticle}
-                />
+                <Box ml="auto">
+                  <AlertDialogPopUp
+                    deleteText={t("articlePage.deleteDetail")}
+                    apiCall={deleteArticle}
+                  />
+                </Box>
                 {hasDetails ? (
                   <ReactMarkdown
                     components={ChakraUIRenderer()}
@@ -314,6 +318,8 @@ const styles = {
     borderRadius: "0px",
     backgroundColor: "#18181a",
     color: "#f0f6fc",
+    fontSize: "14px",
+    ".chakra-heading": { fontSize: "20px" },
   },
   favoriteEditor: {
     w: "300px",

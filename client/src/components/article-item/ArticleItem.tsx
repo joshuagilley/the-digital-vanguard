@@ -18,13 +18,13 @@ import { useTranslation } from "react-i18next";
 
 type Props = {
   text: string;
-  phrase: string;
+  tag: string;
   userId: string;
   articleId: string;
-  refetch?: () => Promise<QueryObserverResult<any, Error>>;
+  refetch: () => Promise<QueryObserverResult<any, Error>>;
 };
 
-const ArticleItem = ({ text, phrase, userId, articleId, refetch }: Props) => {
+const ArticleItem = ({ text, tag, userId, articleId, refetch }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toast = useToast();
@@ -44,13 +44,14 @@ const ArticleItem = ({ text, phrase, userId, articleId, refetch }: Props) => {
         method: "DELETE",
       });
       if (!isFirstDigitTwo(res.status)) {
-        throw Error;
+        throw new Error(`Got ${res.status} at ${res.url}`);
       }
-      refetch && refetch();
+      refetch();
     } catch (error) {
+      const description = error instanceof Error ? error.message : "";
       toast({
         title: "Error",
-        description: JSON.stringify(error),
+        description,
         status: "error",
         isClosable: true,
         position: "top",
@@ -66,7 +67,7 @@ const ArticleItem = ({ text, phrase, userId, articleId, refetch }: Props) => {
       onMouseLeave={handleMouseLeave}
     >
       <CardBody>
-        <Box sx={styles.tag}>{phrase}</Box>
+        <Box sx={styles.tag}>{tag}</Box>
         <Text sx={styles.mainText}>{text}</Text>
       </CardBody>
       <CardFooter p="10px">

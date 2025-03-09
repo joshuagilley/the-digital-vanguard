@@ -14,7 +14,7 @@ vi.mock("react-i18next", () => ({
 }));
 
 describe("Language Changer", () => {
-  test("renders Language Changer with correct text", () => {
+  it("renders Language Changer with correct text", () => {
     render(<LanguageChanger />);
     const textElement = screen.getByText("languages.english");
     expect(textElement).toBeInTheDocument();

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { vi, Mock } from "vitest";
 import Article from "./Article";
 import {
@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { data } from "mock/article";
+import userEvent from "@testing-library/user-event";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,6 +17,24 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Here we tell Vitest to mock fetch on the `window` object.
+global.fetch = vi.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve({}),
+  })
+) as Mock;
+
+vi.mock("react-i18next", () => ({
+  useTranslation: () => {
+    return {
+      t: (str: string) => str,
+      i18n: {
+        changeLanguage: () => new Promise(() => {}),
+      },
+    };
+  },
+}));
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
@@ -35,18 +54,28 @@ vi.mock("@tanstack/react-query", async () => {
 });
 
 (useParams as Mock).mockReturnValue({
-  id: "********-****-****-****-************",
+  id: process.env.TEST_USER_ID,
+  aId: process.env.TEST_ARTICLE_ID,
 });
 
+const mockUseQuery = vi.mocked(useQuery);
+const mockImplementation = (
+  isPending: boolean,
+  error: boolean | null,
+  isFetching: boolean
+) => {
+  (mockUseQuery as Mock).mockImplementation(() => ({
+    isPending,
+    error,
+    data,
+    isFetching,
+    refetch: () => Promise.resolve({}),
+  }));
+};
+
 describe("Articles Page", () => {
-  test("renders error page", () => {
-    const mockUseQuery = vi.mocked(useQuery);
-    (mockUseQuery as Mock).mockImplementation(() => ({
-      isPending: false,
-      error: true,
-      data: undefined,
-      isFetching: false,
-    }));
+  it("renders error page", () => {
+    mockImplementation(false, true, false);
     render(
       <QueryClientProvider client={queryClient}>
         <Article />
@@ -55,14 +84,8 @@ describe("Articles Page", () => {
     expect(screen.getByTestId("error")).toBeInTheDocument();
   });
 
-  test("renders skeleton for isPending", () => {
-    const mockUseQuery = vi.mocked(useQuery);
-    (mockUseQuery as Mock).mockImplementation(() => ({
-      isPending: true,
-      error: null,
-      data: undefined,
-      isFetching: true,
-    }));
+  it("renders skeleton for isPending", () => {
+    mockImplementation(true, null, true);
     render(
       <QueryClientProvider client={queryClient}>
         <Article />
@@ -71,19 +94,46 @@ describe("Articles Page", () => {
     expect(screen.getByTestId("skeleton")).toBeInTheDocument();
   });
 
-  test("renders article page", () => {
-    const mockUseQuery = vi.mocked(useQuery);
-    (mockUseQuery as Mock).mockImplementation(() => ({
-      isPending: false,
-      error: null,
-      data,
-      isFetching: false,
-    }));
+  it("renders article page", () => {
+    mockImplementation(false, null, false);
     render(
       <QueryClientProvider client={queryClient}>
         <Article />
       </QueryClientProvider>
     );
     expect(screen.getByTestId("article-page")).toBeInTheDocument();
+  });
+
+  it("test editable inputs", async () => {
+    mockImplementation(false, null, false);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Article />
+      </QueryClientProvider>
+    );
+
+    const nameInput = screen.getByTestId("editable-input-name").children[1];
+    await userEvent.type(nameInput, "new name{enter}");
+    const summaryInput = screen.getByTestId("editable-input-summary")
+      .children[1];
+    await userEvent.type(summaryInput, "new summary{enter}");
+
+    await waitFor(() => {
+      expect(screen.getByText("new name")).toBeInTheDocument();
+      expect(screen.getByText("new summary")).toBeInTheDocument();
+    });
+  });
+
+  it("test editable inputs", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Article />
+      </QueryClientProvider>
+    );
+
+    fireEvent.click(screen.getByTestId("delete-article"));
+    fireEvent.click(screen.getByTestId("delete"));
+
+    expect(screen.getByTestId("delete")).not.toBeVisible();
   });
 });

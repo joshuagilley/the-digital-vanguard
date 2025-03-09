@@ -14,7 +14,7 @@ vi.mock("react-i18next", () => ({
 }));
 
 describe("About Page", () => {
-  test("renders ExampleComponent with correct text", () => {
+  it("renders ExampleComponent with correct text", () => {
     render(<About />);
     const textElement = screen.getByText("about.vision");
     expect(textElement).toBeInTheDocument();

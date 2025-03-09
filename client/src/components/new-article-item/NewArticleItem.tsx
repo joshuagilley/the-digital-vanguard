@@ -5,7 +5,7 @@ import NewArticleModal from "components/new-article-modal";
 
 type Props = {
   text: string;
-  refetch?: () => Promise<QueryObserverResult<any, Error>>;
+  refetch: () => Promise<QueryObserverResult<any, Error>>;
 };
 
 const NewArticleItem = ({ text, refetch }: Props) => {

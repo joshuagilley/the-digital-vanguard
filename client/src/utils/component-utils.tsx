@@ -36,6 +36,7 @@ export const SkeletonComponent = () => {
 
 export const OverlayOne = () => (
   <ModalOverlay
+    data-testid="modal-overlay"
     bg="blackAlpha.300"
     backdropFilter="blur(10px) hue-rotate(90deg)"
   />
@@ -43,6 +44,7 @@ export const OverlayOne = () => (
 
 export const OverlayTwo = () => (
   <ModalOverlay
+    data-testid="modal-overlay"
     bg="none"
     backdropFilter="auto"
     backdropInvert="80%"

@@ -75,16 +75,16 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       reply
     ) => {
       const { id: userId } = request.params;
-      const { articleName, articleSummary, articleUrl, phrase } = request.body;
+      const { articleName, articleSummary, articleUrl, tag } = request.body;
       const client = await fastify.pg.connect();
       const { rows }: { rows: { [key: string]: string }[] } =
         await client.query(
-          `INSERT INTO articles (user_id, url, article_name, phrase, summary) 
+          `INSERT INTO articles (user_id, url, article_name, tag, summary) 
           VALUES (
           '${userId}', 
           '${articleUrl}',
           '${articleName}',
-          '${phrase}',
+          '${tag}',
           '${articleSummary}'
           );`
         );

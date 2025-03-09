@@ -58,7 +58,7 @@ const Home = () => {
 const styles = {
   wrapper: {
     h: "100vh",
-    "place-content": "center",
+    placeContent: "center",
     background: "#080808",
   },
   dropdown: {

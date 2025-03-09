@@ -34,7 +34,7 @@ vi.mock("@tanstack/react-query", async () => {
 });
 
 describe("Home Page", () => {
-  test("renders error page", () => {
+  it("renders error page", () => {
     const mockUseQuery = vi.mocked(useQuery);
     (mockUseQuery as Mock).mockImplementation(() => ({
       isPending: false,
@@ -50,7 +50,7 @@ describe("Home Page", () => {
     expect(screen.getByTestId("error")).toBeInTheDocument();
   });
 
-  test("renders article page", () => {
+  it("renders article page", () => {
     const mockUseQuery = vi.mocked(useQuery);
     (mockUseQuery as Mock).mockImplementation(() => ({
       isPending: false,
