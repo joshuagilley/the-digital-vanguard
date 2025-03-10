@@ -169,7 +169,16 @@ const Article = () => {
                 </Link>
               </Text>
             </Flex>
-            {showDemo && <ReactPlayer url={url} style={styles.url} />}
+            {showDemo && (
+              <Box maxW={"100%"}>
+                <ReactPlayer
+                  width="100%"
+                  height="600px"
+                  url={url}
+                  style={styles.url}
+                />
+              </Box>
+            )}
           </Box>
           {!showDemo && (
             <Box sx={styles.mainMarkdownSectionWrapper}>
