@@ -1,5 +1,5 @@
 "use client";
-
+import "../../styles/style.css";
 import {
   Container,
   Flex,
@@ -19,7 +19,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Status } from "types/user";
 import { handleSubmit, validateEmail } from "utils/email-utilities";
-import { isMobile } from "react-device-detect";
 
 const Join = () => {
   const toast = useToast();
@@ -168,7 +167,6 @@ const styles = {
     borderRadius: "lg",
     m: { sm: 4, md: 16, lg: 10 },
     p: { sm: 5, md: 5, lg: 10 },
-    w: isMobile ? "100%" : "50%",
   },
   formWrapper: {
     w: "100%",
