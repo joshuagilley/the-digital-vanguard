@@ -1,5 +1,4 @@
 "use client";
-import "../../styles/style.css";
 import {
   Container,
   Flex,
