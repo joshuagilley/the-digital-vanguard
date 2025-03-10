@@ -64,7 +64,7 @@ const Join = () => {
                 <FormControl id="name">
                   <FormLabel>{t("joinPage.fullName")}</FormLabel>
                   <Input
-                    focusBorderColor="#e0ceb5"
+                    focusBorderColor="brand.300"
                     onChange={(e) => setName(e.target.value)}
                     type="text"
                     size="md"

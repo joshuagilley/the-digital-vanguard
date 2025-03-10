@@ -59,11 +59,11 @@ const styles = {
   wrapper: {
     h: "100vh",
     placeContent: "center",
-    background: "#080808",
+    background: "brand.700",
   },
   dropdown: {
     w: "200px",
-    m: "auto auto 150px auto",
+    m: "auto auto 250px auto",
   },
   select: {
     backgroundColor: "brand.300",

@@ -16,30 +16,11 @@ const NavigationBar = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Flex
-      as="nav"
-      p={4}
-      bg="#080808"
-      alignItems="center"
-      data-testid="navigation-bar"
-    >
+    <Flex as="nav" sx={styles.navBar} data-testid="navigation-bar">
       <Spacer />
       {open && (
-        <Stack
-          backgroundColor="#e0ceb5"
-          position="fixed"
-          right="24px"
-          top="80px"
-          width="140px"
-          padding="10px"
-          zIndex={1}
-        >
-          <CloseButton
-            position="absolute"
-            right="0"
-            top="0"
-            onClick={() => setOpen(!open)}
-          />
+        <Stack sx={styles.inputWrappers}>
+          <CloseButton sx={styles.close} onClick={() => setOpen(!open)} />
           <Box m="auto">
             <Link to="/" onClick={() => setOpen(false)}>
               <Button fontWeight="bold" variant="ghost">
@@ -68,7 +49,7 @@ const NavigationBar = () => {
         data-testid="hamburger"
         size="md"
         mr={2}
-        backgroundColor="#e0ceb5"
+        backgroundColor="brand.300"
         icon={<HamburgerIcon />}
         onClick={() => setOpen(!open)}
       />
@@ -77,3 +58,25 @@ const NavigationBar = () => {
 };
 
 export default NavigationBar;
+
+const styles = {
+  navBar: {
+    p: 4,
+    bg: "brand.700",
+    alignItems: "center",
+  },
+  close: {
+    position: "absolute",
+    right: "0",
+    top: "0",
+  },
+  inputWrappers: {
+    backgroundColor: "brand.300",
+    position: "fixed",
+    right: "24px",
+    top: "80px",
+    width: "140px",
+    padding: "10px",
+    zIndex: 1,
+  },
+};
