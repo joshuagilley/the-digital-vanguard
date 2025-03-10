@@ -34,7 +34,7 @@ const About = () => {
 
 const styles = {
   wrapper: {
-    height: "100vh",
+    height: "100%",
   },
   mainText: {
     margin: "20px",

@@ -1,3 +1,4 @@
+import { DeleteIcon } from "@chakra-ui/icons";
 import {
   useDisclosure,
   Button,
@@ -28,15 +29,13 @@ const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
 
   return (
     <Box>
-      <Button
-        data-testid="delete-article"
+      <DeleteIcon
         sx={styles.deleteFile}
-        variant="ghost"
-        colorScheme="whiteAlpha"
+        data-testid="delete-article"
         onClick={onOpen}
       >
         {t("alertDialogPopup.deleteFile")}
-      </Button>
+      </DeleteIcon>
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -75,8 +74,11 @@ export default AlertDialogPopUp;
 const styles = {
   deleteFile: {
     cursor: "pointer",
-    w: "100px",
-    p: "20px",
+    m: "10px 0px 0px 10px",
+    color: "brand.300",
+    _hover: {
+      color: "brand.200",
+    },
   },
   deleteText: {
     fontSize: "lg",

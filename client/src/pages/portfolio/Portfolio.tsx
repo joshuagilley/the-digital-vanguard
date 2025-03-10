@@ -151,7 +151,7 @@ const Portfolio = () => {
 
 const styles = {
   wrapper: {
-    height: "100vh",
+    height: "100%",
   },
   iconButton: {
     marginRight: "10px",

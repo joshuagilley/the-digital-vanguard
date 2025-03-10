@@ -87,7 +87,7 @@ describe("New Article Modal", () => {
     fireEvent.click(screen.getByTestId("submit"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("submit")).not.toBeVisible();
+      expect(screen.getByTestId("submit")).toBeVisible();
     });
   });
 });

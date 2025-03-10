@@ -16,7 +16,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <Box bg="#080808">
+        <Box bg="#080808" minHeight="100vh">
           <Router>
             <NavigationBar />
             <Routes>

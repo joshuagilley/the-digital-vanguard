@@ -131,6 +131,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     const res = await client.query(
       `DELETE FROM articles WHERE article_id = '${articleId}';`
     );
+    console.log(articleId, res);
     client.release();
     if (!res) reply.code(404).send({ error: "Not found" });
     else reply.code(200).send(JSON.stringify(res));

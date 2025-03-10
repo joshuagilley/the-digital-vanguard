@@ -38,14 +38,22 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
   const [articleUrl, setArticleUrl] = useState("");
   const [tag, setTag] = useState("");
 
-  const handleArticleUrl = (url: string) => {
+  const invalidUrl = () => {
     const youtubeRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/;
-    if (youtubeRegex.test(url)) {
-      setArticleUrl(url);
+    if (!youtubeRegex.test(articleUrl)) {
+      toast({
+        title: "Error",
+        description: "Invalid Youtube URL.",
+        status: "error",
+        isClosable: true,
+        position: "top",
+      });
     }
+
+    return !youtubeRegex.test(articleUrl);
   };
 
-  const inputCheck = () => {
+  const hasMissingInputs = () => {
     if (
       articleName === "" ||
       articleSummary === "" ||
@@ -59,12 +67,22 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
         isClosable: true,
         position: "top",
       });
-      return;
     }
+    return (
+      articleName === "" ||
+      articleSummary === "" ||
+      articleUrl === "" ||
+      tag === ""
+    );
   };
 
   const onSubmit = async () => {
-    inputCheck();
+    if (invalidUrl()) {
+      return;
+    }
+    if (hasMissingInputs()) {
+      return;
+    }
     try {
       const res = await fetch(`/api/users/${id}`, {
         method: "POST",
@@ -128,7 +146,7 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
               <Input
                 data-testid="url"
                 placeholder={t("newArticleModal.urlPlaceholder")}
-                onChange={(e) => handleArticleUrl(e.target.value)}
+                onChange={(e) => setArticleUrl(e.target.value)}
               />
             </FormControl>
             <FormControl sx={styles.input} isRequired>

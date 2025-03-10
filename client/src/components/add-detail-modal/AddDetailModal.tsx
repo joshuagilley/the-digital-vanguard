@@ -1,3 +1,4 @@
+import { PlusSquareIcon } from "@chakra-ui/icons";
 import {
   useDisclosure,
   Button,
@@ -90,14 +91,11 @@ const AddDetailModal = ({ refetch, sortValue }: Props) => {
 
   return (
     <Box data-testid="add-detail-modal">
-      <Button
+      <PlusSquareIcon
         data-testid={"add-detail"}
         sx={styles.addDetail}
         onClick={handleAddDetail}
-        colorScheme="whiteAlpha"
-      >
-        {"Add Detail File"}
-      </Button>
+      />
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         {overlay}
         <ModalContent>
@@ -132,5 +130,11 @@ const styles = {
   },
   addDetail: {
     mr: "10px",
+    fontSize: "18px",
+    cursor: "pointer",
+    color: "brand.300",
+    _hover: {
+      color: "brand.200",
+    },
   },
 };

@@ -17,6 +17,6 @@ describe("Navigation Bar testing suite", () => {
   const apiCall = vi.fn(async () => {});
   it("All text and buttons are showing as expected", () => {
     render(<AlertDialogPopUp deleteText="Delete" apiCall={apiCall} />);
-    expect(screen.getByText("alertDialogPopup.deleteFile")).toBeInTheDocument();
+    expect(screen.getByTestId("delete-article")).toBeInTheDocument();
   });
 });

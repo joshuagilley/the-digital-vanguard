@@ -7,12 +7,9 @@ import {
   StackDivider,
   Flex,
   Spacer,
-  Button,
   FormControl,
   FormLabel,
   Switch,
-  Center,
-  Image,
   Editable,
   EditableInput,
   EditablePreview,
@@ -20,6 +17,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
+import { ArrowLeftIcon } from "@chakra-ui/icons";
 import ReactPlayer from "react-player";
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
@@ -174,36 +172,31 @@ const Article = () => {
             {showDemo && <ReactPlayer url={url} style={styles.url} />}
           </Box>
           {!showDemo && (
-            <Box>
+            <Box sx={styles.mainMarkdownSectionWrapper}>
               <Card sx={styles.header}>
                 <CardHeader>
-                  <Flex>
-                    <Editable
-                      data-testid="editable-input-name"
-                      fontSize="2xl"
-                      fontWeight="bold"
-                      color="brand.300"
-                      defaultValue={articleName}
-                      onKeyDown={(e) =>
-                        handleKeyDown(
-                          e,
-                          editedArticleName,
-                          t("articlePage.articleName")
-                        )
-                      }
-                      onChange={(e) => handleChange(e, false)}
-                    >
-                      <EditablePreview />
-                      <EditableInput />
-                    </Editable>
-                    <Spacer />
-                    <Button
-                      size="sm"
-                      onClick={() => navigate(`/portfolio/${id}`)}
-                    >
-                      {t("articlePage.back")}
-                    </Button>
-                  </Flex>
+                  <ArrowLeftIcon
+                    sx={styles.leftArrow}
+                    onClick={() => navigate(`/portfolio/${id}`)}
+                  />
+                  <Editable
+                    data-testid="editable-input-name"
+                    fontSize="2xl"
+                    fontWeight="bold"
+                    color="brand.300"
+                    defaultValue={articleName}
+                    onKeyDown={(e) =>
+                      handleKeyDown(
+                        e,
+                        editedArticleName,
+                        t("articlePage.articleName")
+                      )
+                    }
+                    onChange={(e) => handleChange(e, false)}
+                  >
+                    <EditablePreview />
+                    <EditableInput />
+                  </Editable>
                 </CardHeader>
                 <CardBody>
                   <Stack divider={<StackDivider />} spacing="4">
@@ -227,28 +220,27 @@ const Article = () => {
                   </Stack>
                 </CardBody>
               </Card>
-              <Card sx={styles.markdown}>
-                <Box ml="auto">
-                  <AlertDialogPopUp
-                    deleteText={t("articlePage.deleteDetail")}
-                    apiCall={deleteArticle}
-                  />
-                </Box>
-                {hasDetails ? (
+              {hasDetails && (
+                <Card sx={styles.markdown}>
+                  <Flex>
+                    <AlertDialogPopUp
+                      deleteText={t("articlePage.deleteDetail")}
+                      apiCall={deleteArticle}
+                    />
+                    <Spacer />
+                    <AddDetailModal
+                      refetch={refetch}
+                      sortValue={hasDetails ? data.length + 1 : 1}
+                    />
+                  </Flex>
+
                   <ReactMarkdown
                     components={ChakraUIRenderer()}
                     children={data[currentPage - 1].markdown}
                     skipHtml
                   />
-                ) : (
-                  <Center m="auto">
-                    <Image
-                      sx={styles.noFiles}
-                      src={t("articlePage.noFilesUrl")}
-                    />
-                  </Center>
-                )}
-              </Card>
+                </Card>
+              )}
               <Flex sx={styles.pagination}>
                 {hasDetails && (
                   <Pagination
@@ -280,11 +272,6 @@ const Article = () => {
                     </PaginationContainer>
                   </Pagination>
                 )}
-                <Spacer />
-                <AddDetailModal
-                  refetch={refetch}
-                  sortValue={hasDetails ? data.length + 1 : 1}
-                />
               </Flex>
             </Box>
           )}
@@ -296,7 +283,7 @@ const Article = () => {
 
 const styles = {
   wrapper: {
-    height: "100vh",
+    height: "100%",
   },
   header: {
     margin: "10px 10px 2px 10px",
@@ -312,7 +299,7 @@ const styles = {
   markdown: {
     margin: "0px 10px 0px 10px",
     padding: "10px",
-    height: "60vh",
+    height: "60%",
     overflow: "scroll",
     borderRadius: "0px",
     backgroundColor: "#18181a",
@@ -321,7 +308,7 @@ const styles = {
     ".chakra-heading": { fontSize: "20px" },
   },
   favoriteEditor: {
-    w: "300px",
+    w: "250px",
     color: "brand.200",
   },
   showDemo: {
@@ -330,13 +317,10 @@ const styles = {
     color: "brand.100",
   },
   noFiles: {
-    w: "100px",
+    w: "60px",
     m: "auto",
   },
-  pagination: {
-    m: "10px",
-    position: "sticky",
-  },
+  pagination: { m: "10px" },
   paginationPrevious: {
     mr: "4px",
   },
@@ -355,6 +339,13 @@ const styles = {
     bg: "brand.200",
     fontSize: "sm",
   },
+  leftArrow: {
+    cursor: "pointer",
+    _hover: {
+      color: "brand.300",
+    },
+  },
+  mainMarkdownSectionWrapper: { pb: "5px" },
 };
 
 export default Article;
