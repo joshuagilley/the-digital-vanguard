@@ -20,7 +20,7 @@ import NewArticleItem from "components/new-article-item";
 import { PortfolioResponse } from "types/user";
 
 interface Props {
-  isAuthenticated: boolean;
+  isAuthenticated?: boolean;
 }
 const Portfolio = ({ isAuthenticated }: Props) => {
   const { id } = useParams();
