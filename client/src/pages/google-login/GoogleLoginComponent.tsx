@@ -22,7 +22,7 @@ function GoogleLoginComponent() {
         });
 
         const uid = await res.text();
-
+        localStorage.setItem("authenticatedId", uid);
         navigate(`/portfolio/${uid}`);
       }}
       onError={() => {

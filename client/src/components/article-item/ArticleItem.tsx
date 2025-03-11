@@ -9,13 +9,12 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { isFirstDigitTwo } from "utils/general";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "hooks/auth";
 
 type Props = {
   text: string;
@@ -30,24 +29,7 @@ const ArticleItem = ({ text, tag, userId, articleId, refetch }: Props) => {
   const navigate = useNavigate();
   const toast = useToast();
   const [isHovering, setIsHovering] = useState(false);
-  const [isAuth, setIsAuth] = useState<boolean | null>(null);
-
-  const getAuth = async () => {
-    const credential = localStorage.getItem("googleCredential") || "";
-    const r = await fetch(`/api/auth/${userId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer: ${credential}` },
-    });
-    return r;
-  };
-
-  const { data: authData } = useAuth(getAuth, []) as any;
-
-  useEffect(() => {
-    if (isAuth === null && authData) {
-      setIsAuth(authData.status === 200);
-    }
-  });
+  const isAuth = userId === localStorage.getItem("authenticatedId");
 
   const handleMouseEnter = () => {
     setIsHovering(true);

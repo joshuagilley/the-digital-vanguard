@@ -18,31 +18,17 @@ import ArticleItem from "components/article-item";
 import { useTranslation } from "react-i18next";
 import NewArticleItem from "components/new-article-item";
 import { PortfolioResponse } from "types/user";
-import { useAuth } from "src/hooks/auth";
 
 const Portfolio = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
-  // const [isCalling, setIsCalling] = useState(false);
   const [isEmailing, setIsEmailing] = useState(false);
   const [response, setResponse] = useState<PortfolioResponse[]>([]);
-  // const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [isAuth, setIsAuth] = useState<boolean | null>(null);
-
-  const getAuth = async () => {
-    const credential = localStorage.getItem("googleCredential") || "";
-    const r = await fetch(`/api/auth/${id}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer: ${credential}` },
-    });
-    return r;
-  };
-
-  const { data: authData } = useAuth(getAuth, [id]);
-
+  const isAuth = id === localStorage.getItem("authenticatedId");
+  // even if this is manipulated on the fronted, there is a check in the backend on the google credential before anychanges can be made. Research vulnerabilities of change the token and if we need to do something about that.
   const { isPending, error, data, isFetching, refetch } = useQuery<
     PortfolioResponse[],
     Error
@@ -62,27 +48,6 @@ const Portfolio = () => {
       setEmail(data[0]?.email);
     }
   }, [data]);
-
-  useEffect(() => {
-    if (isAuth === null && authData) {
-      setIsAuth(authData.status === 200);
-    }
-  });
-
-  // const handleCall = (phoneNumber: string) => {
-  //   setIsCalling(true);
-  //   setTimeout(() => {
-  //     setIsCalling(false);
-  //     toast({
-  //       title: "Calling...",
-  //       description: `Calling ${phoneNumber}`,
-  //       status: "info",
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //     window.location.href = `tel:${phoneNumber}`;
-  //   }, 1000);
-  // };
 
   const handleEmail = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -122,15 +87,6 @@ const Portfolio = () => {
               >{`${username}'s ${t("portfolio.portfolio")}`}</Heading>
               <Spacer />
               <Flex>
-                {/* <IconButton
-                    icon={<PhoneIcon />}
-                    aria-label={`${t("portfolio.call")} ${phoneNumber}`}
-                    onClick={() => handleCall(phoneNumber)}
-                    isLoading={isCalling}
-                    colorScheme="whiteAlpha"
-                    data-testid={"phone"}
-                    sx={styles.iconButton}
-                  /> */}
                 {isAuth && (
                   <IconButton
                     icon={<EmailIcon />}

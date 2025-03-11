@@ -37,37 +37,17 @@ import AddDetailModal from "components/add-detail-modal";
 import { useEffect, useState } from "react";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import { AlertComponent } from "utils/component-utils";
-import { useAuth } from "hooks/auth";
 
 const Article = () => {
   const { id, aId } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
   const [showDemo, setShowDemo] = useState(false);
-  const [editedArticleName, setEditArticleName] = useState("");
-  const [editedSummary, setEditSummary] = useState("");
   const [hasDetails, setHasDetails] = useState(false);
   const [articleName, setArticleName] = useState("");
   const [summary, setSummary] = useState("");
   const [url, setUrl] = useState("");
-  const [isAuth, setIsAuth] = useState<boolean | null>(null);
-
-  const getAuth = async () => {
-    const credential = localStorage.getItem("googleCredential") || "";
-    const r = await fetch(`/api/auth/${id}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer: ${credential}` },
-    });
-    return r;
-  };
-
-  const { data: authData } = useAuth(getAuth, []) as any;
-
-  useEffect(() => {
-    if (isAuth === null && authData) {
-      setIsAuth(authData.status === 200);
-    }
-  });
+  const isAuth = id === localStorage.getItem("authenticatedId");
 
   type Props = {
     articleId: string;
@@ -116,15 +96,15 @@ const Article = () => {
     property: string
   ) => {
     if (event.key === "Enter") {
-      editArticle(value, property);
+      await editArticle(value, property);
     }
   };
 
   const handleChange = (str: string, isSummary: boolean) => {
     if (isSummary) {
-      setEditSummary(str);
+      setSummary(str);
     } else {
-      setEditArticleName(str);
+      setArticleName(str);
     }
   };
 
@@ -147,6 +127,8 @@ const Article = () => {
         isClosable: true,
         position: "top",
       });
+    } else {
+      refetch();
     }
   };
 
@@ -160,8 +142,6 @@ const Article = () => {
       },
     });
     const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
-    setCurrentPage(1);
-    refetch();
     if (res.status !== 200) {
       toast({
         title: "Error",
@@ -170,6 +150,9 @@ const Article = () => {
         isClosable: true,
         position: "top",
       });
+    } else {
+      setCurrentPage(1);
+      refetch();
     }
   };
 
@@ -230,11 +213,12 @@ const Article = () => {
                     fontSize="2xl"
                     fontWeight="bold"
                     color="brand.300"
-                    defaultValue={articleName}
+                    value={articleName}
+                    isDisabled={!isAuth}
                     onKeyDown={(e) =>
                       handleKeyDown(
                         e,
-                        editedArticleName,
+                        articleName,
                         t("articlePage.articleName")
                       )
                     }
@@ -250,13 +234,10 @@ const Article = () => {
                       data-testid="editable-input-summary"
                       fontSize="xs"
                       fontWeight="none"
-                      defaultValue={summary}
+                      isDisabled={!isAuth}
+                      value={summary}
                       onKeyDown={(e) =>
-                        handleKeyDown(
-                          e,
-                          editedSummary,
-                          t("articlePage.summary")
-                        )
+                        handleKeyDown(e, summary, t("articlePage.summaryProp"))
                       }
                       onChange={(e) => handleChange(e, true)}
                     >
@@ -268,10 +249,12 @@ const Article = () => {
               </Card>
               {hasDetails && (
                 <Card sx={styles.markdown}>
-                  <AlertDialogPopUp
-                    deleteText={t("articlePage.deleteDetail")}
-                    apiCall={deleteArticle}
-                  />
+                  {isAuth && (
+                    <AlertDialogPopUp
+                      deleteText={t("articlePage.deleteDetail")}
+                      apiCall={deleteArticle}
+                    />
+                  )}
 
                   <ReactMarkdown
                     components={ChakraUIRenderer()}

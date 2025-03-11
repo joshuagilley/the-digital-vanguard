@@ -233,6 +233,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         (await client.query(
           `UPDATE articles SET ${property} = '${changeText}' WHERE article_id = '${articleId}';`
         ));
+
       client.release();
       if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
       if (!res) reply.code(404).send({ error: "Not found" });
@@ -258,10 +259,15 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       const userId = rows.length > 0 ? rows[0].user_id : uuidv4();
       const userNotFound = rows.length === 0;
       if (userNotFound) {
-        await client.query(
-          `INSERT INTO users (user_id, username, email, picture)
-              VALUES ('${userId}', '${given_name} ${family_name}', '${email}', '${picture}');`
-        );
+        try {
+          await client.query(
+            `INSERT INTO users (user_id, username, email, picture)
+                VALUES ('${userId}', '${given_name} ${family_name}', '${email}', '${picture}');`
+          );
+        } catch (error) {
+          console.log(error);
+          reply.code(404).send({ error: "Not found" });
+        }
       }
       client.release();
 

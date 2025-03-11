@@ -14,8 +14,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { QueryObserverResult } from "@tanstack/react-query";
-import { useAuth } from "hooks/auth";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { OverlayOne } from "utils/component-utils";
@@ -33,24 +32,7 @@ const AddDetailModal = ({ refetch, sortValue }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = useState(<OverlayOne />);
   const [markdownText, setMarkdownText] = useState("");
-  const [isAuth, setIsAuth] = useState<boolean | null>(null);
-
-  const getAuth = async () => {
-    const credential = localStorage.getItem("googleCredential") || "";
-    const r = await fetch(`/api/auth/${id}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer: ${credential}` },
-    });
-    return r;
-  };
-
-  const { data: authData } = useAuth(getAuth, []) as any;
-
-  useEffect(() => {
-    if (isAuth === null && authData) {
-      setIsAuth(authData.status === 200);
-    }
-  });
+  const isAuth = id === localStorage.getItem("authenticatedId");
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target as HTMLInputElement;
