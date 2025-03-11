@@ -9,7 +9,7 @@ describe("Server startup", async () => {
   it("authenticate login", async () => {
     const request = supertest(app.server);
     const response = await request
-      .get(`/api/auth/${process.env.ROOT_USER_ID}`)
+      .get(`/api/auth/${process.env.TEST_USER_ID}`)
       .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`);
     expect(response.statusCode).toBe(200);
   });
@@ -53,7 +53,7 @@ describe("Server startup", async () => {
       tag: "test",
     };
     const response = await request
-      .post(`/api/users/${process.env.ROOT_USER_ID}`)
+      .post(`/api/users/${process.env.TEST_USER_ID}`)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`)
@@ -69,7 +69,7 @@ describe("Server startup", async () => {
     };
     const response = await request
       .post(
-        `/api/users/${process.env.ROOT_USER_ID}/articles/${process.env.TEST_ARTICLE_ID_WITH_DETAILS}`
+        `/api/users/${process.env.TEST_USER_ID}/articles/${process.env.TEST_ARTICLE_ID_WITH_DETAILS}`
       )
       .send(payload)
       .set("Content-Type", "application/json")
@@ -82,7 +82,7 @@ describe("Server startup", async () => {
     const request = supertest(app.server);
     const response = await request
       .delete(
-        `/api/users/${process.env.ROOT_USER_ID}/articles/${process.env.TEST_ARTICLE_ID}`
+        `/api/users/${process.env.TEST_USER_ID}/articles/${process.env.TEST_ARTICLE_ID}`
       )
       .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`);
     expect(response.statusCode).toBe(200);
@@ -92,7 +92,7 @@ describe("Server startup", async () => {
     const request = supertest(app.server);
     const response = await request
       .delete(
-        `/api/users/${process.env.ROOT_USER_ID}/details/${process.env.TEST_DETAIL_ID}`
+        `/api/users/${process.env.TEST_USER_ID}/details/${process.env.TEST_DETAIL_ID}`
       )
       .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`);
     expect(response.statusCode).toBe(200);
@@ -106,7 +106,7 @@ describe("Server startup", async () => {
     };
     const response = await request
       .put(
-        `/api/users/${process.env.ROOT_USER_ID}/articles/${process.env.TEST_ARTICLE_ID}`
+        `/api/users/${process.env.TEST_USER_ID}/articles/${process.env.TEST_ARTICLE_ID}`
       )
       .send(payload)
       .set("Content-Type", "application/json")
