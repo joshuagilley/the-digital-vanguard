@@ -325,7 +325,7 @@ const styles = {
   markdown: {
     margin: "0px 10px 0px 10px",
     padding: "10px",
-    height: "60%",
+    height: "600px",
     overflow: "scroll",
     borderRadius: "0px",
     backgroundColor: "#18181a",
