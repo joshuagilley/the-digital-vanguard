@@ -40,6 +40,7 @@ describe("Server startup", async () => {
       .post(`/api/users/${process.env.TEST_USER_ID}`)
       .send(payload)
       .set("Content-Type", "application/json")
+      .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`)
       .set("Accept", "application/json");
     expect(response.statusCode).toBe(200);
   });
@@ -54,23 +55,24 @@ describe("Server startup", async () => {
       .post(`/api/articles/${process.env.TEST_ARTICLE_ID_WITH_DETAILS}`)
       .send(payload)
       .set("Content-Type", "application/json")
+      .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`)
       .set("Accept", "application/json");
     expect(response.statusCode).toBe(200);
   });
 
   it("delete an article", async () => {
     const request = supertest(app.server);
-    const response = await request.delete(
-      `/api/articles/${process.env.TEST_ARTICLE_ID}`
-    );
+    const response = await request
+      .delete(`/api/articles/${process.env.TEST_ARTICLE_ID}`)
+      .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`);
     expect(response.statusCode).toBe(200);
   });
 
   it("delete a detail", async () => {
     const request = supertest(app.server);
-    const response = await request.delete(
-      `/api/details/${process.env.TEST_DETAIL_ID}`
-    );
+    const response = await request
+      .delete(`/api/details/${process.env.TEST_DETAIL_ID}`)
+      .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`);
     expect(response.statusCode).toBe(200);
   });
 
@@ -84,6 +86,7 @@ describe("Server startup", async () => {
       .put(`/api/articles/${process.env.TEST_ARTICLE_ID}`)
       .send(payload)
       .set("Content-Type", "application/json")
+      .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`)
       .set("Accept", "application/json");
     expect(response.statusCode).toBe(200);
   });

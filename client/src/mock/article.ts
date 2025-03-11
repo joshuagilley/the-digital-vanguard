@@ -19,7 +19,6 @@ export const data = [
     phoneNumber: "(843)259-9681",
     userId: "2cc2d264-020a-4690-be0f-2ad84a729942",
     username: "Joshua Gilley",
-    password: "*****************",
     linkedIn: "https://www.linkedin.com/in/joshuadgilley/",
     github: "https://github.com/TheDigitalVanguard",
   },

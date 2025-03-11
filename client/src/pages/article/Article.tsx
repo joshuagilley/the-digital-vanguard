@@ -37,6 +37,7 @@ import AddDetailModal from "components/add-detail-modal";
 import { useEffect, useState } from "react";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import { AlertComponent } from "utils/component-utils";
+import { useAuth } from "hooks/auth";
 
 const Article = () => {
   const { id, aId } = useParams();
@@ -49,6 +50,24 @@ const Article = () => {
   const [articleName, setArticleName] = useState("");
   const [summary, setSummary] = useState("");
   const [url, setUrl] = useState("");
+  const [isAuth, setIsAuth] = useState<boolean | null>(null);
+
+  const getAuth = async () => {
+    const credential = localStorage.getItem("googleCredential") || "";
+    const r = await fetch(`/api/auth/${id}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer: ${credential}` },
+    });
+    return r;
+  };
+
+  const { data: authData } = useAuth(getAuth, []) as any;
+
+  useEffect(() => {
+    if (isAuth === null && authData) {
+      setIsAuth(authData.status === 200);
+    }
+  });
 
   type Props = {
     articleId: string;
@@ -110,10 +129,14 @@ const Article = () => {
   };
 
   const editArticle = async (changeText: string, property: string) => {
-    const res = await fetch(`/api/articles/${aId}`, {
+    const credential = localStorage.getItem("googleCredential");
+    const res = await fetch(`/api/users/${id}/articles/${aId}`, {
       method: "PUT",
       body: JSON.stringify({ changeText, property }),
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${credential}`,
+        "Content-Type": "application/json",
+      },
     });
     const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
     if (res.status !== 200) {
@@ -129,8 +152,12 @@ const Article = () => {
 
   const deleteArticle = async () => {
     const detailId = data && data[currentPage - 1]?.detailId;
-    const res = await fetch(`/api/details/${detailId}`, {
+    const credential = localStorage.getItem("googleCredential");
+    const res = await fetch(`/api/users/${id}/details/${detailId}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${credential}`,
+      },
     });
     const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
     setCurrentPage(1);
@@ -184,10 +211,20 @@ const Article = () => {
             <Box sx={styles.mainMarkdownSectionWrapper}>
               <Card sx={styles.header}>
                 <CardHeader>
-                  <ArrowLeftIcon
-                    sx={styles.leftArrow}
-                    onClick={() => navigate(`/portfolio/${id}`)}
-                  />
+                  <Flex>
+                    <ArrowLeftIcon
+                      sx={styles.leftArrow}
+                      onClick={() => navigate(`/portfolio/${id}`)}
+                    />
+                    <Spacer />
+                    {isAuth && (
+                      <AddDetailModal
+                        refetch={refetch}
+                        sortValue={hasDetails ? data.length + 1 : 1}
+                      />
+                    )}
+                  </Flex>
+
                   <Editable
                     data-testid="editable-input-name"
                     fontSize="2xl"
@@ -231,17 +268,10 @@ const Article = () => {
               </Card>
               {hasDetails && (
                 <Card sx={styles.markdown}>
-                  <Flex>
-                    <AlertDialogPopUp
-                      deleteText={t("articlePage.deleteDetail")}
-                      apiCall={deleteArticle}
-                    />
-                    <Spacer />
-                    <AddDetailModal
-                      refetch={refetch}
-                      sortValue={hasDetails ? data.length + 1 : 1}
-                    />
-                  </Flex>
+                  <AlertDialogPopUp
+                    deleteText={t("articlePage.deleteDetail")}
+                    apiCall={deleteArticle}
+                  />
 
                   <ReactMarkdown
                     components={ChakraUIRenderer()}

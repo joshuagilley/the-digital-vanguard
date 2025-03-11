@@ -6,6 +6,7 @@ export interface IParams {
 
 export interface IHeaders {
   "h-Custom": string;
+  Authorization: string;
 }
 
 export interface IReply {

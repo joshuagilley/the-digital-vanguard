@@ -14,7 +14,8 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { QueryObserverResult } from "@tanstack/react-query";
-import { ChangeEvent, useState } from "react";
+import { useAuth } from "hooks/auth";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { OverlayOne } from "utils/component-utils";
@@ -26,12 +27,30 @@ type Props = {
 };
 
 const AddDetailModal = ({ refetch, sortValue }: Props) => {
-  const { aId } = useParams();
+  const { id, aId } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = useState(<OverlayOne />);
   const [markdownText, setMarkdownText] = useState("");
+  const [isAuth, setIsAuth] = useState<boolean | null>(null);
+
+  const getAuth = async () => {
+    const credential = localStorage.getItem("googleCredential") || "";
+    const r = await fetch(`/api/auth/${id}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer: ${credential}` },
+    });
+    return r;
+  };
+
+  const { data: authData } = useAuth(getAuth, []) as any;
+
+  useEffect(() => {
+    if (isAuth === null && authData) {
+      setIsAuth(authData.status === 200);
+    }
+  });
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target as HTMLInputElement;
@@ -59,9 +78,11 @@ const AddDetailModal = ({ refetch, sortValue }: Props) => {
 
   const onSubmit = async () => {
     try {
-      const res = await fetch(`/api/articles/${aId}`, {
+      const credential = localStorage.getItem("googleCredential");
+      const res = await fetch(`/api/users/${id}/articles/${aId}`, {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${credential || ""}`,
           Accept: "application/json",
           "Content-Type": "application/json",
         },
@@ -91,11 +112,13 @@ const AddDetailModal = ({ refetch, sortValue }: Props) => {
 
   return (
     <Box data-testid="add-detail-modal">
-      <PlusSquareIcon
-        data-testid={"add-detail"}
-        sx={styles.addDetail}
-        onClick={handleAddDetail}
-      />
+      {isAuth && (
+        <PlusSquareIcon
+          data-testid={"add-detail"}
+          sx={styles.addDetail}
+          onClick={handleAddDetail}
+        />
+      )}
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         {overlay}
         <ModalContent>

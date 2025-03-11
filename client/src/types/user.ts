@@ -5,7 +5,6 @@ export type User = {
   phoneNumber: string;
   userId: string;
   username: string;
-  password: string;
   linkedIn: string;
   github: string;
 };
@@ -48,7 +47,6 @@ export interface PortfolioResponse {
   email: string;
   github: string;
   linkedIn: string;
-  password: string;
   phoneNumber: string;
   tag: string;
   summary: string;

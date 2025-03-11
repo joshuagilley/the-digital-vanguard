@@ -3,7 +3,6 @@ import { PortfolioResponse } from "types/user";
 export const mock: PortfolioResponse[] = [
   {
     username: "Joshua Gilley",
-    password: "**********",
     email: "joshdgilley@gmail.com",
     github: "https://github.com/TheDigitalVanguard",
     date: "2025-03-06T20:24:39.604Z",

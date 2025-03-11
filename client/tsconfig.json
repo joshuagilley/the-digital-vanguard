@@ -23,7 +23,8 @@
       "pages": ["src/pages/*"],
       "utils": ["src/utils/*"],
       "mock": ["src/mock/*"],
-      "public": ["public/*"]
+      "public": ["public/*"],
+      "hooks": ["src/hooks/*"]
     }
   },
   "include": ["src"]

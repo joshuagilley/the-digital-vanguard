@@ -84,9 +84,11 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
       return;
     }
     try {
+      const credential = localStorage.getItem("googleCredential");
       const res = await fetch(`/api/users/${id}`, {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${credential}`,
           Accept: "application/json",
           "Content-Type": "application/json",
         },

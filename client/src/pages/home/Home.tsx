@@ -4,10 +4,13 @@ import {
   AlertIcon,
   AlertTitle,
   Box,
+  Center,
   Select,
+  Stack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
+import GoogleLoginComponent from "pages/google-login";
 import { useNavigate } from "react-router-dom";
 import { User } from "types/user";
 
@@ -36,20 +39,25 @@ const Home = () => {
         </Alert>
       )}
       {!isPending && !isFetching && !error && (
-        <Box sx={styles.dropdown}>
-          <Select
-            placeholder={"</>"}
-            variant="filled"
-            onChange={handleNavigate}
-            sx={styles.select}
-          >
-            {data.map(({ username, userId }: User, index: number) => (
-              <option value={userId} key={index}>
-                {username}
-              </option>
-            ))}
-          </Select>
-        </Box>
+        <Stack sx={styles.auth}>
+          <Box sx={styles.dropdown}>
+            <Select
+              placeholder={"</>"}
+              variant="filled"
+              onChange={handleNavigate}
+              sx={styles.select}
+            >
+              {data.map(({ username, userId }: User, index: number) => (
+                <option value={userId} key={index}>
+                  {username}
+                </option>
+              ))}
+            </Select>
+          </Box>
+          <Center>
+            <GoogleLoginComponent />
+          </Center>
+        </Stack>
       )}
     </Box>
   );
@@ -63,10 +71,13 @@ const styles = {
   },
   dropdown: {
     w: "200px",
-    m: "auto auto 250px auto",
+    m: "auto",
   },
   select: {
     backgroundColor: "brand.300",
+  },
+  auth: {
+    mb: "180px",
   },
 };
 

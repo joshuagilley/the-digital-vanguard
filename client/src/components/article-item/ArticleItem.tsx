@@ -9,12 +9,13 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { isFirstDigitTwo } from "utils/general";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "hooks/auth";
 
 type Props = {
   text: string;
@@ -29,6 +30,24 @@ const ArticleItem = ({ text, tag, userId, articleId, refetch }: Props) => {
   const navigate = useNavigate();
   const toast = useToast();
   const [isHovering, setIsHovering] = useState(false);
+  const [isAuth, setIsAuth] = useState<boolean | null>(null);
+
+  const getAuth = async () => {
+    const credential = localStorage.getItem("googleCredential") || "";
+    const r = await fetch(`/api/auth/${userId}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer: ${credential}` },
+    });
+    return r;
+  };
+
+  const { data: authData } = useAuth(getAuth, []) as any;
+
+  useEffect(() => {
+    if (isAuth === null && authData) {
+      setIsAuth(authData.status === 200);
+    }
+  });
 
   const handleMouseEnter = () => {
     setIsHovering(true);
@@ -40,8 +59,12 @@ const ArticleItem = ({ text, tag, userId, articleId, refetch }: Props) => {
 
   const deleteArticle = async () => {
     try {
-      const res = await fetch(`/api/articles/${articleId}`, {
+      const credential = localStorage.getItem("googleCredential");
+      const res = await fetch(`/api/users/${userId}/articles/${articleId}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${credential}`,
+        },
       });
       if (!isFirstDigitTwo(res.status)) {
         throw new Error(`Got ${res.status} at ${res.url}`);
@@ -71,12 +94,14 @@ const ArticleItem = ({ text, tag, userId, articleId, refetch }: Props) => {
         <Text sx={styles.mainText}>{text}</Text>
       </CardBody>
       <CardFooter p="10px">
-        <Flex>
-          <AlertDialogPopUp
-            deleteText={t("articleItem.deleteArticle")}
-            apiCall={deleteArticle}
-          />
-        </Flex>
+        {isAuth && (
+          <Flex>
+            <AlertDialogPopUp
+              deleteText={t("articleItem.deleteArticle")}
+              apiCall={deleteArticle}
+            />
+          </Flex>
+        )}
         <Spacer />
         <Button
           sx={styles.continue}

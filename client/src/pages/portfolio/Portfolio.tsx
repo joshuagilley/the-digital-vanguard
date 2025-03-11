@@ -12,23 +12,36 @@ import {
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { PhoneIcon, EmailIcon } from "@chakra-ui/icons";
+import { EmailIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
 import ArticleItem from "components/article-item";
 import { useTranslation } from "react-i18next";
 import NewArticleItem from "components/new-article-item";
 import { PortfolioResponse } from "types/user";
+import { useAuth } from "src/hooks/auth";
 
 const Portfolio = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
-  const [isCalling, setIsCalling] = useState(false);
+  // const [isCalling, setIsCalling] = useState(false);
   const [isEmailing, setIsEmailing] = useState(false);
   const [response, setResponse] = useState<PortfolioResponse[]>([]);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  // const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [isAuth, setIsAuth] = useState<boolean | null>(null);
+
+  const getAuth = async () => {
+    const credential = localStorage.getItem("googleCredential") || "";
+    const r = await fetch(`/api/auth/${id}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer: ${credential}` },
+    });
+    return r;
+  };
+
+  const { data: authData } = useAuth(getAuth, [id]);
 
   const { isPending, error, data, isFetching, refetch } = useQuery<
     PortfolioResponse[],
@@ -36,34 +49,40 @@ const Portfolio = () => {
   >({
     queryKey: [],
     queryFn: async () => {
-      const response = await fetch(`/api/users/${id}/articles`);
-      return await response.json();
+      const res = await fetch(`/api/users/${id}/articles`, {});
+      return await res.json();
     },
   });
 
   useEffect(() => {
     if (data && data?.length > 0) {
       setResponse(data);
-      setPhoneNumber(data[0]?.phoneNumber);
+      // setPhoneNumber(data[0]?.phoneNumber);
       setUsername(data[0]?.username);
       setEmail(data[0]?.email);
     }
   }, [data]);
 
-  const handleCall = (phoneNumber: string) => {
-    setIsCalling(true);
-    setTimeout(() => {
-      setIsCalling(false);
-      toast({
-        title: "Calling...",
-        description: `Calling ${phoneNumber}`,
-        status: "info",
-        duration: 3000,
-        isClosable: true,
-      });
-      window.location.href = `tel:${phoneNumber}`;
-    }, 1000);
-  };
+  useEffect(() => {
+    if (isAuth === null && authData) {
+      setIsAuth(authData.status === 200);
+    }
+  });
+
+  // const handleCall = (phoneNumber: string) => {
+  //   setIsCalling(true);
+  //   setTimeout(() => {
+  //     setIsCalling(false);
+  //     toast({
+  //       title: "Calling...",
+  //       description: `Calling ${phoneNumber}`,
+  //       status: "info",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //     window.location.href = `tel:${phoneNumber}`;
+  //   }, 1000);
+  // };
 
   const handleEmail = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -103,24 +122,26 @@ const Portfolio = () => {
               >{`${username}'s ${t("portfolio.portfolio")}`}</Heading>
               <Spacer />
               <Flex>
-                <IconButton
-                  icon={<PhoneIcon />}
-                  aria-label={`${t("portfolio.call")} ${phoneNumber}`}
-                  onClick={() => handleCall(phoneNumber)}
-                  isLoading={isCalling}
-                  colorScheme="whiteAlpha"
-                  data-testid={"phone"}
-                  sx={styles.iconButton}
-                />
-                <IconButton
-                  icon={<EmailIcon />}
-                  aria-label={`${t("portfolio.email")} ${email}`}
-                  onClick={(e) => handleEmail(e, email)}
-                  isLoading={isEmailing}
-                  colorScheme="whiteAlpha"
-                  sx={styles.iconButton}
-                  data-testid={"email"}
-                />
+                {/* <IconButton
+                    icon={<PhoneIcon />}
+                    aria-label={`${t("portfolio.call")} ${phoneNumber}`}
+                    onClick={() => handleCall(phoneNumber)}
+                    isLoading={isCalling}
+                    colorScheme="whiteAlpha"
+                    data-testid={"phone"}
+                    sx={styles.iconButton}
+                  /> */}
+                {isAuth && (
+                  <IconButton
+                    icon={<EmailIcon />}
+                    aria-label={`${t("portfolio.email")} ${email}`}
+                    onClick={(e) => handleEmail(e, email)}
+                    isLoading={isEmailing}
+                    colorScheme="whiteAlpha"
+                    sx={styles.iconButton}
+                    data-testid={"email"}
+                  />
+                )}
               </Flex>
             </Flex>
           </Box>
@@ -128,20 +149,24 @@ const Portfolio = () => {
             {Array.from(response)?.map(
               ({ articleName, articleId, userId, tag }: PortfolioResponse) => {
                 return (
-                  <ArticleItem
-                    text={articleName}
-                    tag={tag}
-                    userId={userId}
-                    articleId={articleId}
-                    refetch={refetch}
-                  />
+                  articleId && (
+                    <ArticleItem
+                      text={articleName}
+                      tag={tag}
+                      userId={userId}
+                      articleId={articleId}
+                      refetch={refetch}
+                    />
+                  )
                 );
               }
             )}
-            <NewArticleItem
-              text={t("portfolio.addArticle")}
-              refetch={refetch}
-            />
+            {isAuth && (
+              <NewArticleItem
+                text={t("portfolio.addArticle")}
+                refetch={refetch}
+              />
+            )}
           </Flex>
         </Box>
       )}
@@ -158,7 +183,7 @@ const styles = {
   },
   articleWrapper: {
     flexWrap: "wrap",
-    justifyContent: "center",
+    justifyContent: "left",
   },
 };
 
