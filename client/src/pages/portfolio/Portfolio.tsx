@@ -56,7 +56,6 @@ const Portfolio = ({ isAuthenticated }: Props) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     email: string
   ) => {
-    console.log("getting here");
     setIsEmailing(true);
     setTimeout(() => {
       setIsEmailing(false);

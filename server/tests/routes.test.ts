@@ -6,6 +6,22 @@ describe("Server startup", async () => {
   const app = await createServer();
   await app.listen({ port: 8080 });
 
+  it("authenticate login", async () => {
+    const request = supertest(app.server);
+    const response = await request
+      .get(`/api/auth/${process.env.ROOT_USER_ID}`)
+      .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`);
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("new user", async () => {
+    const request = supertest(app.server);
+    const response = await request
+      .get(`/api/newuser`)
+      .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`);
+    expect(response.statusCode).toBe(200);
+  });
+
   it("get all users route", async () => {
     const request = supertest(app.server);
     const response = await request.get("/api/users");
@@ -37,7 +53,7 @@ describe("Server startup", async () => {
       tag: "test",
     };
     const response = await request
-      .post(`/api/users/${process.env.TEST_USER_ID}`)
+      .post(`/api/users/${process.env.ROOT_USER_ID}`)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`)
@@ -52,7 +68,9 @@ describe("Server startup", async () => {
       sortValue: 1,
     };
     const response = await request
-      .post(`/api/articles/${process.env.TEST_ARTICLE_ID_WITH_DETAILS}`)
+      .post(
+        `/api/users/${process.env.ROOT_USER_ID}/articles/${process.env.TEST_ARTICLE_ID_WITH_DETAILS}`
+      )
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`)
@@ -63,7 +81,9 @@ describe("Server startup", async () => {
   it("delete an article", async () => {
     const request = supertest(app.server);
     const response = await request
-      .delete(`/api/articles/${process.env.TEST_ARTICLE_ID}`)
+      .delete(
+        `/api/users/${process.env.ROOT_USER_ID}/articles/${process.env.TEST_ARTICLE_ID}`
+      )
       .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`);
     expect(response.statusCode).toBe(200);
   });
@@ -71,7 +91,9 @@ describe("Server startup", async () => {
   it("delete a detail", async () => {
     const request = supertest(app.server);
     const response = await request
-      .delete(`/api/details/${process.env.TEST_DETAIL_ID}`)
+      .delete(
+        `/api/users/${process.env.ROOT_USER_ID}/details/${process.env.TEST_DETAIL_ID}`
+      )
       .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`);
     expect(response.statusCode).toBe(200);
   });
@@ -83,7 +105,9 @@ describe("Server startup", async () => {
       property: "article_name",
     };
     const response = await request
-      .put(`/api/articles/${process.env.TEST_ARTICLE_ID}`)
+      .put(
+        `/api/users/${process.env.ROOT_USER_ID}/articles/${process.env.TEST_ARTICLE_ID}`
+      )
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`)
