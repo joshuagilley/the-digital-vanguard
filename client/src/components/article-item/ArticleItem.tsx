@@ -22,14 +22,23 @@ type Props = {
   userId: string;
   articleId: string;
   refetch: () => Promise<QueryObserverResult<any, Error>>;
+  isAuthenticated?: boolean;
 };
 
-const ArticleItem = ({ text, tag, userId, articleId, refetch }: Props) => {
+const ArticleItem = ({
+  text,
+  tag,
+  userId,
+  articleId,
+  refetch,
+  isAuthenticated,
+}: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toast = useToast();
   const [isHovering, setIsHovering] = useState(false);
-  const isAuth = userId === localStorage.getItem("authenticatedId");
+  const isAuth =
+    isAuthenticated || userId === localStorage.getItem("authenticatedId");
 
   const handleMouseEnter = () => {
     setIsHovering(true);

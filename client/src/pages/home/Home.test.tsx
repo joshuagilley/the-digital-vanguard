@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import {
   QueryClient,
   QueryClientProvider,
@@ -43,9 +44,11 @@ describe("Home Page", () => {
       isFetching: false,
     }));
     render(
-      <QueryClientProvider client={queryClient}>
-        <Home />
-      </QueryClientProvider>
+      <GoogleOAuthProvider clientId={`${process.env.GOOGLE_OAUTH_CLIENTID}`}>
+        <QueryClientProvider client={queryClient}>
+          <Home />
+        </QueryClientProvider>
+      </GoogleOAuthProvider>
     );
     expect(screen.getByTestId("error")).toBeInTheDocument();
   });
@@ -59,9 +62,11 @@ describe("Home Page", () => {
       isFetching: false,
     }));
     render(
-      <QueryClientProvider client={queryClient}>
-        <Home />
-      </QueryClientProvider>
+      <GoogleOAuthProvider clientId={`${process.env.GOOGLE_OAUTH_CLIENTID}`}>
+        <QueryClientProvider client={queryClient}>
+          <Home />
+        </QueryClientProvider>
+      </GoogleOAuthProvider>
     );
     expect(screen.getByTestId("home-page")).toBeInTheDocument();
   });

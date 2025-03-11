@@ -19,7 +19,10 @@ import { useTranslation } from "react-i18next";
 import NewArticleItem from "components/new-article-item";
 import { PortfolioResponse } from "types/user";
 
-const Portfolio = () => {
+interface Props {
+  isAuthenticated: boolean;
+}
+const Portfolio = ({ isAuthenticated }: Props) => {
   const { id } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
@@ -27,7 +30,8 @@ const Portfolio = () => {
   const [response, setResponse] = useState<PortfolioResponse[]>([]);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const isAuth = id === localStorage.getItem("authenticatedId");
+  const isAuth =
+    isAuthenticated || id === localStorage.getItem("authenticatedId");
   // even if this is manipulated on the fronted, there is a check in the backend on the google credential before anychanges can be made. Research vulnerabilities of change the token and if we need to do something about that.
   const { isPending, error, data, isFetching, refetch } = useQuery<
     PortfolioResponse[],
@@ -43,7 +47,6 @@ const Portfolio = () => {
   useEffect(() => {
     if (data && data?.length > 0) {
       setResponse(data);
-      // setPhoneNumber(data[0]?.phoneNumber);
       setUsername(data[0]?.username);
       setEmail(data[0]?.email);
     }
@@ -53,6 +56,7 @@ const Portfolio = () => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     email: string
   ) => {
+    console.log("getting here");
     setIsEmailing(true);
     setTimeout(() => {
       setIsEmailing(false);

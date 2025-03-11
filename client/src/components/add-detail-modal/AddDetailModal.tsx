@@ -23,16 +23,18 @@ import { isFirstDigitTwo, readFileAsync } from "utils/general";
 type Props = {
   refetch: () => Promise<QueryObserverResult<any, Error>>;
   sortValue: number;
+  isAuthenticated?: boolean;
 };
 
-const AddDetailModal = ({ refetch, sortValue }: Props) => {
+const AddDetailModal = ({ refetch, sortValue, isAuthenticated }: Props) => {
   const { id, aId } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = useState(<OverlayOne />);
   const [markdownText, setMarkdownText] = useState("");
-  const isAuth = id === localStorage.getItem("authenticatedId");
+  const isAuth =
+    isAuthenticated || id === localStorage.getItem("authenticatedId");
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target as HTMLInputElement;

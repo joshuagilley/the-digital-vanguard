@@ -16,7 +16,7 @@ const queryClient = new QueryClient({
     },
   },
 });
-
+vi.mock("./Porfolio");
 vi.mock("react-i18next", () => ({
   useTranslation: () => {
     return {
@@ -66,17 +66,11 @@ const mockImplementation = (
 };
 
 describe("Portfolio Page", () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-  afterEach(() => {
-    vi.useRealTimers();
-  });
   it("renders error page", () => {
     mockImplementation(false, true, false);
     render(
       <QueryClientProvider client={queryClient}>
-        <Portfolio />
+        <Portfolio isAuthenticated />
       </QueryClientProvider>
     );
     expect(screen.getByTestId("error")).toBeInTheDocument();
@@ -87,42 +81,23 @@ describe("Portfolio Page", () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Portfolio />
+        <Portfolio isAuthenticated />
       </QueryClientProvider>
     );
     expect(screen.getByTestId("portfolio-page")).toBeInTheDocument();
   });
 
-  it("handle call", () => {
-    const callback = vi.fn();
+  it("should trigger email process and reset after timeout", async () => {
     mockImplementation(false, null, false, []);
     render(
       <QueryClientProvider client={queryClient}>
-        <Portfolio />
-      </QueryClientProvider>
-    );
-    fireEvent.click(screen.getByTestId("phone"));
-    vi.advanceTimersByTime(1000);
-    waitFor(() => {
-      expect(callback).toHaveBeenCalled();
-      expect(screen.getByText("Calling...")).toBeInTheDocument();
-    });
-  });
-
-  it("handle email", async () => {
-    vi.spyOn(console, "warn");
-    const callback = vi.fn();
-    mockImplementation(false, null, false, []);
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Portfolio />
+        <Portfolio isAuthenticated />
       </QueryClientProvider>
     );
     fireEvent.click(screen.getByTestId("email"));
-    vi.advanceTimersByTime(1000);
-    waitFor(() => {
-      expect(callback).toHaveBeenCalled();
-      expect(screen.getAllByText("Emailing")).toBeVisible();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("email")).toBeDisabled();
     });
   });
 });

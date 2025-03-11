@@ -38,7 +38,10 @@ import { useEffect, useState } from "react";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import { AlertComponent } from "utils/component-utils";
 
-const Article = () => {
+interface Props {
+  isAuthenticated?: boolean;
+}
+const Article = ({ isAuthenticated }: Props) => {
   const { id, aId } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
@@ -47,7 +50,8 @@ const Article = () => {
   const [articleName, setArticleName] = useState("");
   const [summary, setSummary] = useState("");
   const [url, setUrl] = useState("");
-  const isAuth = id === localStorage.getItem("authenticatedId");
+  const isAuth =
+    isAuthenticated || id === localStorage.getItem("authenticatedId");
 
   type Props = {
     articleId: string;

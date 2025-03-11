@@ -78,7 +78,7 @@ describe("Articles Page", () => {
     mockImplementation(false, true, false);
     render(
       <QueryClientProvider client={queryClient}>
-        <Article />
+        <Article isAuthenticated />
       </QueryClientProvider>
     );
     expect(screen.getByTestId("error")).toBeInTheDocument();
@@ -88,7 +88,7 @@ describe("Articles Page", () => {
     mockImplementation(false, null, false);
     render(
       <QueryClientProvider client={queryClient}>
-        <Article />
+        <Article isAuthenticated />
       </QueryClientProvider>
     );
     expect(screen.getByTestId("article-page")).toBeInTheDocument();
@@ -98,7 +98,7 @@ describe("Articles Page", () => {
     mockImplementation(false, null, false);
     render(
       <QueryClientProvider client={queryClient}>
-        <Article />
+        <Article isAuthenticated />
       </QueryClientProvider>
     );
 
@@ -117,7 +117,7 @@ describe("Articles Page", () => {
   it("test editable inputs", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <Article />
+        <Article isAuthenticated />
       </QueryClientProvider>
     );
 

@@ -29,13 +29,25 @@ describe("Add Detail Modal", () => {
   );
 
   it("renders Article Item with correct text", () => {
-    render(<AddDetailModal sortValue={1} refetch={result.current.refetch} />);
+    render(
+      <AddDetailModal
+        sortValue={1}
+        refetch={result.current.refetch}
+        isAuthenticated
+      />
+    );
     const textElement = screen.getByTestId("add-detail-modal");
     expect(textElement).toBeInTheDocument();
   });
 
   it("test handleAddDetail", async () => {
-    render(<AddDetailModal sortValue={1} refetch={result.current.refetch} />);
+    render(
+      <AddDetailModal
+        sortValue={1}
+        refetch={result.current.refetch}
+        isAuthenticated
+      />
+    );
 
     fireEvent.click(screen.getAllByTestId("add-detail")[0]);
 
@@ -46,7 +58,13 @@ describe("Add Detail Modal", () => {
 
   it("test onSubmit", async () => {
     vi.mock("utils/general");
-    render(<AddDetailModal sortValue={1} refetch={result.current.refetch} />);
+    render(
+      <AddDetailModal
+        sortValue={1}
+        refetch={result.current.refetch}
+        isAuthenticated
+      />
+    );
 
     fireEvent.click(screen.getByTestId("add-detail"));
 
@@ -61,7 +79,13 @@ describe("Add Detail Modal", () => {
 
   it("simulates file selection", async () => {
     vi.mock("utils/general");
-    render(<AddDetailModal sortValue={1} refetch={result.current.refetch} />);
+    render(
+      <AddDetailModal
+        sortValue={1}
+        refetch={result.current.refetch}
+        isAuthenticated
+      />
+    );
     fireEvent.click(screen.getByTestId("add-detail"));
     const fileInput = screen.getByTestId("file-upload") as HTMLInputElement;
     const mockFile = new File(["markdown content"], "file.md", {
@@ -76,7 +100,13 @@ describe("Add Detail Modal", () => {
 
   it("trigger error by uploading non markdown file", async () => {
     vi.mock("utils/general");
-    render(<AddDetailModal sortValue={1} refetch={result.current.refetch} />);
+    render(
+      <AddDetailModal
+        sortValue={1}
+        refetch={result.current.refetch}
+        isAuthenticated
+      />
+    );
     fireEvent.click(screen.getByTestId("add-detail"));
     const fileInput = screen.getByTestId("file-upload") as HTMLInputElement;
     const mockFile = new File(["markdown content"], "file.txt", {
