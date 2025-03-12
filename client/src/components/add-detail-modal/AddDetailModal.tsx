@@ -70,7 +70,10 @@ const AddDetailModal = ({ refetch, sortValue, isAuthenticated }: Props) => {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ markdownText, sortValue }),
+        body: JSON.stringify({
+          markdownText: markdownText.replace(/'/g, "''"),
+          sortValue,
+        }),
       });
       if (!isFirstDigitTwo(res.status)) {
         throw new Error(`Got ${res.status} at ${res.url}`);
