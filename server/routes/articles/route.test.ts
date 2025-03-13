@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import supertest from "supertest";
-import createServer from "../server";
+import createServer from "../../server";
 
 describe("Server startup", async () => {
   const app = await createServer();
