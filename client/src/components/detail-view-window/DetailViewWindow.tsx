@@ -12,24 +12,12 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import { t } from "i18next";
 import ReactMarkdown from "react-markdown";
-
-interface Data {
-  articleId: string;
-  articleName: string;
-  date: string;
-  detailId: string;
-  markdown: string;
-  tag: string;
-  sortValue: number;
-  summary: string;
-  url: string;
-  userId: string;
-}
+import { ArticleData } from "types/articles";
 
 interface Props {
   hasDetails: boolean;
   isAuth: boolean;
-  data: Data[];
+  data: ArticleData[];
   id: string;
   refetchCallback: () => void;
 }

@@ -17,25 +17,15 @@ import AddDetailModal from "components/add-detail-modal";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-interface Data {
-  articleId: string;
-  articleName: string;
-  detailId: string;
-  markdown: string;
-  tag: string;
-  sortValue: number;
-  summary: string;
-  url: string;
-  userId: string;
-}
+import { ArticleData } from "types/articles";
+import { editArticle } from "utils/general";
 
 interface Props {
   id: string;
   aId: string;
   isAuth: boolean;
   hasDetails: boolean;
-  data: Data[];
+  data: ArticleData[];
   refetch: () => void;
 }
 
@@ -60,36 +50,23 @@ const ArticleHeader = ({
     }
   }, [data]);
 
-  const editArticle = async (changeText: string, property: string) => {
-    const credential = localStorage.getItem("googleCredential");
-    const res = await fetch(`/api/users/${id}/articles/${aId}`, {
-      method: "PUT",
-      body: JSON.stringify({ changeText, property }),
-      headers: {
-        Authorization: `Bearer ${credential}`,
-        "Content-Type": "application/json",
-      },
+  const handleToast = (issue: string) => {
+    toast({
+      title: "Error",
+      description: issue,
+      status: "error",
+      isClosable: true,
+      position: "top",
     });
-    const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
-    if (res.status !== 200) {
-      toast({
-        title: "Error",
-        description: issue,
-        status: "error",
-        isClosable: true,
-        position: "top",
-      });
-    } else {
-      refetch();
-    }
   };
+
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLDivElement>,
     value: string,
     property: string
   ) => {
     if (event.key === "Enter") {
-      await editArticle(value, property);
+      await editArticle(value, property, id, aId, handleToast, refetch);
     }
   };
 
@@ -100,6 +77,7 @@ const ArticleHeader = ({
       setArticleName(str);
     }
   };
+
   return (
     <Box sx={styles.mainMarkdownSectionWrapper}>
       <Card sx={styles.header}>

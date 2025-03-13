@@ -21,12 +21,14 @@ import { useEffect, useState } from "react";
 import { AlertComponent } from "utils/component-utils";
 import DetailViewWindow from "components/detail-view-window";
 import ArticleHeader from "components/article-header";
+import { ArticleData } from "types/articles";
+import { editArticle } from "utils/general";
 
 interface Props {
   isAuthenticated?: boolean;
 }
 const Article = ({ isAuthenticated }: Props) => {
-  const { id, aId } = useParams();
+  const { id = "", aId = "" } = useParams();
   const toast = useToast();
   const [showDemo, setShowDemo] = useState(false);
   const [hasDetails, setHasDetails] = useState(false);
@@ -36,21 +38,8 @@ const Article = ({ isAuthenticated }: Props) => {
   const isAuth =
     isAuthenticated || id === localStorage.getItem("authenticatedId");
 
-  type Props = {
-    articleId: string;
-    articleName: string;
-    date: string;
-    detailId: string;
-    markdown: string;
-    tag: string;
-    sortValue: number;
-    summary: string;
-    url: string;
-    userId: string;
-  };
-
   const { isPending, error, data, isFetching, refetch } = useQuery<
-    Props[],
+    ArticleData[],
     Error
   >({
     queryKey: [],
@@ -70,28 +59,14 @@ const Article = ({ isAuthenticated }: Props) => {
     }
   }, [data]);
 
-  const editArticle = async (changeText: string, property: string) => {
-    const credential = localStorage.getItem("googleCredential");
-    const res = await fetch(`/api/users/${id}/articles/${aId}`, {
-      method: "PUT",
-      body: JSON.stringify({ changeText, property }),
-      headers: {
-        Authorization: `Bearer ${credential}`,
-        "Content-Type": "application/json",
-      },
+  const handleToast = (issue: string) => {
+    toast({
+      title: "Error",
+      description: issue,
+      status: "error",
+      isClosable: true,
+      position: "top",
     });
-    const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
-    if (res.status !== 200) {
-      toast({
-        title: "Error",
-        description: issue,
-        status: "error",
-        isClosable: true,
-        position: "top",
-      });
-    } else {
-      refetch();
-    }
   };
 
   const invalidUrl = (incomingUrl: string) => {
@@ -114,7 +89,7 @@ const Article = ({ isAuthenticated }: Props) => {
       if (invalidUrl(newUrl)) {
         setNewUrl("");
       } else {
-        await editArticle(newUrl, "url");
+        await editArticle(newUrl, "url", id, aId, handleToast, () => refetch());
       }
       setEditingUrl(false);
     }
@@ -182,8 +157,8 @@ const Article = ({ isAuthenticated }: Props) => {
           </Box>
           {!showDemo && (
             <ArticleHeader
-              id={id || ""}
-              aId={aId || ""}
+              id={id}
+              aId={aId}
               isAuth={isAuth}
               hasDetails={hasDetails}
               data={data}
@@ -193,7 +168,7 @@ const Article = ({ isAuthenticated }: Props) => {
           <DetailViewWindow
             hasDetails={hasDetails}
             isAuth={isAuth}
-            id={id || ""}
+            id={id}
             data={data}
             refetchCallback={() => refetch()}
           />
