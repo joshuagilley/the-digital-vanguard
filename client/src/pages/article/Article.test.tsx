@@ -103,18 +103,39 @@ describe("Articles Page", () => {
     );
 
     const nameInput = screen.getByTestId("editable-input-name").children[1];
-    await userEvent.type(nameInput, "new name{enter}");
     const summaryInput = screen.getByTestId("editable-input-summary")
       .children[1];
+    await userEvent.type(nameInput, "new name{enter}");
     await userEvent.type(summaryInput, "new summary{enter}");
-
     await waitFor(() => {
       expect(screen.getByText("new name")).toBeInTheDocument();
       expect(screen.getByText("new summary")).toBeInTheDocument();
     });
   });
 
-  it("test editable inputs", async () => {
+  it("test new url", async () => {
+    mockImplementation(false, null, false);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Article isAuthenticated />
+      </QueryClientProvider>
+    );
+
+    fireEvent.click(screen.getByTestId("show-demo"));
+    fireEvent.click(screen.getByTestId("edit-url-icon"));
+    const urlInput = screen.getByTestId("editable-url").children[1];
+
+    await userEvent.type(
+      urlInput,
+      "https://www.youtube.com/watch?v=GOIYREEANEM{enter}"
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("edit-url-icon")).toBeInTheDocument();
+    });
+  });
+
+  it("article delete", async () => {
     render(
       <QueryClientProvider client={queryClient}>
         <Article isAuthenticated />

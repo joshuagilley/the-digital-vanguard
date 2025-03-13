@@ -17,7 +17,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { ArrowLeftIcon } from "@chakra-ui/icons";
+import { ArrowLeftIcon, EditIcon } from "@chakra-ui/icons";
 import ReactPlayer from "react-player";
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
@@ -50,6 +50,8 @@ const Article = ({ isAuthenticated }: Props) => {
   const [articleName, setArticleName] = useState("");
   const [summary, setSummary] = useState("");
   const [url, setUrl] = useState("");
+  const [editingUrl, setEditingUrl] = useState(false);
+  const [newUrl, setNewUrl] = useState("");
   const isAuth =
     isAuthenticated || id === localStorage.getItem("authenticatedId");
 
@@ -136,6 +138,32 @@ const Article = ({ isAuthenticated }: Props) => {
     }
   };
 
+  const invalidUrl = (incomingUrl: string) => {
+    const youtubeRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/;
+    if (!youtubeRegex.test(incomingUrl)) {
+      toast({
+        title: "Error",
+        description: "Invalid Youtube URL.",
+        status: "error",
+        isClosable: true,
+        position: "top",
+      });
+    }
+
+    return !youtubeRegex.test(incomingUrl);
+  };
+
+  const editUrl = async (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      if (invalidUrl(newUrl)) {
+        setNewUrl("");
+      } else {
+        await editArticle(newUrl, "url");
+      }
+      setEditingUrl(false);
+    }
+  };
+
   const deleteArticle = async () => {
     const detailId = data && data[currentPage - 1]?.detailId;
     const credential = localStorage.getItem("googleCredential");
@@ -167,15 +195,43 @@ const Article = ({ isAuthenticated }: Props) => {
         <Box data-test="article">
           <Box m="10px">
             <Flex>
-              <FormControl sx={styles.showDemo}>
-                <FormLabel htmlFor="email-alerts" mb="0">
-                  {t("articlePage.showDemo")}
-                </FormLabel>
-                <Switch
-                  id="email-alerts"
-                  onChange={() => setShowDemo(!showDemo)}
-                />
-              </FormControl>
+              <Flex>
+                <FormControl sx={styles.showDemo}>
+                  <FormLabel htmlFor="email-alerts" mb="0">
+                    {t("articlePage.showDemo")}
+                  </FormLabel>
+                  <Switch
+                    id="email-alerts"
+                    data-testid="show-demo"
+                    onChange={() => setShowDemo(!showDemo)}
+                  />
+                </FormControl>
+                {showDemo && (
+                  <Box>
+                    {!editingUrl && (
+                      <EditIcon
+                        data-testid="edit-url-icon"
+                        sx={styles.editUrlIcon}
+                        onClick={() => setEditingUrl(true)}
+                      />
+                    )}
+                    {editingUrl && (
+                      <Editable
+                        data-testid="editable-url"
+                        sx={styles.editableUrl}
+                        value={newUrl === "" ? url : newUrl}
+                        isDisabled={!isAuth}
+                        onKeyDown={(e) => editUrl(e)}
+                        onChange={(e) => setNewUrl(e)}
+                        startWithEditView
+                      >
+                        <EditablePreview />
+                        <EditableInput />
+                      </Editable>
+                    )}
+                  </Box>
+                )}
+              </Flex>
               <Spacer />
               <Text sx={styles.favoriteEditor}>
                 <Link href="https://stackedit.io/app#" target="_blank">
@@ -184,14 +240,12 @@ const Article = ({ isAuthenticated }: Props) => {
               </Text>
             </Flex>
             {showDemo && (
-              <Box maxW={"100%"}>
-                <ReactPlayer
-                  width="100%"
-                  height="600px"
-                  url={url}
-                  style={styles.url}
-                />
-              </Box>
+              <ReactPlayer
+                width="80%"
+                height="60vh"
+                url={url}
+                style={styles.url}
+              />
             )}
           </Box>
           {!showDemo && (
@@ -336,6 +390,18 @@ const styles = {
   favoriteEditor: {
     w: "250px",
     color: "brand.200",
+  },
+  editUrlIcon: {
+    m: "10px",
+    color: "brand.300",
+    _hover: { cursor: "pointer", color: "brand.200" },
+  },
+  editableUrl: {
+    fontSize: "sm",
+    fontWeight: "bold",
+    color: "brand.300",
+    ml: "10px",
+    w: "400px",
   },
   showDemo: {
     display: "flex",
