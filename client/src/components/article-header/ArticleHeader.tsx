@@ -37,7 +37,6 @@ const ArticleHeader = ({
   data,
   refetch,
 }: Props) => {
-  console.log(data);
   const toast = useToast();
   const navigate = useNavigate();
   const [articleName, setArticleName] = useState("");

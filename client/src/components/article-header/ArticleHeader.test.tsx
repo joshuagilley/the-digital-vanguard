@@ -45,7 +45,7 @@ it("test editable inputs", async () => {
         isAuth={true}
         hasDetails={true}
         data={headerData}
-        refetch={() => console.log("refetching")}
+        refetch={() => {}}
       />
     </QueryClientProvider>
   );

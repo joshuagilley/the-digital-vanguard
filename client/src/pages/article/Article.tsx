@@ -156,22 +156,26 @@ const Article = ({ isAuthenticated }: Props) => {
             )}
           </Box>
           {!showDemo && (
-            <ArticleHeader
-              id={id}
-              aId={aId}
-              isAuth={isAuth}
-              hasDetails={hasDetails}
-              data={data}
-              refetch={() => refetch()}
-            />
+            <Box>
+              <ArticleHeader
+                id={id}
+                aId={aId}
+                isAuth={isAuth}
+                hasDetails={hasDetails}
+                data={data}
+                refetch={() => refetch()}
+              />
+              {hasDetails && (
+                <DetailViewWindow
+                  isAuth={isAuth}
+                  id={id}
+                  aid={aId}
+                  data={data}
+                  refetchCallback={() => refetch()}
+                />
+              )}
+            </Box>
           )}
-          <DetailViewWindow
-            hasDetails={hasDetails}
-            isAuth={isAuth}
-            id={id}
-            data={data}
-            refetchCallback={() => refetch()}
-          />
         </Box>
       )}
     </Box>

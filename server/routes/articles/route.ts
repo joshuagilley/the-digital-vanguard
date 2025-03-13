@@ -236,6 +236,70 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     },
   });
 
+  fastify.put("/api/users/:id/articles/:aid/detail-sort", {
+    handler: async (
+      request: FastifyRequest<{
+        Params: IParams;
+        Body: { sortValue: number };
+      }>,
+      reply
+    ) => {
+      const { id: userId, aid: articleId } = request.params;
+      const { sortValue } = request.body;
+      const credential = request.headers.authorization?.split(" ")[1] || "";
+      const client = await fastify.pg.connect();
+      const authenticatedUser = await validUserCheck(
+        client,
+        credential,
+        userId
+      );
+      try {
+        if (!authenticatedUser) throw Error("Unauthorized");
+        const res = await client.query(
+          ` UPDATE details
+            SET sort_value = sort_value - 1
+            WHERE article_id = '${articleId}' AND sort_value > ${sortValue};`
+        );
+        reply.code(200).send(JSON.stringify(res));
+      } catch (error) {
+        if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
+        else reply.code(404).send({ error: "Not found" });
+      }
+      client.release();
+    },
+  });
+
+  fastify.put("/api/users/:id/articles/:aid/details/:did", {
+    handler: async (
+      request: FastifyRequest<{
+        Params: IParams;
+        Body: { changeValue: string; property: string; sortValue: number };
+      }>,
+      reply
+    ) => {
+      const { id: userId, aid: articleId, did: detailId } = request.params;
+      const { changeValue, property, sortValue } = request.body;
+      const credential = request.headers.authorization?.split(" ")[1] || "";
+      const client = await fastify.pg.connect();
+      const authenticatedUser = await validUserCheck(
+        client,
+        credential,
+        userId
+      );
+      try {
+        if (!authenticatedUser) throw Error("Unauthorized");
+        const res = await client.query(
+          `UPDATE details SET ${property} = '${changeValue}' WHERE article_id = '${articleId}' AND detail_id = '${detailId}' AND sort_value = ${sortValue};`
+        );
+        reply.code(200).send(JSON.stringify(res));
+      } catch (error) {
+        if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
+        else reply.code(404).send({ error: "Not found" });
+      }
+      client.release();
+    },
+  });
+
   fastify.get("/api/newuser", {
     handler: async (
       request: FastifyRequest<{

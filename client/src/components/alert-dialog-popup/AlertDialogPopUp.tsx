@@ -74,7 +74,6 @@ export default AlertDialogPopUp;
 const styles = {
   deleteFile: {
     cursor: "pointer",
-    m: "10px 0px 0px 10px",
     color: "brand.300",
     _hover: {
       color: "brand.200",

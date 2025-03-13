@@ -74,5 +74,10 @@
     "summary": "Summary",
     "submit": "Submit",
     "urlPlaceholder": "Video of your project"
+  },
+  "replaceDetailModal": {
+    "replaceDetail": "Replace Detail",
+    "uploadMarkdown": "Upload Markdown File",
+    "submit": "Submit"
   }
 }

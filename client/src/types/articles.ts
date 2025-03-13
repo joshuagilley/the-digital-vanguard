@@ -1,7 +1,7 @@
 export interface ArticleData {
   articleId: string;
   articleName: string;
-  date: string;
+  date?: string;
   detailId: string;
   markdown: string;
   tag: string;

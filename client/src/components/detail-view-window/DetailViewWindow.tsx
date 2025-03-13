@@ -10,23 +10,24 @@ import {
 import { Box, Card, Flex, useToast } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import AlertDialogPopUp from "components/alert-dialog-popup";
+import ReplaceDetailModal from "components/replace-detail-modal";
 import { t } from "i18next";
 import ReactMarkdown from "react-markdown";
 import { ArticleData } from "types/articles";
 
 interface Props {
-  hasDetails: boolean;
   isAuth: boolean;
   data: ArticleData[];
   id: string;
+  aid: string;
   refetchCallback: () => void;
 }
 
 const DetailViewWindow = ({
   data,
-  hasDetails,
   isAuth,
   id,
+  aid,
   refetchCallback,
 }: Props) => {
   const toast = useToast();
@@ -34,6 +35,31 @@ const DetailViewWindow = ({
     pagesCount: data?.length,
     initialState: { currentPage: 1 },
   });
+
+  const sortDetails = async () => {
+    const credential = localStorage.getItem("googleCredential");
+    try {
+      await fetch(`/api/users/${id}/articles/${aid}/detail-sort`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${credential}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sortValue: currentPage,
+        }),
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: JSON.stringify(error),
+        status: "error",
+        isClosable: true,
+        position: "top",
+      });
+    }
+  };
 
   const deleteArticle = async () => {
     const detailId = data && data[currentPage - 1]?.detailId;
@@ -44,6 +70,7 @@ const DetailViewWindow = ({
         Authorization: `Bearer ${credential}`,
       },
     });
+    await sortDetails();
     const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
     if (res.status !== 200) {
       toast({
@@ -61,52 +88,57 @@ const DetailViewWindow = ({
 
   return (
     <Box>
-      {hasDetails && (
-        <Card sx={styles.markdown}>
+      <Card sx={styles.markdown}>
+        <Flex>
           {isAuth && (
             <AlertDialogPopUp
               deleteText={t("articlePage.deleteDetail")}
               apiCall={deleteArticle}
             />
           )}
-          <ReactMarkdown
-            components={ChakraUIRenderer()}
-            children={data[currentPage - 1].markdown}
-            skipHtml
-          />
-        </Card>
-      )}
+          {isAuth && (
+            <ReplaceDetailModal
+              refetch={refetchCallback}
+              sortValue={currentPage}
+              detailId={data[currentPage - 1].detailId}
+            />
+          )}
+        </Flex>
+        <ReactMarkdown
+          components={ChakraUIRenderer()}
+          children={data[currentPage - 1].markdown}
+          skipHtml
+        />
+      </Card>
       <Flex sx={styles.pagination}>
-        {hasDetails && (
-          <Pagination
-            pagesCount={pagesCount}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          >
-            <PaginationContainer>
-              <PaginationPrevious sx={styles.paginationPrevious}>
-                {t("articleItem.previous")}
-              </PaginationPrevious>
-              <PaginationPageGroup>
-                {pages.map((page: number) => (
-                  <PaginationPage
-                    key={`pagination_page_${page}`}
-                    page={page}
-                    sx={styles.paginationPage}
-                    _hover={styles.paginationPageHover}
-                    _current={{
-                      ...styles.paginationCurrent,
-                      _hover: styles.paginationPageHover,
-                    }}
-                  />
-                ))}
-              </PaginationPageGroup>
-              <PaginationNext sx={styles.paginationNext}>
-                {t("articleItem.next")}
-              </PaginationNext>
-            </PaginationContainer>
-          </Pagination>
-        )}
+        <Pagination
+          pagesCount={pagesCount}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        >
+          <PaginationContainer>
+            <PaginationPrevious sx={styles.paginationPrevious}>
+              {t("articleItem.previous")}
+            </PaginationPrevious>
+            <PaginationPageGroup>
+              {pages.map((page: number) => (
+                <PaginationPage
+                  key={`pagination_page_${page}`}
+                  page={page}
+                  sx={styles.paginationPage}
+                  _hover={styles.paginationPageHover}
+                  _current={{
+                    ...styles.paginationCurrent,
+                    _hover: styles.paginationPageHover,
+                  }}
+                />
+              ))}
+            </PaginationPageGroup>
+            <PaginationNext sx={styles.paginationNext}>
+              {t("articleItem.next")}
+            </PaginationNext>
+          </PaginationContainer>
+        </Pagination>
       </Flex>
     </Box>
   );
