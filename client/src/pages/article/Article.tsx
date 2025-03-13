@@ -1,10 +1,5 @@
 import {
   Box,
-  Stack,
-  Card,
-  CardBody,
-  CardHeader,
-  StackDivider,
   Flex,
   Spacer,
   FormControl,
@@ -17,38 +12,24 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { ArrowLeftIcon, EditIcon } from "@chakra-ui/icons";
+import { EditIcon } from "@chakra-ui/icons";
 import ReactPlayer from "react-player";
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
-import ReactMarkdown from "react-markdown";
-import {
-  Pagination,
-  usePagination,
-  PaginationNext,
-  PaginationPage,
-  PaginationPrevious,
-  PaginationContainer,
-  PaginationPageGroup,
-} from "@ajna/pagination";
-import AddDetailModal from "components/add-detail-modal";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import AlertDialogPopUp from "components/alert-dialog-popup";
 import { AlertComponent } from "utils/component-utils";
+import DetailViewWindow from "components/detail-view-window";
+import ArticleHeader from "components/article-header";
 
 interface Props {
   isAuthenticated?: boolean;
 }
 const Article = ({ isAuthenticated }: Props) => {
   const { id, aId } = useParams();
-  const navigate = useNavigate();
   const toast = useToast();
   const [showDemo, setShowDemo] = useState(false);
   const [hasDetails, setHasDetails] = useState(false);
-  const [articleName, setArticleName] = useState("");
-  const [summary, setSummary] = useState("");
   const [url, setUrl] = useState("");
   const [editingUrl, setEditingUrl] = useState(false);
   const [newUrl, setNewUrl] = useState("");
@@ -86,33 +67,8 @@ const Article = ({ isAuthenticated }: Props) => {
       );
       setHasDetails(hasD !== undefined);
       setUrl(data[0]?.url);
-      setArticleName(data[0]?.articleName);
-      setSummary(data[0]?.summary);
     }
   }, [data]);
-
-  const { currentPage, setCurrentPage, pagesCount, pages } = usePagination({
-    pagesCount: data?.length,
-    initialState: { currentPage: 1 },
-  });
-
-  const handleKeyDown = async (
-    event: React.KeyboardEvent<HTMLDivElement>,
-    value: string,
-    property: string
-  ) => {
-    if (event.key === "Enter") {
-      await editArticle(value, property);
-    }
-  };
-
-  const handleChange = (str: string, isSummary: boolean) => {
-    if (isSummary) {
-      setSummary(str);
-    } else {
-      setArticleName(str);
-    }
-  };
 
   const editArticle = async (changeText: string, property: string) => {
     const credential = localStorage.getItem("googleCredential");
@@ -161,30 +117,6 @@ const Article = ({ isAuthenticated }: Props) => {
         await editArticle(newUrl, "url");
       }
       setEditingUrl(false);
-    }
-  };
-
-  const deleteArticle = async () => {
-    const detailId = data && data[currentPage - 1]?.detailId;
-    const credential = localStorage.getItem("googleCredential");
-    const res = await fetch(`/api/users/${id}/details/${detailId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${credential}`,
-      },
-    });
-    const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
-    if (res.status !== 200) {
-      toast({
-        title: "Error",
-        description: issue,
-        status: "error",
-        isClosable: true,
-        position: "top",
-      });
-    } else {
-      setCurrentPage(1);
-      refetch();
     }
   };
 
@@ -249,112 +181,22 @@ const Article = ({ isAuthenticated }: Props) => {
             )}
           </Box>
           {!showDemo && (
-            <Box sx={styles.mainMarkdownSectionWrapper}>
-              <Card sx={styles.header}>
-                <CardHeader>
-                  <Flex>
-                    <ArrowLeftIcon
-                      sx={styles.leftArrow}
-                      onClick={() => navigate(`/portfolio/${id}`)}
-                    />
-                    <Spacer />
-                    {isAuth && (
-                      <AddDetailModal
-                        refetch={refetch}
-                        sortValue={hasDetails ? data.length + 1 : 1}
-                      />
-                    )}
-                  </Flex>
-
-                  <Editable
-                    data-testid="editable-input-name"
-                    fontSize="2xl"
-                    fontWeight="bold"
-                    color="brand.300"
-                    value={articleName}
-                    isDisabled={!isAuth}
-                    onKeyDown={(e) =>
-                      handleKeyDown(
-                        e,
-                        articleName,
-                        t("articlePage.articleName")
-                      )
-                    }
-                    onChange={(e) => handleChange(e, false)}
-                  >
-                    <EditablePreview />
-                    <EditableInput />
-                  </Editable>
-                </CardHeader>
-                <CardBody>
-                  <Stack divider={<StackDivider />} spacing="4">
-                    <Editable
-                      data-testid="editable-input-summary"
-                      fontSize="xs"
-                      fontWeight="none"
-                      isDisabled={!isAuth}
-                      value={summary}
-                      onKeyDown={(e) =>
-                        handleKeyDown(e, summary, t("articlePage.summaryProp"))
-                      }
-                      onChange={(e) => handleChange(e, true)}
-                    >
-                      <EditablePreview />
-                      <EditableInput />
-                    </Editable>
-                  </Stack>
-                </CardBody>
-              </Card>
-              {hasDetails && (
-                <Card sx={styles.markdown}>
-                  {isAuth && (
-                    <AlertDialogPopUp
-                      deleteText={t("articlePage.deleteDetail")}
-                      apiCall={deleteArticle}
-                    />
-                  )}
-
-                  <ReactMarkdown
-                    components={ChakraUIRenderer()}
-                    children={data[currentPage - 1].markdown}
-                    skipHtml
-                  />
-                </Card>
-              )}
-              <Flex sx={styles.pagination}>
-                {hasDetails && (
-                  <Pagination
-                    pagesCount={pagesCount}
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                  >
-                    <PaginationContainer>
-                      <PaginationPrevious sx={styles.paginationPrevious}>
-                        {t("articleItem.previous")}
-                      </PaginationPrevious>
-                      <PaginationPageGroup>
-                        {pages.map((page: number) => (
-                          <PaginationPage
-                            key={`pagination_page_${page}`}
-                            page={page}
-                            sx={styles.paginationPage}
-                            _hover={styles.paginationPageHover}
-                            _current={{
-                              ...styles.paginationCurrent,
-                              _hover: styles.paginationPageHover,
-                            }}
-                          />
-                        ))}
-                      </PaginationPageGroup>
-                      <PaginationNext sx={styles.paginationNext}>
-                        {t("articleItem.next")}
-                      </PaginationNext>
-                    </PaginationContainer>
-                  </Pagination>
-                )}
-              </Flex>
-            </Box>
+            <ArticleHeader
+              id={id || ""}
+              aId={aId || ""}
+              isAuth={isAuth}
+              hasDetails={hasDetails}
+              data={data}
+              refetch={() => refetch()}
+            />
           )}
+          <DetailViewWindow
+            hasDetails={hasDetails}
+            isAuth={isAuth}
+            id={id || ""}
+            data={data}
+            refetchCallback={() => refetch()}
+          />
         </Box>
       )}
     </Box>
@@ -365,27 +207,10 @@ const styles = {
   wrapper: {
     height: "100%",
   },
-  header: {
-    margin: "10px 10px 2px 10px",
-    borderRadius: "5px 5px 0px 0px",
-    backgroundColor: "#18181a",
-    color: "#f0f6fc",
-  },
   url: {
     margin: "auto",
     paddingTop: "10px",
     borderRadius: "25px",
-  },
-  markdown: {
-    margin: "0px 10px 0px 10px",
-    padding: "10px",
-    height: "600px",
-    overflow: "scroll",
-    borderRadius: "0px",
-    backgroundColor: "#18181a",
-    color: "#f0f6fc",
-    fontSize: "14px",
-    ".chakra-heading": { fontSize: "20px" },
   },
   favoriteEditor: {
     w: "250px",
@@ -408,36 +233,6 @@ const styles = {
     alignItems: "center",
     color: "brand.100",
   },
-  noFiles: {
-    w: "60px",
-    m: "auto",
-  },
-  pagination: { m: "10px" },
-  paginationPrevious: {
-    mr: "4px",
-  },
-  paginationNext: {
-    ml: "4px",
-  },
-  paginationPage: {
-    w: 7,
-    fontSize: "sm",
-  },
-  paginationPageHover: {
-    bg: "brand.300",
-  },
-  paginationCurrent: {
-    w: 7,
-    bg: "brand.200",
-    fontSize: "sm",
-  },
-  leftArrow: {
-    cursor: "pointer",
-    _hover: {
-      color: "brand.300",
-    },
-  },
-  mainMarkdownSectionWrapper: { pb: "5px" },
 };
 
 export default Article;

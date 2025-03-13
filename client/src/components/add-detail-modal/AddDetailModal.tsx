@@ -13,7 +13,6 @@ import {
   useToast,
   Box,
 } from "@chakra-ui/react";
-import { QueryObserverResult } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -21,7 +20,7 @@ import { OverlayOne } from "utils/component-utils";
 import { isFirstDigitTwo, readFileAsync } from "utils/general";
 
 type Props = {
-  refetch: () => Promise<QueryObserverResult<any, Error>>;
+  refetch: () => void;
   sortValue: number;
   isAuthenticated?: boolean;
 };

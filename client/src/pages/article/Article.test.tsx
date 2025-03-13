@@ -94,25 +94,6 @@ describe("Articles Page", () => {
     expect(screen.getByTestId("article-page")).toBeInTheDocument();
   });
 
-  it("test editable inputs", async () => {
-    mockImplementation(false, null, false);
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Article isAuthenticated />
-      </QueryClientProvider>
-    );
-
-    const nameInput = screen.getByTestId("editable-input-name").children[1];
-    const summaryInput = screen.getByTestId("editable-input-summary")
-      .children[1];
-    await userEvent.type(nameInput, "new name{enter}");
-    await userEvent.type(summaryInput, "new summary{enter}");
-    await waitFor(() => {
-      expect(screen.getByText("new name")).toBeInTheDocument();
-      expect(screen.getByText("new summary")).toBeInTheDocument();
-    });
-  });
-
   it("test new url", async () => {
     mockImplementation(false, null, false);
     render(
