@@ -64,7 +64,7 @@ describe("Server startup", async () => {
   it("create new detail (markdown file) for user", async () => {
     const request = supertest(app.server);
     const payload = {
-      markdown: "## Hello World!",
+      markdownText: "## Hello World!",
       sortValue: 1,
     };
     const response = await request

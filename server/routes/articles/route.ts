@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { Server } from "http";
 import { jwtDecode } from "jwt-decode";
@@ -10,44 +11,29 @@ import {
   NewFileBody,
 } from "./query";
 import { simpleObjectKeyConversion } from "utils";
-
-interface JWT {
-  email: string;
-  picture: string;
-  given_name: string;
-  family_name: string;
-}
-
-const validUserCheck = async (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  client: any,
-  credential: string,
-  userId: string
-) => {
-  const { email } = (await jwtDecode(credential)) as JWT;
-  const { rows: users }: { rows: { [key: string]: string }[] } =
-    await client.query(`SELECT user_id FROM users WHERE email = '${email}';`);
-  return users.length > 0 && users[0].user_id === userId;
-};
+import { JWT } from "../../types/auth";
+import { validUserCheck } from "../../utils/authentication";
 
 const articleRoutes = async (fastify: FastifyInstance<Server>) => {
   fastify.get<{
     Params: IParams;
     Headers: IHeaders;
     Reply: IReply;
-  }>("/api/users", async (request, reply) => {
+  }>("/api/users", async (_request, reply) => {
     const client = await fastify.pg.connect();
-    const { rows }: { rows: { [key: string]: string }[] } = await client.query(
-      `SELECT * FROM users LEFT OUTER JOIN articles ON users.user_id = articles.user_id WHERE articles.article_id IS NOT NULL AND users.email != 'joshgilleytest@gmail.com';`
-    );
-    const convertedCaseRows = rows.map((row) =>
-      simpleObjectKeyConversion(row, true)
-    );
-
-    // Note: avoid doing expensive computation here, this will block releasing the client
+    try {
+      const { rows }: { rows: { [key: string]: string }[] } =
+        await client.query(
+          `SELECT t1.user_id, t1.username, t1.email, t2.article_id, t2.article_name, t2.summary, t2.tag FROM users t1 LEFT OUTER JOIN articles t2 ON t1.user_id = t2.user_id WHERE t2.article_id IS NOT NULL AND t1.email != 'joshgilleytest@gmail.com';`
+        );
+      const convertedCaseRows = rows.map((row) =>
+        simpleObjectKeyConversion(row, true)
+      );
+      reply.code(200).send(JSON.stringify(convertedCaseRows));
+    } catch (error) {
+      reply.code(404).send({ error: "Not found" });
+    }
     client.release();
-    if (!rows) reply.code(404).send({ error: "Not found" });
-    else reply.code(200).send(JSON.stringify(convertedCaseRows));
   });
 
   fastify.get<{
@@ -57,16 +43,21 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
   }>("/api/users/:id/articles", async (request, reply) => {
     const { id: userId } = request.params;
     const client = await fastify.pg.connect();
-    const { rows }: { rows: { [key: string]: string }[] } = await client.query(
-      `  SELECT * FROM users LEFT JOIN articles ON articles.user_id = users.user_id WHERE users.user_id = '${userId}';`
-    );
-    const convertedCaseRows =
-      rows.length > 0
-        ? rows.map((row) => simpleObjectKeyConversion(row, true))
-        : [];
+    try {
+      const { rows }: { rows: { [key: string]: string }[] } =
+        await client.query(
+          `  SELECT t1.user_id, t1.username, t1.email, t2.article_id, t2.article_name, t2.summary, t2.tag FROM users t1 LEFT JOIN articles t2 ON t2.user_id = t1.user_id WHERE t1.user_id = '${userId}';`
+        );
+      const convertedCaseRows =
+        rows.length > 0
+          ? rows.map((row) => simpleObjectKeyConversion(row, true))
+          : [];
+
+      reply.code(200).send(JSON.stringify(convertedCaseRows));
+    } catch (error) {
+      reply.code(404).send({ error: "Not found" });
+    }
     client.release();
-    if (!convertedCaseRows) reply.code(404).send({ error: "Not found" });
-    else reply.code(200).send(JSON.stringify(convertedCaseRows));
   });
 
   fastify.get<{
@@ -76,19 +67,23 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
   }>("/api/users/:id/articles/:aid", async (request, reply) => {
     const { id: userId, aid: articleId } = request.params;
     const client = await fastify.pg.connect();
-    const { rows }: { rows: { [key: string]: string }[] } = await client.query(
-      `SELECT * FROM articles 
-      LEFT JOIN details 
-      ON details.article_id = '${articleId}'
-      WHERE user_id = '${userId}' 
-      AND articles.article_id = '${articleId}';`
-    );
-    const convertedCaseRows = rows.map((row) =>
-      simpleObjectKeyConversion(row, true)
-    );
+    try {
+      const { rows }: { rows: { [key: string]: string }[] } =
+        await client.query(
+          `SELECT t1.article_id, t1.user_id, t1.url, t1.article_name, t1.summary, t1.tag, t2.detail_id, t2.markdown, t2.sort_value FROM articles t1
+        LEFT JOIN details t2
+        ON t2.article_id = '${articleId}'
+        WHERE t1.user_id = '${userId}' 
+        AND t1.article_id = '${articleId}';`
+        );
+      const convertedCaseRows = rows.map((row) =>
+        simpleObjectKeyConversion(row, true)
+      );
+      reply.code(200).send(JSON.stringify(convertedCaseRows));
+    } catch (error) {
+      reply.code(404).send({ error: "Not found" });
+    }
     client.release();
-    if (!convertedCaseRows) reply.code(404).send({ error: "Not found" });
-    else reply.code(200).send(JSON.stringify(convertedCaseRows));
   });
 
   fastify.post("/api/users/:id", {
@@ -110,9 +105,9 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         userId
       );
 
-      const { rows }: { rows: { [key: string]: string }[] } =
-        authenticatedUser &&
-        (await client.query(
+      try {
+        if (!authenticatedUser) throw Error("Unauthorized");
+        const response = await client.query(
           `INSERT INTO articles (user_id, url, article_name, tag, summary) 
           VALUES (
           '${userId}', 
@@ -121,14 +116,13 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
           '${tag}',
           '${articleSummary}'
           );`
-        ));
-      const convertedCaseRows = rows?.map((row) =>
-        simpleObjectKeyConversion(row, true)
-      );
+        );
+        reply.code(200).send(JSON.stringify(response));
+      } catch (error) {
+        if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
+        else reply.code(404).send({ error: "Not found" });
+      }
       client.release();
-      if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
-      else if (!convertedCaseRows) reply.code(404).send({ error: "Not found" });
-      else reply.code(200).send(JSON.stringify(convertedCaseRows));
     },
   });
 
@@ -141,35 +135,27 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       }>,
       reply
     ) => {
-      let convertedCaseRows: { [key: string]: string }[] = [];
       const { id: userId, aid: articleId } = request.params;
       const credential = request.headers.authorization.split(" ")[1];
       const { markdownText, sortValue } = request.body;
       const client = await fastify.pg.connect();
-
-      // logged in user is valid check
-      const authenticatedUser =
-        credential && (await validUserCheck(client, credential, userId));
-
-      if (credential && authenticatedUser) {
-        const { rows }: { rows: { [key: string]: string }[] } =
-          await client.query(
-            `INSERT INTO details (article_id, markdown, sort_value) 
+      const authenticatedUser = await validUserCheck(
+        client,
+        credential,
+        userId
+      );
+      try {
+        if (!authenticatedUser) throw Error("Unauthorized");
+        const response = await client.query(
+          `INSERT INTO details (article_id, markdown, sort_value) 
             VALUES ('${articleId}', '${markdownText}', ${sortValue});`
-          );
-        convertedCaseRows = rows.map((row) =>
-          simpleObjectKeyConversion(row, true)
         );
+        reply.code(200).send(JSON.stringify({ response, authenticated: true }));
+      } catch (error) {
+        if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
+        else reply.code(400).send({ error: "Invalid data" });
       }
       client.release();
-
-      if (!credential || !authenticatedUser)
-        reply.code(401).send({ error: "Unauthorized" });
-      else if (!convertedCaseRows) reply.code(404).send({ error: "Not found" });
-      else
-        reply
-          .code(200)
-          .send(JSON.stringify({ convertedCaseRows, authenticated: true }));
     },
   });
 
@@ -179,18 +165,20 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     Reply: IReply;
   }>("/api/users/:id/articles/:aid", async (request, reply) => {
     const { id: userId, aid: articleId } = request.params;
-    const credential = request.headers.authorization?.split(" ")[1];
+    const credential = request.headers.authorization?.split(" ")[1] || "";
     const client = await fastify.pg.connect();
-    const authenticatedUser =
-      credential && (await validUserCheck(client, credential, userId));
-    const res =
-      authenticatedUser &&
-      (await client.query(
+    const authenticatedUser = await validUserCheck(client, credential, userId);
+    try {
+      if (!authenticatedUser) throw Error("Unauthorized");
+      const res = await client.query(
         `DELETE FROM articles WHERE article_id = '${articleId}';`
-      ));
+      );
+      reply.code(200).send(JSON.stringify(res));
+    } catch (error) {
+      if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
+      else reply.code(404).send({ error: "Not found" });
+    }
     client.release();
-    if (!res) reply.code(404).send({ error: "Not found" });
-    else reply.code(200).send(JSON.stringify(res));
   });
 
   fastify.delete<{
@@ -199,19 +187,22 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     Reply: IReply;
   }>("/api/users/:id/details/:did", async (request, reply) => {
     const { id: userId, did: detailId } = request.params;
-    const credential = request.headers.authorization?.split(" ")[1];
+    const credential = request.headers.authorization?.split(" ")[1] || "";
     const client = await fastify.pg.connect();
-    const authenticatedUser =
-      credential && (await validUserCheck(client, credential, userId));
-    const res =
-      authenticatedUser &&
-      (await client.query(
-        `DELETE FROM details WHERE detail_id = '${detailId}';`
-      ));
+    const authenticatedUser = await validUserCheck(client, credential, userId);
+    try {
+      if (!authenticatedUser) throw Error("Unauthorized");
+      const res =
+        authenticatedUser &&
+        (await client.query(
+          `DELETE FROM details WHERE detail_id = '${detailId}';`
+        ));
+      reply.code(200).send(JSON.stringify(res));
+    } catch (error) {
+      if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
+      else reply.code(404).send({ error: "Not found" });
+    }
     client.release();
-    if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
-    else if (!res) reply.code(404).send({ error: "Not found" });
-    else reply.code(200).send(JSON.stringify(res));
   });
 
   fastify.put("/api/users/:id/articles/:aid", {
@@ -223,21 +214,25 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       reply
     ) => {
       const { id: userId, aid: articleId } = request.params;
-      const credential = request.headers.authorization?.split(" ")[1];
       const { changeText, property } = request.body;
+      const credential = request.headers.authorization?.split(" ")[1] || "";
       const client = await fastify.pg.connect();
-      const authenticatedUser =
-        credential && (await validUserCheck(client, credential, userId));
-      const res =
-        authenticatedUser &&
-        (await client.query(
+      const authenticatedUser = await validUserCheck(
+        client,
+        credential,
+        userId
+      );
+      try {
+        if (!authenticatedUser) throw Error("Unauthorized");
+        const res = await client.query(
           `UPDATE articles SET ${property} = '${changeText}' WHERE article_id = '${articleId}';`
-        ));
-
+        );
+        reply.code(200).send(JSON.stringify(res));
+      } catch (error) {
+        if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
+        else reply.code(404).send({ error: "Not found" });
+      }
       client.release();
-      if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
-      if (!res) reply.code(404).send({ error: "Not found" });
-      else reply.code(200).send(JSON.stringify(res));
     },
   });
 
@@ -250,28 +245,31 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       reply
     ) => {
       const credential = request.headers.authorization.split(" ")[1];
-      const { email, picture, given_name, family_name } = (await jwtDecode(
+      const { email, picture, given_name, family_name }: JWT = await jwtDecode(
         credential
-      )) as JWT;
+      );
       const client = await fastify.pg.connect();
-      const { rows }: { rows: { [key: string]: string }[] } =
-        await client.query(`SELECT * FROM users WHERE email = '${email}';`);
-      const userId = rows.length > 0 ? rows[0].user_id : uuidv4();
-      const userNotFound = rows.length === 0;
-      if (userNotFound) {
-        try {
+      try {
+        const { rows }: { rows: { [key: string]: string }[] } =
+          await client.query(
+            `SELECT user_id FROM users WHERE email = '${email}';`
+          );
+        const userId = rows.length > 0 ? rows[0].user_id : uuidv4();
+        const userNotFound = rows.length === 0;
+        if (userNotFound) {
           await client.query(
             `INSERT INTO users (user_id, username, email, picture)
                 VALUES ('${userId}', '${given_name} ${family_name}', '${email}', '${picture}');`
           );
-        } catch (error) {
-          console.log(error);
-          reply.code(404).send({ error: "Not found" });
         }
+        reply.code(200).send(userId);
+      } catch (error) {
+        reply
+          .code(404)
+          .send({ error: "Issue finding user or creating new user.." });
       }
-      client.release();
 
-      reply.code(200).send(userId);
+      client.release();
     },
   });
 
@@ -286,9 +284,11 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       const { id: userId } = request.params;
       const credential = request.headers.authorization?.split(" ")[1];
       const client = await fastify.pg.connect();
-
-      const authenticatedUser =
-        credential && (await validUserCheck(client, credential, userId));
+      const authenticatedUser = await validUserCheck(
+        client,
+        credential,
+        userId
+      );
       client.release();
       if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
       else reply.code(200).send({ success: "Authorized" });
