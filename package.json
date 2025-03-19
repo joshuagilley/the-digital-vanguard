@@ -3,13 +3,23 @@
   "version": "1.0.0",
   "description": "the-digital-vanguard",
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "cz-conventional-changelog": "^3.3.0"
   },
   "scripts": {
-    "start": "cd client && npm run dev",
     "commit": "git cz",
-    "test_client": "cd client && npm test",
-    "test_server": "cd server && npm test"
+    "start": "concurrently \"npm run start-client\" \"npm run start-server\"",
+    "dev": "concurrently \"npm run dev-client\" \"npm run dev-server\"",
+    "test": "concurrently \"npm run test-client\" \"npm run test-server\"",
+    "build": "concurrently \"npm run build-client\" \"npm run build-server\"",
+    "start-client": "cd client && npm run start",
+    "start-server": "cd server && npm run start",
+    "dev-client": "cd client && npm run dev",
+    "dev-server": "cd server && npm run dev",
+    "test-client": "cd client && npm test",
+    "test-server": "cd server && npm test",
+    "build-client": "cd client && npm run build",
+    "build-server": "cd server && npm run build"
   },
   "repository": {
     "type": "git",
