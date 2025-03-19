@@ -24,7 +24,10 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     try {
       const { rows }: { rows: { [key: string]: string }[] } =
         await client.query(
-          `SELECT t1.user_id, t1.username, t1.email, t2.article_id, t2.article_name, t2.summary, t2.tag FROM users t1 LEFT OUTER JOIN articles t2 ON t1.user_id = t2.user_id WHERE t2.article_id IS NOT NULL AND t1.email != 'joshgilleytest@gmail.com';`
+          `SELECT DISTINCT t1.user_id, t1.username, t1.email
+            FROM users t1
+            LEFT JOIN articles t2 ON t1.user_id = t2.user_id
+            WHERE t2.article_id IS NOT NULL AND t1.email != 'joshgilleytest@gmail.com';`
         );
       const convertedCaseRows = rows.map((row) =>
         simpleObjectKeyConversion(row, true)
