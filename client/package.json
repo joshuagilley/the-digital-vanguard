@@ -6,7 +6,7 @@
   "scripts": {
     "client": "vite",
     "build": "tsc",
-    "server": "cd .. && cd server && npm run dev",
+    "server": "cd .. && cd server && npm run start",
     "dev": "concurrently \"npm run client\" \"npm run server\"",
     "preview": "vite preview",
     "lint": "eslint './src/**/*.{js,jsx,ts,tsx}'",

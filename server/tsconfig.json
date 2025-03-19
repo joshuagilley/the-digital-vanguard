@@ -3,20 +3,20 @@
     "require": ["tsconfig-paths/register"]
   },
   "compilerOptions": {
+    "outDir": "./dist", // Output directory for compiled JavaScript
     "baseUrl": "./",
+    "rootDir": "./", // The root directory for source files
+    "module": "commonjs", // Set the module system to commonjs for Node.js
     "target": "ESNext",
-    "module": "CommonJS",
-    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "outDir": "./dist",
     "paths": {
       "config/*": ["config/*"],
       "routes/*": ["routes/*"]
     }
   },
-  "include": ["./*.ts", "server.js"],
+  "include": ["./*.ts"],
   "exclude": ["node_modules"]
 }
