@@ -26,7 +26,7 @@ export default function SearchInput({ data, handleNavigate }: Props) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const filteredDevelopers = data.filter(({ username }) =>
-    username.toLowerCase().includes(searchTerm.toLowerCase())
+    username?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

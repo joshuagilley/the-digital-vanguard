@@ -1,16 +1,11 @@
-import {
-  Flex,
-  Spacer,
-  Box,
-  Button,
-  IconButton,
-  Stack,
-  CloseButton,
-} from "@chakra-ui/react";
+import { Flex, Spacer, Box, Button, IconButton, Stack } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { HOME } from "assets/constants";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const MotionStack = motion(Stack);
 
 const NavigationBar = () => {
   const [open, setOpen] = useState(false);
@@ -18,32 +13,23 @@ const NavigationBar = () => {
   return (
     <Flex as="nav" sx={styles.navBar} data-testid="navigation-bar">
       <Spacer />
-      {open && (
-        <Stack sx={styles.inputWrappers}>
-          <CloseButton sx={styles.close} onClick={() => setOpen(!open)} />
-          <Box m="auto">
-            <Link to="/" onClick={() => setOpen(false)}>
-              <Button fontWeight="bold" variant="ghost">
-                {HOME}
-              </Button>
-            </Link>
-          </Box>
-          {/* <Box m="auto">
-            <Link to="/about" onClick={() => setOpen(false)}>
-              <Button fontWeight="bold" variant="ghost">
-                {ABOUT}
-              </Button>
-            </Link>
-          </Box> */}
-          {/* <Box margin="auto">
-            <Link to="/join" onClick={() => setOpen(false)}>
-              <Button fontWeight="bold" variant="ghost">
-                {JOIN}
-              </Button>
-            </Link>
-          </Box> */}
-        </Stack>
-      )}
+      <AnimatePresence>
+        {open && (
+          <MotionStack
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            sx={styles.menu}
+          >
+            <Box m="auto">
+              <Link to="/" onClick={() => setOpen(false)}>
+                <Button sx={styles.menuButton}>{HOME}</Button>
+              </Link>
+            </Box>
+          </MotionStack>
+        )}
+      </AnimatePresence>
       <IconButton
         aria-label="Open Menu"
         data-testid="hamburger"
@@ -51,7 +37,10 @@ const NavigationBar = () => {
         mr={2}
         backgroundColor="brand.300"
         icon={<HamburgerIcon />}
+        as={motion.button}
+        whileTap={{ scale: 0.9 }}
         onClick={() => setOpen(!open)}
+        sx={styles.hamburger}
       />
     </Flex>
   );
@@ -65,18 +54,34 @@ const styles = {
     bg: "brand.400",
     alignItems: "center",
   },
-  close: {
-    position: "absolute",
-    right: "0",
-    top: "0",
-  },
-  inputWrappers: {
+  menu: {
     backgroundColor: "brand.300",
     position: "fixed",
     right: "24px",
     top: "80px",
     width: "140px",
-    padding: "10px",
-    zIndex: 1,
+    padding: "12px",
+    zIndex: 10,
+    borderRadius: "8px",
+    boxShadow: "lg",
+  },
+  menuButton: {
+    fontWeight: "bold",
+    backgroundColor: "brand.300",
+    transition: "all 0.2s ease-in-out",
+    borderBottom: "1px solid",
+    borderBottomColor: "brand.700",
+    borderRadius: "0",
+    _hover: {
+      color: "brand.100",
+      transform: "scale(1.05)",
+    },
+  },
+  hamburger: {
+    transition: "all 0.2s ease-in-out",
+    _hover: {
+      backgroundColor: "brand.200",
+      transform: "rotate(90deg)",
+    },
   },
 };

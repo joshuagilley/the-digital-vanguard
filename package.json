@@ -12,6 +12,7 @@
     "dev": "concurrently \"npm run dev-client\" \"npm run dev-server\"",
     "test": "concurrently \"npm run test-client\" \"npm run test-server\"",
     "build": "concurrently \"npm run build-client\" \"npm run build-server\"",
+    "lint": "concurrently \"npm run lint-client\" \"npm run lint-server\"",
     "start-client": "cd client && npm run start",
     "start-server": "cd server && npm run start",
     "dev-client": "cd client && npm run dev",
@@ -19,7 +20,9 @@
     "test-client": "cd client && npm test",
     "test-server": "cd server && npm test",
     "build-client": "cd client && npm run build",
-    "build-server": "cd server && npm run build"
+    "build-server": "cd server && npm run build",
+    "lint-client": "cd client && npm run lint",
+    "lint-server": "cd server && npm run lint"
   },
   "repository": {
     "type": "git",

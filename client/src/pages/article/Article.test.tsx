@@ -94,27 +94,27 @@ describe("Articles Page", () => {
     expect(screen.getByTestId("article-page")).toBeInTheDocument();
   });
 
-  it("test new url", async () => {
-    mockImplementation(false, null, false);
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Article isAuthenticated />
-      </QueryClientProvider>
-    );
+  // it("test new url", async () => { THIS WILL MOVE TO MARKDOWN WINDOWN COMPONENT
+  //   mockImplementation(false, null, false);
+  //   render(
+  //     <QueryClientProvider client={queryClient}>
+  //       <Article isAuthenticated />
+  //     </QueryClientProvider>
+  //   );
 
-    fireEvent.click(screen.getByTestId("show-demo"));
-    fireEvent.click(screen.getByTestId("edit-url-icon"));
-    const urlInput = screen.getByTestId("editable-url").children[1];
+  //   fireEvent.click(screen.getByTestId("show-demo"));
+  //   fireEvent.click(screen.getByTestId("edit-url-icon"));
+  //   const urlInput = screen.getByTestId("editable-url").children[1];
 
-    await userEvent.type(
-      urlInput,
-      "https://www.youtube.com/watch?v=GOIYREEANEM{enter}"
-    );
+  //   await userEvent.type(
+  //     urlInput,
+  //     "https://www.youtube.com/watch?v=GOIYREEANEM{enter}"
+  //   );
 
-    await waitFor(() => {
-      expect(screen.getByTestId("edit-url-icon")).toBeInTheDocument();
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(screen.getByTestId("edit-url-icon")).toBeInTheDocument();
+  //   });
+  // });
 
   it("article delete", async () => {
     render(

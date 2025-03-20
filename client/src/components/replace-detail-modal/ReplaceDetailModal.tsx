@@ -151,9 +151,9 @@ const styles = {
     marginLeft: "10px",
     fontSize: "22px",
     cursor: "pointer",
-    color: "brand.600",
+    color: "brand.700",
     _hover: {
-      color: "brand.200",
+      color: "brand.300",
     },
   },
 };

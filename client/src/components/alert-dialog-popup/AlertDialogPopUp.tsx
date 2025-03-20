@@ -73,11 +73,13 @@ export default AlertDialogPopUp;
 
 const styles = {
   deleteFile: {
+    position: "absolute",
+    bottom: "15px",
     fontSize: "20px",
     cursor: "pointer",
-    color: "brand.600",
+    color: "brand.100",
     _hover: {
-      color: "brand.200",
+      color: "brand.300",
     },
   },
   deleteText: {

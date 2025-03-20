@@ -7,15 +7,30 @@ import {
   PaginationNext,
   usePagination,
 } from "@ajna/pagination";
-import { Box, Card, Flex, Spacer, useToast } from "@chakra-ui/react";
+import { EditIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Card,
+  Flex,
+  Spacer,
+  useToast,
+  Switch,
+  Editable,
+  EditableInput,
+  EditablePreview,
+} from "@chakra-ui/react";
 import MarkdownButton from "assets/markdown-button";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import AddDetailModal from "components/add-detail-modal";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import ReplaceDetailModal from "components/replace-detail-modal";
 import { t } from "i18next";
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import ReactPlayer from "react-player";
 import { ArticleData } from "types/articles";
+import { editArticle } from "utils/general";
+import MarkdownTheme from "./MarkdownTheme";
 
 interface Props {
   isAuth: boolean;
@@ -23,6 +38,7 @@ interface Props {
   id: string;
   aid: string;
   hasDetails: boolean;
+  url: string;
   refetchCallback: () => void;
 }
 
@@ -32,8 +48,12 @@ const DetailViewWindow = ({
   id,
   aid,
   hasDetails,
+  url,
   refetchCallback,
 }: Props) => {
+  const [editingUrl, setEditingUrl] = useState(false);
+  const [newUrl, setNewUrl] = useState("");
+  const [showDemo, setShowDemo] = useState(false);
   const toast = useToast();
   const { currentPage, setCurrentPage, pagesCount, pages } = usePagination({
     pagesCount: data?.length,
@@ -85,29 +105,116 @@ const DetailViewWindow = ({
     }
   };
 
+  const handleToast = (issue: string) => {
+    toast({
+      title: "Error",
+      description: issue,
+      status: "error",
+      isClosable: true,
+      position: "top",
+    });
+  };
+
+  const invalidUrl = (incomingUrl: string) => {
+    const youtubeRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|embed\/|v\/|.+)$/i;
+    if (!youtubeRegex.test(incomingUrl)) {
+      toast({
+        title: "Error",
+        description: "Invalid Youtube URL.",
+        status: "error",
+        isClosable: true,
+        position: "top",
+      });
+    }
+
+    return !youtubeRegex.test(incomingUrl);
+  };
+
+  const editUrl = async (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      if (newUrl === "") {
+        setEditingUrl(false);
+        return;
+      }
+      if (invalidUrl(newUrl)) {
+        setNewUrl("");
+      } else {
+        await editArticle(newUrl, "url", id, aid, handleToast, () =>
+          refetchCallback()
+        );
+      }
+      setEditingUrl(false);
+    }
+  };
+
   return (
     <Box p={4}>
       <Card sx={styles.markdown}>
-        <Flex mb={4}>
-          {isAuth && (
-            <>
-              <AlertDialogPopUp
-                deleteText={t("articlePage.deleteDetail")}
-                apiCall={deleteArticle}
-              />
-              <ReplaceDetailModal
-                refetch={refetchCallback}
-                sortValue={currentPage}
-                detailId={data[currentPage - 1]?.detailId}
-              />
-            </>
+        <Flex>
+          <Box sx={styles.floatingBox}>
+            <Flex>
+              {isAuth && (
+                <>
+                  <AlertDialogPopUp
+                    deleteText={t("articlePage.deleteDetail")}
+                    apiCall={deleteArticle}
+                  />
+                  <ReplaceDetailModal
+                    refetch={refetchCallback}
+                    sortValue={currentPage}
+                    detailId={data[currentPage - 1]?.detailId}
+                  />
+                </>
+              )}
+            </Flex>
+          </Box>
+          <Spacer />
+          <Switch
+            sx={{ position: "absolute", top: 0, right: 0, m: "15px" }}
+            isChecked={showDemo}
+            onChange={() => setShowDemo(!showDemo)}
+          >
+            Demo
+          </Switch>
+          {showDemo && (
+            <Box>
+              {!editingUrl && (
+                <EditIcon
+                  data-testid="edit-url-icon"
+                  sx={styles.editUrlIcon}
+                  onClick={() => setEditingUrl(true)}
+                />
+              )}
+              {editingUrl && (
+                <Editable
+                  data-testid="editable-url"
+                  sx={styles.editableUrl}
+                  value={newUrl === "" ? url : newUrl}
+                  isDisabled={!isAuth}
+                  onKeyDown={(e) => editUrl(e)}
+                  onChange={(e) => setNewUrl(e)}
+                  startWithEditView
+                >
+                  <EditablePreview />
+                  <EditableInput />
+                </Editable>
+              )}
+            </Box>
           )}
         </Flex>
-        <ReactMarkdown
-          components={ChakraUIRenderer()}
-          children={data[currentPage - 1]?.markdown}
-          skipHtml
-        />
+
+        {showDemo ? (
+          <Box mt={"10px"}>
+            <ReactPlayer url={url} controls width="100%" height="600px" />
+          </Box>
+        ) : (
+          <ReactMarkdown
+            components={ChakraUIRenderer(MarkdownTheme)}
+            children={data[currentPage - 1]?.markdown}
+            skipHtml
+          />
+        )}
       </Card>
       <Flex sx={styles.pagination} align="center" mt={6}>
         <Pagination
@@ -155,14 +262,32 @@ const DetailViewWindow = ({
 
 const styles = {
   markdown: {
-    padding: "20px",
-    height: "600px",
+    p: "30px 20px 20px 20px",
+    bg: "brand.500",
+    color: "brand.100",
+    borderRadius: "md",
+    boxShadow: "lg",
+    border: "1px solid",
+    borderColor: "gray.700",
+    maxH: "600px",
     overflowY: "auto",
-    borderRadius: "8px",
-    backgroundColor: "#18181a",
-    color: "#f0f6fc",
-    fontSize: "12px",
-    ".chakra-heading": { fontSize: "22px" },
+    css: {
+      "&::-webkit-scrollbar": { width: "6px" },
+      "&::-webkit-scrollbar-thumb": {
+        background: "gray.600",
+        borderRadius: "8px",
+      },
+      "&::-webkit-scrollbar-track": { background: "gray.700" },
+    },
+  },
+  floatingBox: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    backgroundColor: "brand.200",
+    borderRadius: "0 0 5px 0",
+    p: "8px",
+    m: "auto",
   },
   pagination: { mt: "20px", px: "10px" },
   paginationPrevious: { mr: "6px" },
@@ -170,6 +295,19 @@ const styles = {
   paginationPage: { w: 8, fontSize: "md" },
   paginationPageHover: { bg: "brand.300" },
   paginationCurrent: { w: 8, bg: "brand.200", fontSize: "md" },
+  editUrlIcon: {
+    fontSize: "22px",
+    m: "10px",
+    color: "brand.300",
+    _hover: { cursor: "pointer", color: "brand.200" },
+  },
+  editableUrl: {
+    fontSize: "sm",
+    fontWeight: "bold",
+    color: "brand.300",
+    m: "10px 0px 0 10px",
+    w: "400px",
+  },
 };
 
 export default DetailViewWindow;

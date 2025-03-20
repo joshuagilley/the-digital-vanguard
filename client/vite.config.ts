@@ -42,6 +42,20 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    preview: {
+      port: 5173,
+      strictPort: true,
+      host: true,
+      allowedHosts: true,
+      origin: `http://${host}:5173`,
+      proxy: {
+        "/api": {
+          target: `http://${hostOrContainer}:8080`,
+          changeOrigin: true,
+          secure: false,
+        },
+      },
+    },
     base: "/",
   };
 });

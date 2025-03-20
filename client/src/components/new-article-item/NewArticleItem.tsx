@@ -42,6 +42,7 @@ const styles = {
     border: "none",
   },
   cardHover: {
+    color: "brand.300",
     boxShadow: `inset 0 0 0.5px 1px hsla(0, 0%,  
               100%, 0.075),
               /* shadow ring 👇 */

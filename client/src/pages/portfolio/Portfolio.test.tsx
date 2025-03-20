@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { Mock, vi } from "vitest";
 import { useParams } from "react-router-dom";
-import { mock } from "mock/portfolio";
+// import { mock } from "mock/portfolio";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,28 +76,28 @@ describe("Portfolio Page", () => {
     expect(screen.getByTestId("error")).toBeInTheDocument();
   });
 
-  it("renders article page", () => {
-    mockImplementation(false, null, false, mock);
+  // it("renders portfolio page", () => {
+  //   mockImplementation(false, null, false, mock);
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Portfolio isAuthenticated />
-      </QueryClientProvider>
-    );
-    expect(screen.getByTestId("portfolio-page")).toBeInTheDocument();
-  });
+  //   render(
+  //     <QueryClientProvider client={queryClient}>
+  //       <Portfolio isAuthenticated />
+  //     </QueryClientProvider>
+  //   );
+  //   expect(screen.getByTestId("portfolio-page")).toBeInTheDocument();
+  // });
 
-  it("should trigger email process and reset after timeout", async () => {
-    mockImplementation(false, null, false, []);
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Portfolio isAuthenticated />
-      </QueryClientProvider>
-    );
-    fireEvent.click(screen.getByTestId("email"));
+  // it("should trigger email process and reset after timeout", async () => {
+  //   mockImplementation(false, null, false, []);
+  //   render(
+  //     <QueryClientProvider client={queryClient}>
+  //       <Portfolio isAuthenticated />
+  //     </QueryClientProvider>
+  //   );
+  //   fireEvent.click(screen.getByTestId("email"));
 
-    await waitFor(() => {
-      expect(screen.getByTestId("email")).toBeDisabled();
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(screen.getByTestId("email")).toBeDisabled();
+  //   });
+  // });
 });

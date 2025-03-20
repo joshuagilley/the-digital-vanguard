@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 
 type Props = {
   text: string;
-  tag: string;
+  tag?: string;
   userId: string;
   articleId: string;
   refetch: () => Promise<QueryObserverResult<any, Error>>;

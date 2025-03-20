@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { Server } from "http";
 import { jwtDecode } from "jwt-decode";
@@ -34,6 +33,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       );
       reply.code(200).send(JSON.stringify(convertedCaseRows));
     } catch (error) {
+      console.log(error);
       reply.code(404).send({ error: "Not found" });
     }
     client.release();
@@ -58,6 +58,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
 
       reply.code(200).send(JSON.stringify(convertedCaseRows));
     } catch (error) {
+      console.log(error);
       reply.code(404).send({ error: "Not found" });
     }
     client.release();
@@ -84,6 +85,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       );
       reply.code(200).send(JSON.stringify(convertedCaseRows));
     } catch (error) {
+      console.log(error);
       reply.code(404).send({ error: "Not found" });
     }
     client.release();
@@ -122,6 +124,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         );
         reply.code(200).send(JSON.stringify(response));
       } catch (error) {
+        console.log(error);
         if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
         else reply.code(404).send({ error: "Not found" });
       }
@@ -155,6 +158,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         );
         reply.code(200).send(JSON.stringify({ response, authenticated: true }));
       } catch (error) {
+        console.log(error);
         if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
         else reply.code(400).send({ error: "Invalid data" });
       }
@@ -178,6 +182,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       );
       reply.code(200).send(JSON.stringify(res));
     } catch (error) {
+      console.log(error);
       if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
       else reply.code(404).send({ error: "Not found" });
     }
@@ -202,6 +207,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         ));
       reply.code(200).send(JSON.stringify(res));
     } catch (error) {
+      console.log(error);
       if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
       else reply.code(404).send({ error: "Not found" });
     }
@@ -232,6 +238,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         );
         reply.code(200).send(JSON.stringify(res));
       } catch (error) {
+        console.log(error);
         if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
         else reply.code(404).send({ error: "Not found" });
       }
@@ -265,6 +272,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         );
         reply.code(200).send(JSON.stringify(res));
       } catch (error) {
+        console.log(error);
         if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
         else reply.code(404).send({ error: "Not found" });
       }
@@ -296,6 +304,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         );
         reply.code(200).send(JSON.stringify(res));
       } catch (error) {
+        console.log(error);
         if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
         else reply.code(404).send({ error: "Not found" });
       }
@@ -331,6 +340,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         }
         reply.code(200).send(userId);
       } catch (error) {
+        console.log(error);
         reply
           .code(404)
           .send({ error: "Issue finding user or creating new user.." });
