@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "the-digital-vanguard",
   "devDependencies": {
+    "@types/rollup": "^0.51.4",
     "concurrently": "^9.1.2",
-    "cz-conventional-changelog": "^3.3.0"
+    "cz-conventional-changelog": "^3.3.0",
+    "rollup": "^4.36.0"
   },
   "scripts": {
     "commit": "git cz",

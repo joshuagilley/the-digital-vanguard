@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "main": "server.ts",
   "scripts": {
-    "build": "tsc && tsc-alias",
-    "start": "node ./dist/server.js",
-    "ts-start": "ts-node server.ts",
+    "build": "tsc",
+    "start": "ts-node server.ts",
     "dev": "nodemon server.ts",
     "lint": "eslint . --ext .ts",
     "test": "vitest --coverage"

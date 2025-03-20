@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { vi, Mock } from "vitest";
 import Article from "./Article";
 import {
@@ -8,7 +8,6 @@ import {
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { data } from "mock/article";
-import userEvent from "@testing-library/user-event";
 
 const queryClient = new QueryClient({
   defaultOptions: {

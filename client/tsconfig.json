@@ -1,15 +1,14 @@
 {
-  "extends": "../tsconfig",
   "compilerOptions": {
     "baseUrl": "src",
-    // "lib": ["dom", "dom.iterable", "esnext"],
-    // "allowJs": true,
-    // "allowSyntheticDefaultImports": true,
-    // "noFallthroughCasesInSwitch": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "noFallthroughCasesInSwitch": true,
     "module": "esnext",
     "moduleResolution": "Bundler",
-    // "isolatedModules": true,
-    // "noEmit": true,
+    "isolatedModules": true,
+    "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
       "src": ["src/*"],
