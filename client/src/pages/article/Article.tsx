@@ -1,15 +1,12 @@
 import {
   Box,
   Flex,
-  Spacer,
   FormControl,
   FormLabel,
   Switch,
   Editable,
   EditableInput,
   EditablePreview,
-  Link,
-  Text,
   useToast,
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
@@ -139,12 +136,6 @@ const Article = ({ isAuthenticated }: Props) => {
                   </Box>
                 )}
               </Flex>
-              <Spacer />
-              <Text sx={styles.favoriteEditor}>
-                <Link href="https://stackedit.io/app#" target="_blank">
-                  {t("articlePage.favoriteEditor")}
-                </Link>
-              </Text>
             </Flex>
             {showDemo && (
               <ReactPlayer
@@ -161,7 +152,6 @@ const Article = ({ isAuthenticated }: Props) => {
                 id={id}
                 aId={aId}
                 isAuth={isAuth}
-                hasDetails={hasDetails}
                 data={data}
                 refetch={() => refetch()}
               />
@@ -172,6 +162,7 @@ const Article = ({ isAuthenticated }: Props) => {
                   aid={aId}
                   data={data}
                   refetchCallback={() => refetch()}
+                  hasDetails={hasDetails}
                 />
               )}
             </Box>
@@ -191,11 +182,8 @@ const styles = {
     paddingTop: "10px",
     borderRadius: "25px",
   },
-  favoriteEditor: {
-    w: "250px",
-    color: "brand.200",
-  },
   editUrlIcon: {
+    fontSize: "22px",
     m: "10px",
     color: "brand.300",
     _hover: { cursor: "pointer", color: "brand.200" },

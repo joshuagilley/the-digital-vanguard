@@ -127,7 +127,7 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
       <AddIcon
         data-testid="create"
         sx={styles.addIcon}
-        color={isHovering ? "brand.100" : "brand.200"}
+        color={isHovering ? "brand.200" : "brand.200"}
         onClick={openModal}
       />
       <Modal isCentered isOpen={isOpen} onClose={onClose}>

@@ -85,9 +85,17 @@ const Portfolio = ({ isAuthenticated }: Props) => {
           <Box p={4}>
             <Flex align="center">
               <Heading
-                color="brand.100"
-                size="lg"
-              >{`${username}'s ${t("portfolio.portfolio")}`}</Heading>
+                h="50px"
+                size="2xl"
+                bgGradient="linear(to-r, brand.300, brand.500)"
+                bgClip="text"
+                fontWeight="bold"
+                textAlign="center"
+                letterSpacing="wide"
+                ml="25px"
+              >
+                {`${username}'s ${t("portfolio.portfolio")}`}
+              </Heading>
               <Spacer />
               <Flex>
                 {isAuth && (

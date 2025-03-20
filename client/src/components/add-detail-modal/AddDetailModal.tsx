@@ -139,7 +139,7 @@ const styles = {
   },
   addDetail: {
     mr: "10px",
-    fontSize: "18px",
+    fontSize: "38px",
     cursor: "pointer",
     color: "brand.300",
     _hover: {

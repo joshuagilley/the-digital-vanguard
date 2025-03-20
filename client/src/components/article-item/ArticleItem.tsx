@@ -96,7 +96,6 @@ const ArticleItem = ({
         <Spacer />
         <Button
           sx={styles.continue}
-          colorScheme="whiteAlpha"
           onClick={() => navigate(`/portfolio/${userId}/articles/${articleId}`)}
         >
           {t("articleItem.continue")}
@@ -107,13 +106,17 @@ const ArticleItem = ({
 };
 const styles = {
   continue: {
+    backgroundColor: "brand.600",
+    _hover: {
+      backgroundColor: "brand.200",
+    },
     cursor: "pointer",
     p: "2px 10px 2px 10px",
     borderRadius: 0,
   },
   card: {
     backgroundColor: "#18181a",
-    color: "brand.700",
+    color: "brand.400",
     border: "2px solid transparent",
     boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
     w: "400px",

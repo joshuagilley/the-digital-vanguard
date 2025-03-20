@@ -5,13 +5,13 @@ import { extendTheme } from "@chakra-ui/react";
 export const theme = extendTheme({
   colors: {
     brand: {
-      100: "#f0f6fc",
-      200: "#919192",
-      300: "#e0ceb5",
-      400: "#F4F4F4",
-      500: "#121212",
-      600: "#ffffff",
-      700: "#080808",
+      100: "#E0E0E0", // off white
+      200: "#ffb2ff", // secondary
+      300: "#ea80fc", // primary
+      400: "#121212", // main background black
+      500: "#202020", // secondary black
+      600: "#898989", // subtext grey
+      700: "#1E1E1E", // off black
     },
   },
 });

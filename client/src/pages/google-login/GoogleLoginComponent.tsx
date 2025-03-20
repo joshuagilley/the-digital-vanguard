@@ -8,6 +8,8 @@ function GoogleLoginComponent() {
   return (
     <Box data-testid="google-login">
       <GoogleLogin
+        theme="filled_black"
+        type="icon"
         onSuccess={async ({ credential }) => {
           localStorage.setItem(
             "googleCredential",

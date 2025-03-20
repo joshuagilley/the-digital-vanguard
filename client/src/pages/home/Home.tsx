@@ -5,14 +5,13 @@ import {
   AlertTitle,
   Box,
   Center,
-  Select,
-  Stack,
+  Flex,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
+import SearchInput from "components/search-input";
 import { t } from "i18next";
 import GoogleLoginComponent from "pages/google-login";
 import { useNavigate } from "react-router-dom";
-import { User } from "types/user";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -24,9 +23,8 @@ const Home = () => {
     },
   });
 
-  const handleNavigate = (e: React.ChangeEvent) => {
-    const value = (e.target as HTMLInputElement).value;
-    navigate(`/portfolio/${value}`);
+  const handleNavigate = (userId: string) => {
+    navigate(`/portfolio/${userId}`);
   };
 
   return (
@@ -39,25 +37,12 @@ const Home = () => {
         </Alert>
       )}
       {!isPending && !isFetching && !error && (
-        <Stack sx={styles.auth}>
-          <Box sx={styles.dropdown}>
-            <Select
-              placeholder={"</>"}
-              variant="filled"
-              onChange={handleNavigate}
-              sx={styles.select}
-            >
-              {data.map(({ username, userId }: User, index: number) => (
-                <option value={userId} key={index}>
-                  {username}
-                </option>
-              ))}
-            </Select>
-          </Box>
-          <Center>
+        <Center mb="250px">
+          <Flex gap="10px">
+            <SearchInput data={data} handleNavigate={handleNavigate} />
             <GoogleLoginComponent />
-          </Center>
-        </Stack>
+          </Flex>
+        </Center>
       )}
     </Box>
   );
@@ -66,18 +51,9 @@ const Home = () => {
 const styles = {
   wrapper: {
     h: "100vh",
+    mx: "auto",
     placeContent: "center",
-    background: "brand.700",
-  },
-  dropdown: {
-    w: "200px",
-    m: "auto",
-  },
-  select: {
-    backgroundColor: "brand.300",
-  },
-  auth: {
-    mb: "180px",
+    background: "brand.400",
   },
 };
 

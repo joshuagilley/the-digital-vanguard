@@ -32,7 +32,7 @@ const NewArticleItem = ({ text, refetch }: Props) => {
 const styles = {
   card: {
     backgroundColor: "#18181a",
-    color: "brand.700",
+    color: "brand.400",
     cursor: "pointer",
     w: "400px",
     height: "150px",
@@ -52,7 +52,7 @@ const styles = {
               0 3.5px 6px hsla(0, 0%, 0%, 0.09)`,
   },
   text: {
-    color: "brand.100",
+    color: "brand.200",
     fontSize: "20px",
     fontWeight: "bold",
     m: "auto",

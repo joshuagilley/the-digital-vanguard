@@ -149,9 +149,9 @@ const styles = {
   },
   replaceDetail: {
     marginLeft: "10px",
-    fontSize: "16px",
+    fontSize: "22px",
     cursor: "pointer",
-    color: "brand.300",
+    color: "brand.600",
     _hover: {
       color: "brand.200",
     },

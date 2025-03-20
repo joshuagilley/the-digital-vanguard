@@ -8,7 +8,7 @@ import {
   CloseButton,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { ABOUT, HOME } from "assets/constants";
+import { HOME } from "assets/constants";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 
@@ -28,13 +28,13 @@ const NavigationBar = () => {
               </Button>
             </Link>
           </Box>
-          <Box m="auto">
+          {/* <Box m="auto">
             <Link to="/about" onClick={() => setOpen(false)}>
               <Button fontWeight="bold" variant="ghost">
                 {ABOUT}
               </Button>
             </Link>
-          </Box>
+          </Box> */}
           {/* <Box margin="auto">
             <Link to="/join" onClick={() => setOpen(false)}>
               <Button fontWeight="bold" variant="ghost">
@@ -62,7 +62,7 @@ export default NavigationBar;
 const styles = {
   navBar: {
     p: 4,
-    bg: "brand.700",
+    bg: "brand.400",
     alignItems: "center",
   },
   close: {

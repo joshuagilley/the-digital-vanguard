@@ -2,18 +2,12 @@ import { ArrowLeftIcon } from "@chakra-ui/icons";
 import {
   Box,
   Card,
-  CardHeader,
-  Flex,
-  Spacer,
   Editable,
   EditablePreview,
   EditableInput,
-  CardBody,
   Stack,
-  StackDivider,
   useToast,
 } from "@chakra-ui/react";
-import AddDetailModal from "components/add-detail-modal";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -24,19 +18,11 @@ interface Props {
   id: string;
   aId: string;
   isAuth: boolean;
-  hasDetails: boolean;
   data: ArticleData[];
   refetch: () => void;
 }
 
-const ArticleHeader = ({
-  id,
-  aId,
-  isAuth,
-  hasDetails,
-  data,
-  refetch,
-}: Props) => {
+const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
   const [articleName, setArticleName] = useState("");
@@ -80,25 +66,16 @@ const ArticleHeader = ({
   return (
     <Box sx={styles.mainMarkdownSectionWrapper}>
       <Card sx={styles.header}>
-        <CardHeader>
-          <Flex>
-            <ArrowLeftIcon
-              sx={styles.leftArrow}
-              onClick={() => navigate(`/portfolio/${id}`)}
-            />
-            <Spacer />
-            {isAuth && (
-              <AddDetailModal
-                refetch={() => refetch()}
-                sortValue={hasDetails ? data.length + 1 : 1}
-              />
-            )}
-          </Flex>
+        <Box m="20px">
+          <ArrowLeftIcon
+            sx={styles.leftArrow}
+            onClick={() => navigate(`/portfolio/${id}`)}
+          />
           <Editable
             data-testid="editable-input-name"
             fontSize="2xl"
             fontWeight="bold"
-            color="brand.300"
+            color="brand.100"
             value={articleName}
             isDisabled={!isAuth}
             onKeyDown={(e) =>
@@ -109,11 +86,11 @@ const ArticleHeader = ({
             <EditablePreview />
             <EditableInput />
           </Editable>
-        </CardHeader>
-        <CardBody>
-          <Stack divider={<StackDivider />} spacing="4">
+          <Stack>
             <Editable
               data-testid="editable-input-summary"
+              maxWidth="900px"
+              color="brand.600"
               fontSize="xs"
               fontWeight="none"
               isDisabled={!isAuth}
@@ -127,7 +104,7 @@ const ArticleHeader = ({
               <EditableInput />
             </Editable>
           </Stack>
-        </CardBody>
+        </Box>
       </Card>
     </Box>
   );
@@ -143,9 +120,11 @@ const styles = {
     color: "#f0f6fc",
   },
   leftArrow: {
+    fontSize: "18px",
     cursor: "pointer",
+    color: "brand.600",
     _hover: {
-      color: "brand.300",
+      color: "brand.200",
     },
   },
   mainMarkdownSectionWrapper: { pb: "5px" },

@@ -7,8 +7,10 @@ import {
   PaginationNext,
   usePagination,
 } from "@ajna/pagination";
-import { Box, Card, Flex, useToast } from "@chakra-ui/react";
+import { Box, Card, Flex, Spacer, useToast } from "@chakra-ui/react";
+import MarkdownButton from "assets/markdown-button";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import AddDetailModal from "components/add-detail-modal";
 import AlertDialogPopUp from "components/alert-dialog-popup";
 import ReplaceDetailModal from "components/replace-detail-modal";
 import { t } from "i18next";
@@ -20,6 +22,7 @@ interface Props {
   data: ArticleData[];
   id: string;
   aid: string;
+  hasDetails: boolean;
   refetchCallback: () => void;
 }
 
@@ -28,6 +31,7 @@ const DetailViewWindow = ({
   isAuth,
   id,
   aid,
+  hasDetails,
   refetchCallback,
 }: Props) => {
   const toast = useToast();
@@ -46,9 +50,7 @@ const DetailViewWindow = ({
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          sortValue: currentPage,
-        }),
+        body: JSON.stringify({ sortValue: currentPage }),
       });
     } catch (error) {
       toast({
@@ -66,16 +68,13 @@ const DetailViewWindow = ({
     const credential = localStorage.getItem("googleCredential");
     const res = await fetch(`/api/users/${id}/details/${detailId}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${credential}`,
-      },
+      headers: { Authorization: `Bearer ${credential}` },
     });
     await sortDetails();
-    const issue = JSON.stringify(`Status: ${res.status} at ${res.url}`);
     if (res.status !== 200) {
       toast({
         title: "Error",
-        description: issue,
+        description: `Status: ${res.status} at ${res.url}`,
         status: "error",
         isClosable: true,
         position: "top",
@@ -87,30 +86,30 @@ const DetailViewWindow = ({
   };
 
   return (
-    <Box>
+    <Box p={4}>
       <Card sx={styles.markdown}>
-        <Flex>
+        <Flex mb={4}>
           {isAuth && (
-            <AlertDialogPopUp
-              deleteText={t("articlePage.deleteDetail")}
-              apiCall={deleteArticle}
-            />
-          )}
-          {isAuth && (
-            <ReplaceDetailModal
-              refetch={refetchCallback}
-              sortValue={currentPage}
-              detailId={data[currentPage - 1].detailId}
-            />
+            <>
+              <AlertDialogPopUp
+                deleteText={t("articlePage.deleteDetail")}
+                apiCall={deleteArticle}
+              />
+              <ReplaceDetailModal
+                refetch={refetchCallback}
+                sortValue={currentPage}
+                detailId={data[currentPage - 1]?.detailId}
+              />
+            </>
           )}
         </Flex>
         <ReactMarkdown
           components={ChakraUIRenderer()}
-          children={data[currentPage - 1].markdown}
+          children={data[currentPage - 1]?.markdown}
           skipHtml
         />
       </Card>
-      <Flex sx={styles.pagination}>
+      <Flex sx={styles.pagination} align="center" mt={6}>
         <Pagination
           pagesCount={pagesCount}
           currentPage={currentPage}
@@ -139,6 +138,16 @@ const DetailViewWindow = ({
             </PaginationNext>
           </PaginationContainer>
         </Pagination>
+        <Spacer />
+        {isAuth && (
+          <Flex gap={4} align="center">
+            <MarkdownButton />
+            <AddDetailModal
+              refetch={refetchCallback}
+              sortValue={hasDetails ? data.length + 1 : 1}
+            />
+          </Flex>
+        )}
       </Flex>
     </Box>
   );
@@ -146,35 +155,21 @@ const DetailViewWindow = ({
 
 const styles = {
   markdown: {
-    margin: "0px 10px 0px 10px",
-    padding: "10px",
+    padding: "20px",
     height: "600px",
-    overflow: "scroll",
-    borderRadius: "0px",
+    overflowY: "auto",
+    borderRadius: "8px",
     backgroundColor: "#18181a",
     color: "#f0f6fc",
-    fontSize: "14px",
-    ".chakra-heading": { fontSize: "20px" },
+    fontSize: "12px",
+    ".chakra-heading": { fontSize: "22px" },
   },
-  pagination: { m: "10px" },
-  paginationPrevious: {
-    mr: "4px",
-  },
-  paginationNext: {
-    ml: "4px",
-  },
-  paginationPage: {
-    w: 7,
-    fontSize: "sm",
-  },
-  paginationPageHover: {
-    bg: "brand.300",
-  },
-  paginationCurrent: {
-    w: 7,
-    bg: "brand.200",
-    fontSize: "sm",
-  },
+  pagination: { mt: "20px", px: "10px" },
+  paginationPrevious: { mr: "6px" },
+  paginationNext: { ml: "6px" },
+  paginationPage: { w: 8, fontSize: "md" },
+  paginationPageHover: { bg: "brand.300" },
+  paginationCurrent: { w: 8, bg: "brand.200", fontSize: "md" },
 };
 
 export default DetailViewWindow;
