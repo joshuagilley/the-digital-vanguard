@@ -14,7 +14,7 @@ RUN npm install  --force
 COPY . .
 
 # Build the TypeScript code
-# RUN npm run build
+RUN npm run build
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
