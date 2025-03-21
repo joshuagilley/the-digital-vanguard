@@ -81,7 +81,11 @@ const ArticleItem = ({
       onMouseLeave={handleMouseLeave}
     >
       <CardBody>
-        <Box sx={styles.tag}>{tag}</Box>
+        <Flex gap="5px" flexWrap="wrap">
+          {tag.split(",").map((t) => (
+            <Box sx={styles.tag}>{t}</Box>
+          ))}
+        </Flex>
         <Text sx={styles.mainText}>{text}</Text>
       </CardBody>
       <CardFooter p="10px">
@@ -89,6 +93,8 @@ const ArticleItem = ({
           <Flex>
             <AlertDialogPopUp
               deleteText={t("articleItem.deleteArticle")}
+              primaryColor="brand.600"
+              secondaryColor="brand.300"
               apiCall={deleteArticle}
             />
           </Flex>

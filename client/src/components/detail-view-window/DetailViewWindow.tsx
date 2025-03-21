@@ -7,19 +7,18 @@ import {
   PaginationNext,
   usePagination,
 } from "@ajna/pagination";
-import { EditIcon } from "@chakra-ui/icons";
 import {
   Box,
   Card,
   Flex,
   Spacer,
   useToast,
-  Switch,
   Editable,
   EditableInput,
   EditablePreview,
+  Center,
+  Tooltip,
 } from "@chakra-ui/react";
-import MarkdownButton from "assets/markdown-button";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import AddDetailModal from "components/add-detail-modal";
 import AlertDialogPopUp from "components/alert-dialog-popup";
@@ -31,6 +30,7 @@ import ReactPlayer from "react-player";
 import { ArticleData } from "types/articles";
 import { editArticle } from "utils/general";
 import MarkdownTheme from "./MarkdownTheme";
+import { ExternalLinkIcon, TvMinimalPlay } from "lucide-react";
 
 interface Props {
   isAuth: boolean;
@@ -51,7 +51,6 @@ const DetailViewWindow = ({
   url,
   refetchCallback,
 }: Props) => {
-  const [editingUrl, setEditingUrl] = useState(false);
   const [newUrl, setNewUrl] = useState("");
   const [showDemo, setShowDemo] = useState(false);
   const toast = useToast();
@@ -134,7 +133,6 @@ const DetailViewWindow = ({
   const editUrl = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       if (newUrl === "") {
-        setEditingUrl(false);
         return;
       }
       if (invalidUrl(newUrl)) {
@@ -144,7 +142,6 @@ const DetailViewWindow = ({
           refetchCallback()
         );
       }
-      setEditingUrl(false);
     }
   };
 
@@ -153,11 +150,13 @@ const DetailViewWindow = ({
       <Card sx={styles.markdown}>
         <Flex>
           <Box sx={styles.floatingBox}>
-            <Flex>
+            <Flex gap="15px">
               {isAuth && (
                 <>
                   <AlertDialogPopUp
                     deleteText={t("articlePage.deleteDetail")}
+                    primaryColor="brand.700"
+                    secondaryColor="brand.300"
                     apiCall={deleteArticle}
                   />
                   <ReplaceDetailModal
@@ -165,49 +164,39 @@ const DetailViewWindow = ({
                     sortValue={currentPage}
                     detailId={data[currentPage - 1]?.detailId}
                   />
+                  <Box
+                    sx={styles.youtube}
+                    onClick={() => setShowDemo(!showDemo)}
+                  >
+                    <Tooltip label="Demo">
+                      <TvMinimalPlay size={24} />
+                    </Tooltip>
+                  </Box>
                 </>
               )}
             </Flex>
           </Box>
           <Spacer />
-          <Switch
-            sx={{ position: "absolute", top: 0, right: 0, m: "15px" }}
-            isChecked={showDemo}
-            onChange={() => setShowDemo(!showDemo)}
-          >
-            Demo
-          </Switch>
           {showDemo && (
-            <Box>
-              {!editingUrl && (
-                <EditIcon
-                  data-testid="edit-url-icon"
-                  sx={styles.editUrlIcon}
-                  onClick={() => setEditingUrl(true)}
-                />
-              )}
-              {editingUrl && (
-                <Editable
-                  data-testid="editable-url"
-                  sx={styles.editableUrl}
-                  value={newUrl === "" ? url : newUrl}
-                  isDisabled={!isAuth}
-                  onKeyDown={(e) => editUrl(e)}
-                  onChange={(e) => setNewUrl(e)}
-                  startWithEditView
-                >
-                  <EditablePreview />
-                  <EditableInput />
-                </Editable>
-              )}
-            </Box>
+            <Editable
+              placeholder="Edit url"
+              data-testid="editable-url"
+              sx={styles.editableUrl}
+              value={newUrl}
+              isDisabled={!isAuth}
+              onKeyDown={(e) => editUrl(e)}
+              onChange={(e) => setNewUrl(e)}
+            >
+              <EditablePreview />
+              <EditableInput />
+            </Editable>
           )}
         </Flex>
 
         {showDemo ? (
-          <Box mt={"10px"}>
-            <ReactPlayer url={url} controls width="100%" height="600px" />
-          </Box>
+          <Center mt={"10px"}>
+            <ReactPlayer url={url} controls />
+          </Center>
         ) : (
           <ReactMarkdown
             components={ChakraUIRenderer(MarkdownTheme)}
@@ -248,7 +237,9 @@ const DetailViewWindow = ({
         <Spacer />
         {isAuth && (
           <Flex gap={4} align="center">
-            <MarkdownButton />
+            <Box sx={styles.stackEdit}>
+              <ExternalLinkIcon size="30" />
+            </Box>
             <AddDetailModal
               refetch={refetchCallback}
               sortValue={hasDetails ? data.length + 1 : 1}
@@ -262,7 +253,7 @@ const DetailViewWindow = ({
 
 const styles = {
   markdown: {
-    p: "30px 20px 20px 20px",
+    p: "40px 20px 20px 20px",
     bg: "brand.500",
     color: "brand.100",
     borderRadius: "md",
@@ -271,6 +262,8 @@ const styles = {
     borderColor: "gray.700",
     maxH: "600px",
     overflowY: "auto",
+    scrollbarColor: "#898989 #202020",
+
     css: {
       "&::-webkit-scrollbar": { width: "6px" },
       "&::-webkit-scrollbar-thumb": {
@@ -304,9 +297,54 @@ const styles = {
   editableUrl: {
     fontSize: "sm",
     fontWeight: "bold",
+    color: "brand.600",
+    width: "300px",
+    maxWidth: "400px",
+    position: "absolute",
+    right: "10px",
+    top: "10px",
+    textAlign: "right",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    display: "block",
+    border: "1px solid",
+    borderColor: "brand.600",
+    borderRadius: "8px",
+    padding: "4px 8px",
+    transition: "all 0.3s ease-in-out",
+    height: "30px",
+    p: "auto",
+
+    // **Cool hover effect**
+    _hover: {
+      borderColor: "brand.500",
+      boxShadow: "0 0 15px #898989",
+      transform: "scale(1.03)",
+    },
+
+    // **Smooth focus effect**
+    _focusWithin: {
+      borderColor: "brand.400",
+      boxShadow: "0 0 15px #ea80fc",
+      backgroundColor: "brand.500",
+      transform: "scale(1.04)",
+    },
+  },
+  stackEdit: {
     color: "brand.300",
-    m: "10px 0px 0 10px",
-    w: "400px",
+    _hover: {
+      color: "brand.200",
+      cursor: "pointer",
+    },
+  },
+  youtube: {
+    color: "brand.700",
+    mt: "3px",
+    _hover: {
+      color: "brand.300",
+      cursor: "pointer",
+    },
   },
 };
 

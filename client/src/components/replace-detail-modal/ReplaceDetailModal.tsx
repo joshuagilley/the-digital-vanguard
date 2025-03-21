@@ -1,4 +1,3 @@
-import { EditIcon } from "@chakra-ui/icons";
 import {
   useDisclosure,
   Button,
@@ -12,12 +11,14 @@ import {
   FormLabel,
   useToast,
   Box,
+  Tooltip,
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { OverlayOne } from "utils/component-utils";
 import { isFirstDigitTwo, readFileAsync } from "utils/general";
+import { Replace } from "lucide-react";
 
 type Props = {
   refetch: () => void;
@@ -109,15 +110,19 @@ const ReplaceDetailModal = ({
   return (
     <Box data-testid="replace-detail-modal">
       {isAuth && (
-        <EditIcon
-          data-testid={"replace-detail"}
-          sx={styles.replaceDetail}
-          onClick={handleReplaceDetail}
-        />
+        <Tooltip label="Replace detail">
+          <Box sx={styles.replaceDetail}>
+            <Replace
+              size={22}
+              data-testid={"replace-detail"}
+              onClick={handleReplaceDetail}
+            />
+          </Box>
+        </Tooltip>
       )}
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         {overlay}
-        <ModalContent>
+        <ModalContent sx={{ backgroundColor: "brand.500", color: "brand.100" }}>
           <ModalHeader>{t("replaceDetailModal.replaceDetail")}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -131,7 +136,11 @@ const ReplaceDetailModal = ({
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button data-testid="submit-file" onClick={onSubmit}>
+            <Button
+              data-testid="submit-file"
+              sx={styles.submit}
+              onClick={onSubmit}
+            >
               {t("replaceDetailModal.submit")}
             </Button>
           </ModalFooter>
@@ -148,12 +157,17 @@ const styles = {
     mt: "20px",
   },
   replaceDetail: {
-    marginLeft: "10px",
-    fontSize: "22px",
+    mt: "3px",
     cursor: "pointer",
     color: "brand.700",
     _hover: {
       color: "brand.300",
+    },
+  },
+  submit: {
+    _hover: {
+      backgroundColor: "brand.300",
+      color: "brand.500",
     },
   },
 };

@@ -1,4 +1,3 @@
-import { PlusSquareIcon } from "@chakra-ui/icons";
 import {
   useDisclosure,
   Button,
@@ -12,12 +11,14 @@ import {
   FormLabel,
   useToast,
   Box,
+  Tooltip,
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { OverlayOne } from "utils/component-utils";
 import { isFirstDigitTwo, readFileAsync } from "utils/general";
+import { FilePlus2 } from "lucide-react";
 
 type Props = {
   refetch: () => void;
@@ -99,15 +100,19 @@ const AddDetailModal = ({ refetch, sortValue, isAuthenticated }: Props) => {
   return (
     <Box data-testid="add-detail-modal">
       {isAuth && (
-        <PlusSquareIcon
-          data-testid={"add-detail"}
+        <Box
           sx={styles.addDetail}
+          data-testid={"add-detail"}
           onClick={handleAddDetail}
-        />
+        >
+          <Tooltip label="Add detail">
+            <FilePlus2 size={28} />
+          </Tooltip>
+        </Box>
       )}
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         {overlay}
-        <ModalContent>
+        <ModalContent sx={{ backgroundColor: "brand.500", color: "brand.100" }}>
           <ModalHeader>{t("addDetailModal.addDetail")}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -121,7 +126,11 @@ const AddDetailModal = ({ refetch, sortValue, isAuthenticated }: Props) => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button data-testid="submit-file" onClick={onSubmit}>
+            <Button
+              data-testid="submit-file"
+              sx={styles.submit}
+              onClick={onSubmit}
+            >
               {t("addDetailModal.submit")}
             </Button>
           </ModalFooter>
@@ -139,11 +148,16 @@ const styles = {
   },
   addDetail: {
     mr: "10px",
-    fontSize: "38px",
     cursor: "pointer",
     color: "brand.300",
     _hover: {
       color: "brand.200",
+    },
+  },
+  submit: {
+    _hover: {
+      backgroundColor: "brand.300",
+      color: "brand.500",
     },
   },
 };

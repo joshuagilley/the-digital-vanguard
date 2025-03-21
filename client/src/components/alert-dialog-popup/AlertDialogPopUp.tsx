@@ -9,16 +9,24 @@ import {
   AlertDialogFooter,
   AlertDialog,
   Box,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 type Props = {
   deleteText: string;
+  primaryColor: string;
+  secondaryColor: string;
   apiCall: () => Promise<void>;
 };
 
-const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
+const AlertDialogPopUp = ({
+  deleteText,
+  primaryColor,
+  secondaryColor,
+  apiCall,
+}: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { t } = useTranslation();
   const cancelRef = useRef(null);
@@ -29,20 +37,26 @@ const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
 
   return (
     <Box>
-      <DeleteIcon
-        sx={styles.deleteFile}
-        data-testid="delete-article"
-        onClick={onOpen}
-      >
-        {t("alertDialogPopup.deleteFile")}
-      </DeleteIcon>
+      <Tooltip label="Delete detail">
+        <DeleteIcon
+          color={primaryColor}
+          _hover={{ color: secondaryColor }}
+          sx={styles.deleteFile}
+          data-testid="delete-article"
+          onClick={onOpen}
+        >
+          {t("alertDialogPopup.deleteFile")}
+        </DeleteIcon>
+      </Tooltip>
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
         onClose={onClose}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent
+            sx={{ backgroundColor: "brand.500", color: "brand.100" }}
+          >
             <AlertDialogHeader sx={styles.deleteText}>
               {deleteText}
             </AlertDialogHeader>
@@ -55,7 +69,8 @@ const AlertDialogPopUp = ({ deleteText, apiCall }: Props) => {
               </Button>
               <Button
                 data-testid="delete"
-                colorScheme="red"
+                backgroundColor="brand.300"
+                _hover={{ backgroundColor: "brand.200" }}
                 onClick={handleDelete}
                 ml={3}
               >
@@ -73,14 +88,8 @@ export default AlertDialogPopUp;
 
 const styles = {
   deleteFile: {
-    position: "absolute",
-    bottom: "15px",
     fontSize: "20px",
     cursor: "pointer",
-    color: "brand.100",
-    _hover: {
-      color: "brand.300",
-    },
   },
   deleteText: {
     fontSize: "lg",

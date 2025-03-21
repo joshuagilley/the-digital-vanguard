@@ -132,7 +132,7 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
       />
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         {overlay}
-        <ModalContent>
+        <ModalContent sx={{ backgroundColor: "brand.500", color: "brand.100" }}>
           <ModalHeader>{t("newArticleModal.create")}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -155,7 +155,7 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
               <FormLabel>{t("newArticleModal.tag")}</FormLabel>
               <Input
                 data-testid="tag"
-                placeholder="i.e. Full-stack Development"
+                placeholder="Comma separate your tags"
                 onChange={(e) => setTag(e.target.value)}
               />
             </FormControl>
@@ -168,7 +168,7 @@ const NewArticleModal = ({ isHovering, refetch }: Props) => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button data-testid="submit" onClick={onSubmit}>
+            <Button sx={styles.submit} data-testid="submit" onClick={onSubmit}>
               {t("newArticleModal.submit")}
             </Button>
           </ModalFooter>
@@ -183,9 +183,16 @@ export default NewArticleModal;
 const styles = {
   input: {
     mt: "20px",
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
   },
   addIcon: {
     fontSize: "30px",
     mt: "10px",
+  },
+  submit: {
+    _hover: {
+      backgroundColor: "brand.300",
+      color: "brand.500",
+    },
   },
 };

@@ -53,4 +53,5 @@ export interface PortfolioResponse {
   url: string;
   userId: string;
   username: string;
+  picture: string;
 }

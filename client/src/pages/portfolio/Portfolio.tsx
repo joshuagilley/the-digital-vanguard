@@ -6,18 +6,16 @@ import {
   Box,
   Flex,
   Heading,
-  IconButton,
   Spacer,
-  useToast,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { EmailIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
 import ArticleItem from "components/article-item";
 import { useTranslation } from "react-i18next";
 import NewArticleItem from "components/new-article-item";
 import { PortfolioResponse } from "types/user";
+import AvatarFlip from "components/avatar-flip";
 
 interface Props {
   isAuthenticated?: boolean;
@@ -25,11 +23,10 @@ interface Props {
 const Portfolio = ({ isAuthenticated }: Props) => {
   const { id } = useParams();
   const { t } = useTranslation();
-  const toast = useToast();
-  const [isEmailing, setIsEmailing] = useState(false);
   const [response, setResponse] = useState<PortfolioResponse[]>([]);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [avatar, setAvatar] = useState("");
   const isAuth =
     isAuthenticated || id === localStorage.getItem("authenticatedId");
   // even if this is manipulated on the fronted, there is a check in the backend on the google credential before anychanges can be made. Research vulnerabilities of change the token and if we need to do something about that.
@@ -49,27 +46,9 @@ const Portfolio = ({ isAuthenticated }: Props) => {
       setResponse(data);
       setUsername(data[0]?.username);
       setEmail(data[0]?.email);
+      setAvatar(data[0]?.picture);
     }
   }, [data]);
-
-  const handleEmail = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    email: string
-  ) => {
-    setIsEmailing(true);
-    setTimeout(() => {
-      setIsEmailing(false);
-      toast({
-        title: `${t("portfolio.emailing")}...`,
-        description: `${t("portfolio.emailing")} ${email}`,
-        status: "info",
-        duration: 3000,
-        isClosable: true,
-      });
-      window.location.href = `mailto:${email}`;
-      e.preventDefault();
-    }, 1000);
-  };
 
   return (
     <Box sx={styles.wrapper} data-testid="portfolio-page">
@@ -97,19 +76,12 @@ const Portfolio = ({ isAuthenticated }: Props) => {
                 {`${username}'s ${t("portfolio.portfolio")}`}
               </Heading>
               <Spacer />
-              <Flex>
-                {isAuth && (
-                  <IconButton
-                    icon={<EmailIcon />}
-                    aria-label={`${t("portfolio.email")} ${email}`}
-                    onClick={(e) => handleEmail(e, email)}
-                    isLoading={isEmailing}
-                    colorScheme="whiteAlpha"
-                    sx={styles.iconButton}
-                    data-testid={"email"}
-                  />
-                )}
-              </Flex>
+              <AvatarFlip
+                isAuth={isAuth}
+                avatar={avatar}
+                email={email}
+                username={username}
+              />
             </Flex>
           </Box>
           <Flex sx={styles.articleWrapper}>
@@ -146,7 +118,31 @@ const styles = {
     height: "100%",
   },
   iconButton: {
-    marginRight: "10px",
+    borderRadius: "50%",
+    padding: "10px",
+    fontSize: "lg",
+    width: "48px",
+    height: "48px",
+    transition: "all 0.3s ease-in-out",
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+
+    _hover: {
+      transform: "scale(1.1)",
+      boxShadow: "0 6px 12px rgba(0, 0, 0, 0.2)",
+      backgroundColor: "brand.300",
+      color: "white",
+    },
+
+    _focus: {
+      outline: "none",
+      boxShadow: "0 0 15px rgba(0, 0, 255, 0.4)",
+      backgroundColor: "brand.400",
+    },
+
+    _active: {
+      transform: "scale(0.95)",
+      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+    },
   },
   articleWrapper: {
     flexWrap: "wrap",

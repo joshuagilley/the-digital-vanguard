@@ -79,6 +79,7 @@ const styles = {
   },
   hamburger: {
     transition: "all 0.2s ease-in-out",
+    marginRight: "25px",
     _hover: {
       backgroundColor: "brand.200",
       transform: "rotate(90deg)",

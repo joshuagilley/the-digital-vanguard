@@ -49,7 +49,7 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     try {
       const { rows }: { rows: { [key: string]: string }[] } =
         await client.query(
-          `  SELECT t1.user_id, t1.username, t1.email, t2.article_id, t2.article_name, t2.summary, t2.tag FROM users t1 LEFT JOIN articles t2 ON t2.user_id = t1.user_id WHERE t1.user_id = '${userId}';`
+          `  SELECT t1.user_id, t1.username, t1.email, t1.picture, t2.article_id, t2.article_name, t2.summary, t2.tag FROM users t1 LEFT JOIN articles t2 ON t2.user_id = t1.user_id WHERE t1.user_id = '${userId}';`
         );
       const convertedCaseRows =
         rows.length > 0
