@@ -41,6 +41,9 @@ export default defineConfig(({ mode }) => {
           secure: false,
         },
       },
+      hmr: {
+        overlay: false,
+      },
     },
     preview: {
       port: 5173,
