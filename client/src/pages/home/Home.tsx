@@ -11,8 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import SearchInput from "components/search-input";
 import { t } from "i18next";
 import GoogleLoginComponent from "pages/google-login";
-// import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -24,40 +24,25 @@ const Home = () => {
     },
   });
 
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await fetch("http://localhost:8000/generate-tags", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         text: "I love javascript so much!",
-  //       }),
-  //     });
+  const [fadeIn, setFadeIn] = useState(0);
 
-  //     if (!response.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-
-  //     const data = await response.json();
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // // Call the fetchData function when the component mounts
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    setTimeout(() => setFadeIn(1), 500);
+  }, []);
 
   const handleNavigate = (userId: string) => {
     navigate(`/portfolio/${userId}`);
   };
 
   return (
-    <Box data-testid="home-page" sx={styles.wrapper}>
+    <Box
+      data-testid="home-page"
+      sx={{
+        ...styles.wrapper,
+        opacity: fadeIn,
+        transition: "opacity 1.5s ease-in-out",
+      }}
+    >
       {error && (
         <Alert status="error" data-testid="error">
           <AlertIcon />
@@ -82,7 +67,10 @@ const styles = {
     h: "100vh",
     mx: "auto",
     placeContent: "center",
-    background: "brand.400",
+    backgroundImage: `url('${process.env.TDV_LOGO}')`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
   },
 };
 
