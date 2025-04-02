@@ -34,11 +34,9 @@ const NavigationBar = () => {
         aria-label="Open Menu"
         data-testid="hamburger"
         size="md"
-        mr={2}
         backgroundColor="brand.300"
         icon={<HamburgerIcon />}
         as={motion.button}
-        whileTap={{ scale: 0.9 }}
         onClick={() => setOpen(!open)}
         sx={styles.hamburger}
       />
@@ -79,7 +77,7 @@ const styles = {
   },
   hamburger: {
     transition: "all 0.2s ease-in-out",
-    marginRight: "25px",
+    marginRight: "10px",
     _hover: {
       backgroundColor: "brand.200",
       transform: "rotate(90deg)",
