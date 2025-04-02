@@ -151,7 +151,7 @@ const styles = {
   },
   articleWrapper: {
     flexWrap: "wrap",
-    justifyContent: "left",
+    justifyContent: "center",
   },
 };
 
