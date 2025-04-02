@@ -86,16 +86,21 @@ const Portfolio = ({ isAuthenticated }: Props) => {
           </Box>
           <Flex sx={styles.articleWrapper}>
             {Array.from(response)?.map(
-              ({ articleName, articleId, userId, tag }: PortfolioResponse) => {
+              (
+                { articleName, articleId, userId, tag }: PortfolioResponse,
+                index
+              ) => {
                 return (
                   articleId && (
-                    <ArticleItem
-                      text={articleName}
-                      tag={tag}
-                      userId={userId}
-                      articleId={articleId}
-                      refetch={refetch}
-                    />
+                    <Box key={`article-item-${index}`}>
+                      <ArticleItem
+                        text={articleName}
+                        tag={tag}
+                        userId={userId}
+                        articleId={articleId}
+                        refetch={refetch}
+                      />
+                    </Box>
                   )
                 );
               }

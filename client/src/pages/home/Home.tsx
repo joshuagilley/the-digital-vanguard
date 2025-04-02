@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import SearchInput from "components/search-input";
 import { t } from "i18next";
 import GoogleLoginComponent from "pages/google-login";
+// import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
@@ -22,6 +23,34 @@ const Home = () => {
       return await response.json();
     },
   });
+
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:8000/generate-tags", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         text: "I love javascript so much!",
+  //       }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+
+  //     const data = await response.json();
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // // Call the fetchData function when the component mounts
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   const handleNavigate = (userId: string) => {
     navigate(`/portfolio/${userId}`);

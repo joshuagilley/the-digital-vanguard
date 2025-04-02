@@ -82,8 +82,10 @@ const ArticleItem = ({
     >
       <CardBody>
         <Flex gap="5px" flexWrap="wrap">
-          {tag.split(",").map((t) => (
-            <Box sx={styles.tag}>{t}</Box>
+          {tag.split(",").map((t, index) => (
+            <Box key={`tag-${index}`} sx={styles.tag}>
+              {t}
+            </Box>
           ))}
         </Flex>
         <Text sx={styles.mainText}>{text}</Text>

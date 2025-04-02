@@ -147,98 +147,108 @@ const DetailViewWindow = ({
 
   return (
     <Box p={4}>
-      <Card sx={styles.markdown}>
-        <Flex>
-          <Box sx={styles.floatingBox}>
-            <Flex gap="15px">
-              {isAuth && (
-                <>
-                  <AlertDialogPopUp
-                    deleteText={t("articlePage.deleteDetail")}
-                    primaryColor="brand.700"
-                    secondaryColor="brand.300"
-                    apiCall={deleteArticle}
-                  />
-                  <ReplaceDetailModal
-                    refetch={refetchCallback}
-                    sortValue={currentPage}
-                    detailId={data[currentPage - 1]?.detailId}
-                  />
-                  <Box
-                    sx={styles.youtube}
-                    onClick={() => setShowDemo(!showDemo)}
-                  >
-                    <Tooltip label="Demo">
-                      <TvMinimalPlay size={24} />
-                    </Tooltip>
-                  </Box>
-                </>
-              )}
-            </Flex>
-          </Box>
-          <Spacer />
-          {showDemo && (
-            <Editable
-              placeholder="Edit url"
-              data-testid="editable-url"
-              sx={styles.editableUrl}
-              value={newUrl}
-              isDisabled={!isAuth}
-              onKeyDown={(e) => editUrl(e)}
-              onChange={(e) => setNewUrl(e)}
-            >
-              <EditablePreview />
-              <EditableInput />
-            </Editable>
-          )}
-        </Flex>
+      {hasDetails && (
+        <Card sx={styles.markdown}>
+          <Flex>
+            <Box sx={styles.floatingBox}>
+              <Flex gap="15px">
+                {isAuth && (
+                  <>
+                    <AlertDialogPopUp
+                      deleteText={t("articlePage.deleteDetail")}
+                      primaryColor="brand.700"
+                      secondaryColor="brand.300"
+                      apiCall={deleteArticle}
+                    />
+                    <ReplaceDetailModal
+                      refetch={refetchCallback}
+                      sortValue={currentPage}
+                      detailId={data[currentPage - 1]?.detailId}
+                    />
+                    <Box
+                      sx={styles.youtube}
+                      onClick={() => setShowDemo(!showDemo)}
+                    >
+                      <Tooltip label="Demo">
+                        <TvMinimalPlay size={24} />
+                      </Tooltip>
+                    </Box>
+                  </>
+                )}
+              </Flex>
+            </Box>
+            <Spacer />
+            {showDemo && (
+              <Editable
+                placeholder="Edit url"
+                data-testid="editable-url"
+                sx={styles.editableUrl}
+                value={newUrl}
+                isDisabled={!isAuth}
+                onKeyDown={(e) => editUrl(e)}
+                onChange={(e) => setNewUrl(e)}
+              >
+                <EditablePreview />
+                <EditableInput />
+              </Editable>
+            )}
+          </Flex>
 
-        {showDemo ? (
-          <Center mt={"10px"}>
-            <ReactPlayer url={url} controls />
-          </Center>
-        ) : (
-          <ReactMarkdown
-            components={ChakraUIRenderer(MarkdownTheme)}
-            children={data[currentPage - 1]?.markdown}
-            skipHtml
-          />
-        )}
-      </Card>
+          {showDemo ? (
+            <Center mt={"10px"}>
+              <ReactPlayer url={url} controls />
+            </Center>
+          ) : (
+            <ReactMarkdown
+              components={ChakraUIRenderer(MarkdownTheme)}
+              children={data[currentPage - 1]?.markdown}
+              skipHtml
+            />
+          )}
+        </Card>
+      )}
       <Flex sx={styles.pagination} align="center" mt={6}>
-        <Pagination
-          pagesCount={pagesCount}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-        >
-          <PaginationContainer>
-            <PaginationPrevious sx={styles.paginationPrevious}>
-              {t("articleItem.previous")}
-            </PaginationPrevious>
-            <PaginationPageGroup>
-              {pages.map((page: number) => (
-                <PaginationPage
-                  key={`pagination_page_${page}`}
-                  page={page}
-                  sx={styles.paginationPage}
-                  _hover={styles.paginationPageHover}
-                  _current={{
-                    ...styles.paginationCurrent,
-                    _hover: styles.paginationPageHover,
-                  }}
-                />
-              ))}
-            </PaginationPageGroup>
-            <PaginationNext sx={styles.paginationNext}>
-              {t("articleItem.next")}
-            </PaginationNext>
-          </PaginationContainer>
-        </Pagination>
+        {hasDetails && (
+          <Pagination
+            pagesCount={pagesCount}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          >
+            <PaginationContainer>
+              <PaginationPrevious sx={styles.paginationPrevious}>
+                {t("articleItem.previous")}
+              </PaginationPrevious>
+              <PaginationPageGroup>
+                {pages.map((page: number) => (
+                  <PaginationPage
+                    key={`pagination_page_${page}`}
+                    page={page}
+                    sx={styles.paginationPage}
+                    _hover={styles.paginationPageHover}
+                    _current={{
+                      ...styles.paginationCurrent,
+                      _hover: styles.paginationPageHover,
+                    }}
+                  />
+                ))}
+              </PaginationPageGroup>
+              <PaginationNext sx={styles.paginationNext}>
+                {t("articleItem.next")}
+              </PaginationNext>
+            </PaginationContainer>
+          </Pagination>
+        )}
         <Spacer />
         {isAuth && (
           <Flex gap={4} align="center">
             <Box sx={styles.stackEdit}>
-              <ExternalLinkIcon size="30" />
+              <a
+                href="https://stackedit.io/app#"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ExternalLinkIcon size="30" />
+              </a>
             </Box>
             <AddDetailModal
               refetch={refetchCallback}

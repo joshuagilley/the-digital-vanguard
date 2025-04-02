@@ -51,17 +51,15 @@ const Article = ({ isAuthenticated }: Props) => {
               data={data}
               refetch={() => refetch()}
             />
-            {hasDetails && (
-              <DetailViewWindow
-                isAuth={isAuth}
-                id={id}
-                aid={aId}
-                data={data}
-                refetchCallback={() => refetch()}
-                hasDetails={hasDetails}
-                url={url}
-              />
-            )}
+            <DetailViewWindow
+              isAuth={isAuth}
+              id={id}
+              aid={aId}
+              data={data}
+              refetchCallback={() => refetch()}
+              hasDetails={hasDetails}
+              url={url}
+            />
           </Box>
         </Box>
       )}
