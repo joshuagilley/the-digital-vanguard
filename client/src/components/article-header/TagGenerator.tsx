@@ -3,6 +3,7 @@ import { Box, Text } from "@chakra-ui/react";
 
 const AnimatedText = ({ tagsData }: { tagsData: string[] }) => {
   const [visibleIndex, setVisibleIndex] = useState(0);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setVisibleIndex((prevIndex) => {

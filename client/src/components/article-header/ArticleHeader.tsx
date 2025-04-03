@@ -29,14 +29,7 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
   const navigate = useNavigate();
   const [articleName, setArticleName] = useState("");
   const [summary, setSummary] = useState("");
-
-  const { data: markdown } = useQuery({
-    queryKey: ["markdown", aId], // Different unique query key
-    queryFn: async () => {
-      const response = await fetch(`/api/get-markdown/${aId}`);
-      return await response.json();
-    },
-  });
+  const [prioritizedTags, setPrioritizedTags] = useState([]);
 
   const handleToast = (issue: string) => {
     toast({
@@ -48,11 +41,18 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
     });
   };
 
-  interface TagsData {
-    tags: string[];
-  }
+  const { data: markdown } = useQuery({
+    queryKey: ["markdown", aId], // Different unique query key
+    queryFn: async () => {
+      const response = await fetch(`/api/get-markdown/${aId}`);
+      return await response.json();
+    },
+  });
+
   // New API Call to Lambda for Tag Generation
-  const { data: tagsData } = useQuery<TagsData>({
+  const { data: tagsData } = useQuery<{
+    tags: string[];
+  }>({
     queryKey: ["tags", id, aId],
     queryFn: async () => {
       if (!markdown) {
@@ -79,6 +79,44 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
       return await lambdaResponse.json();
     },
   });
+
+  const rankTagsInString = (text: string, tags: string[]) => {
+    // Convert input string to lowercase for case-insensitive matching
+    const lowercasedString = text.toLowerCase();
+
+    // Create a function to count occurrences of a tag in the string
+    function countOccurrences(str, tag) {
+      const regex = new RegExp(tag, "g"); // 'g' for global search
+      const matches = str.match(regex);
+      return matches ? matches.length : 0;
+    }
+
+    // Filter tags based on their presence in the string and count their occurrences
+    const tagCounts = tags.map((tag) => {
+      const lowercasedTag = tag.toLowerCase(); // Lowercase the tag for case-insensitive matching
+      const count = countOccurrences(lowercasedString, lowercasedTag);
+      return { tag: lowercasedTag, count };
+    });
+
+    // Sort tags by count in descending order
+    tagCounts.sort((a, b) => b.count - a.count);
+
+    // Return the filtered and ranked tags (without zero occurrences)
+    return (
+      tagCounts.find(({ count }) => count > 0)
+        ? tagCounts.filter((tagCount) => tagCount.count > 0)
+        : tagCounts
+    )
+      .slice(0, 10)
+      .map(({ tag }) => tag);
+  };
+
+  useEffect(() => {
+    if (tagsData && tagsData.tags.length > 0) {
+      const result = rankTagsInString(markdown?.text, tagsData?.tags);
+      setPrioritizedTags(result);
+    }
+  }, [tagsData]);
 
   useEffect(() => {
     if (data && data?.length > 0) {
@@ -146,8 +184,8 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
               <EditableInput />
             </Editable>
             <Box minH="25px">
-              {tagsData && (
-                <TagGenerator tagsData={tagsData?.tags?.slice(0, 10)} />
+              {prioritizedTags.length > 0 && (
+                <TagGenerator tagsData={prioritizedTags} />
               )}
             </Box>
           </Stack>

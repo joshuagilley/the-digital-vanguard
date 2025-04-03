@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "es6",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true,
