@@ -371,6 +371,34 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       else reply.code(200).send({ success: "Authorized" });
     },
   });
+
+  // GET ALL MARKDOWN ASSOCIATED WITH ARTICLE SEND ONE LONG STRING
+  fastify.get<{
+    Params: IParams;
+    Headers: IHeaders;
+    Reply: IReply;
+  }>("/api/get-markdown/:aid", async (request, reply) => {
+    const { aid: articleId } = request.params;
+    const client = await fastify.pg.connect();
+    try {
+      const { rows }: { rows: { [key: string]: string }[] } =
+        await client.query(
+          `SELECT details.markdown
+            FROM details
+            JOIN articles ON articles.article_id = details.article_id
+            WHERE articles.article_id = '${articleId}';`
+        );
+      reply
+        .code(200)
+        .send(
+          JSON.stringify({ text: rows.map((item) => item.markdown).join("") })
+        );
+    } catch (error) {
+      console.log(error);
+      reply.code(404).send({ error: "Not found" });
+    }
+    client.release();
+  });
 };
 
 export default articleRoutes;

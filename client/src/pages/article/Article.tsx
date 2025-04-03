@@ -21,12 +21,47 @@ const Article = ({ isAuthenticated }: Props) => {
     ArticleData[],
     Error
   >({
-    queryKey: [],
+    queryKey: ["articles", id, aId], // Unique query key
     queryFn: async () => {
       const response = await fetch(`/api/users/${id}/articles/${aId}`);
       return await response.json();
     },
   });
+
+  const { data: markdown } = useQuery({
+    queryKey: ["markdown", aId], // Different unique query key
+    queryFn: async () => {
+      const response = await fetch(`/api/get-markdown/${aId}`);
+      return await response.json();
+    },
+  });
+
+  // New API Call to Lambda for Tag Generation
+  // const { data: tagsData, error: tagsError } = useQuery({
+  //   queryKey: ["tags", id, aId],
+  //   queryFn: async () => {
+  //     const { text } = markdown;
+  //     const lambdaResponse = await fetch(
+  //       "https://8ldpvopzq5.execute-api.us-east-2.amazonaws.com/TagGenerator2",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({ text }),
+  //       }
+  //     );
+  //     console.log(lambdaResponse);
+
+  //     if (!lambdaResponse.ok) {
+  //       throw new Error("Failed to fetch tags");
+  //     }
+
+  //     return await lambdaResponse.json();
+  //   },
+  //   enabled: !!data?.[0], // Only run if data is available
+  // });
+  // console.log(tagsData, tagsError);
 
   useEffect(() => {
     if (data && data?.length > 0) {
