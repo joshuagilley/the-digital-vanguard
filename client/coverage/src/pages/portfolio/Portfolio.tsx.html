@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.37% </span>
+                <span class="strong">55.11% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>70/122</span>
+                <span class='fraction'>70/127</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.37% </span>
+                <span class="strong">55.11% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>70/122</span>
+                <span class='fraction'>70/127</span>
             </div>
         
             
@@ -216,7 +216,12 @@
 <a name='L151'></a><a href='#L151'>151</a>
 <a name='L152'></a><a href='#L152'>152</a>
 <a name='L153'></a><a href='#L153'>153</a>
-<a name='L154'></a><a href='#L154'>154</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -291,6 +296,11 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -457,16 +467,21 @@ const Portfolio = ({ isAuthenticated }: Props) =&gt; {
 <span class="cstat-no" title="statement not covered" >          &lt;/Box&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;Flex sx={styles.articleWrapper}&gt;</span>
 <span class="cstat-no" title="statement not covered" >            {Array.from(response)?.map(</span>
-<span class="cstat-no" title="statement not covered" >              ({ articleName, articleId, userId, tag }: PortfolioResponse) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >              (</span>
+<span class="cstat-no" title="statement not covered" >                { articleName, articleId, userId, tag }: PortfolioResponse,</span>
+<span class="cstat-no" title="statement not covered" >                index</span>
+<span class="cstat-no" title="statement not covered" >              ) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >                return (</span>
 <span class="cstat-no" title="statement not covered" >                  articleId &amp;&amp; (</span>
-<span class="cstat-no" title="statement not covered" >                    &lt;ArticleItem</span>
-<span class="cstat-no" title="statement not covered" >                      text={articleName}</span>
-<span class="cstat-no" title="statement not covered" >                      tag={tag}</span>
-<span class="cstat-no" title="statement not covered" >                      userId={userId}</span>
-<span class="cstat-no" title="statement not covered" >                      articleId={articleId}</span>
-<span class="cstat-no" title="statement not covered" >                      refetch={refetch}</span>
-<span class="cstat-no" title="statement not covered" >                    /&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;Box key={`article-item-${index}`}&gt;</span>
+<span class="cstat-no" title="statement not covered" >                      &lt;ArticleItem</span>
+<span class="cstat-no" title="statement not covered" >                        text={articleName}</span>
+<span class="cstat-no" title="statement not covered" >                        tag={tag}</span>
+<span class="cstat-no" title="statement not covered" >                        userId={userId}</span>
+<span class="cstat-no" title="statement not covered" >                        articleId={articleId}</span>
+<span class="cstat-no" title="statement not covered" >                        refetch={refetch}</span>
+<span class="cstat-no" title="statement not covered" >                      /&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;/Box&gt;</span>
                   )
                 );
 <span class="cstat-no" title="statement not covered" >              }</span>
@@ -517,7 +532,7 @@ const styles = {
   },
   articleWrapper: {
     flexWrap: "wrap",
-    justifyContent: "left",
+    justifyContent: "center",
   },
 };
 &nbsp;
@@ -529,7 +544,7 @@ export default Portfolio;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-03-21T03:25:49.599Z
+                at 2025-04-03T18:53:29.844Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

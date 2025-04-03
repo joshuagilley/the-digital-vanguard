@@ -28,42 +28,6 @@ const Article = ({ isAuthenticated }: Props) => {
     },
   });
 
-  const { data: markdown } = useQuery({
-    queryKey: ["markdown", aId], // Different unique query key
-    queryFn: async () => {
-      const response = await fetch(`/api/get-markdown/${aId}`);
-      return await response.json();
-    },
-  });
-
-  // New API Call to Lambda for Tag Generation
-  const { data: tagsData, error: tagsError } = useQuery({
-    queryKey: ["tags", id, aId],
-    queryFn: async () => {
-      if (!markdown) {
-        throw new Error("Markdown data is not available yet");
-      }
-      const { text } = markdown;
-      const lambdaResponse = await fetch(
-        process.env.API_GATEWAY_TAG_GENERATOR,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": process.env.API_GATEWAY_KEY,
-          },
-          body: JSON.stringify({ text }),
-        }
-      );
-
-      if (!lambdaResponse.ok) {
-        throw new Error("Failed to fetch tags");
-      }
-
-      return await lambdaResponse.json();
-    },
-  });
-
   useEffect(() => {
     if (data && data?.length > 0) {
       const hasD = data?.find(

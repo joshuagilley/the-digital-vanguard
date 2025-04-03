@@ -8,11 +8,13 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArticleData } from "types/articles";
 import { editArticle } from "utils/general";
+import TagGenerator from "./TagGenerator";
 
 interface Props {
   id: string;
@@ -28,12 +30,13 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
   const [articleName, setArticleName] = useState("");
   const [summary, setSummary] = useState("");
 
-  useEffect(() => {
-    if (data && data?.length > 0) {
-      setArticleName(data[0]?.articleName);
-      setSummary(data[0]?.summary);
-    }
-  }, [data]);
+  const { data: markdown } = useQuery({
+    queryKey: ["markdown", aId], // Different unique query key
+    queryFn: async () => {
+      const response = await fetch(`/api/get-markdown/${aId}`);
+      return await response.json();
+    },
+  });
 
   const handleToast = (issue: string) => {
     toast({
@@ -44,6 +47,45 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
       position: "top",
     });
   };
+
+  interface TagsData {
+    tags: string[];
+  }
+  // New API Call to Lambda for Tag Generation
+  const { data: tagsData } = useQuery<TagsData>({
+    queryKey: ["tags", id, aId],
+    queryFn: async () => {
+      if (!markdown) {
+        throw new Error("Markdown data is not available yet");
+      }
+      const { text } = markdown;
+      const lambdaResponse = await fetch(
+        process.env.API_GATEWAY_TAG_GENERATOR,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": process.env.API_GATEWAY_KEY,
+          },
+          body: JSON.stringify({ text: text }),
+        }
+      );
+
+      if (!lambdaResponse.ok) {
+        handleToast("Failed to fetch tags");
+        throw new Error("Failed to fetch tags");
+      }
+
+      return await lambdaResponse.json();
+    },
+  });
+
+  useEffect(() => {
+    if (data && data?.length > 0) {
+      setArticleName(data[0]?.articleName);
+      setSummary(data[0]?.summary);
+    }
+  }, [data]);
 
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLDivElement>,
@@ -103,6 +145,11 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
               <EditablePreview />
               <EditableInput />
             </Editable>
+            <Box minH="25px">
+              {tagsData && (
+                <TagGenerator tagsData={tagsData?.tags?.slice(0, 10)} />
+              )}
+            </Box>
           </Stack>
         </Box>
       </Card>
