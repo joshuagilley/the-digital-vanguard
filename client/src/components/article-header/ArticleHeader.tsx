@@ -8,7 +8,6 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -21,10 +20,11 @@ interface Props {
   aId: string;
   isAuth: boolean;
   data: ArticleData[];
+  tags: string[];
   refetch: () => void;
 }
 
-const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
+const ArticleHeader = ({ id, aId, isAuth, data, tags, refetch }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
   const [articleName, setArticleName] = useState("");
@@ -39,14 +39,6 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
       position: "top",
     });
   };
-
-  const { data: tags } = useQuery({
-    queryKey: ["tags", aId],
-    queryFn: async () => {
-      const response = await fetch(`/api/articles/${aId}/tags`);
-      return await response.json();
-    },
-  });
 
   useEffect(() => {
     if (data && data?.length > 0) {
@@ -114,7 +106,7 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
               <EditableInput />
             </Editable>
             <Box minH="25px">
-              {tags?.length > 0 && <TagGenerator tagsData={tags[0].tags} />}
+              {tags?.length > 0 && <TagGenerator tagsData={tags} />}
             </Box>
           </Stack>
         </Box>

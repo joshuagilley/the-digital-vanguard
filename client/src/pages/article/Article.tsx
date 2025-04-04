@@ -28,6 +28,14 @@ const Article = ({ isAuthenticated }: Props) => {
     },
   });
 
+  const { data: tags, refetch: refetchTags } = useQuery({
+    queryKey: ["tags", aId],
+    queryFn: async () => {
+      const response = await fetch(`/api/articles/${aId}/tags`);
+      return await response.json();
+    },
+  });
+
   useEffect(() => {
     if (data && data?.length > 0) {
       const hasD = data?.find(
@@ -49,6 +57,7 @@ const Article = ({ isAuthenticated }: Props) => {
               aId={aId}
               isAuth={isAuth}
               data={data}
+              tags={tags}
               refetch={() => refetch()}
             />
             <DetailViewWindow
@@ -56,6 +65,7 @@ const Article = ({ isAuthenticated }: Props) => {
               id={id}
               aid={aId}
               data={data}
+              refetchTags={refetchTags}
               refetchCallback={() => refetch()}
               hasDetails={hasDetails}
               url={url}

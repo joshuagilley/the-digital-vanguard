@@ -120,7 +120,9 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
           `SELECT * FROM dynamic_tags WHERE article_id = $1;`,
           [articleId]
         );
-      reply.code(200).send(JSON.stringify(rows));
+      reply
+        .code(200)
+        .send(JSON.stringify(rows?.length > 0 ? rows[0].tags : []));
     } catch (error) {
       console.log(error);
       reply.code(404).send({ error: "Not found" });
@@ -350,9 +352,9 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       try {
         if (!authenticatedUser) throw Error("Unauthorized");
         const res = await client.query(
-          ` UPDATE details
+          `UPDATE details
             SET sort_value = sort_value - 1
-            WHERE article_id = $1 AND sort_value > ${sortValue};`,
+            WHERE article_id = $1 AND sort_value > $2;`,
           [articleId, sortValue]
         );
         reply.code(200).send(JSON.stringify(res));

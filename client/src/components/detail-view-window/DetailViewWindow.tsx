@@ -39,6 +39,7 @@ interface Props {
   aid: string;
   hasDetails: boolean;
   url: string;
+  refetchTags: () => void;
   refetchCallback: () => void;
 }
 
@@ -49,6 +50,7 @@ const DetailViewWindow = ({
   aid,
   hasDetails,
   url,
+  refetchTags,
   refetchCallback,
 }: Props) => {
   const [newUrl, setNewUrl] = useState("");
@@ -252,6 +254,7 @@ const DetailViewWindow = ({
             </Box>
             <AddDetailModal
               refetch={refetchCallback}
+              refetchTags={refetchTags}
               sortValue={hasDetails ? data.length + 1 : 1}
             />
           </Flex>

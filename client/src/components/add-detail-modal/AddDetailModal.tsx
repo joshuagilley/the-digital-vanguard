@@ -26,11 +26,17 @@ import { FilePlus2 } from "lucide-react";
 
 type Props = {
   refetch: () => void;
+  refetchTags: () => void;
   sortValue: number;
   isAuthenticated?: boolean;
 };
 
-const AddDetailModal = ({ refetch, sortValue, isAuthenticated }: Props) => {
+const AddDetailModal = ({
+  refetch,
+  refetchTags,
+  sortValue,
+  isAuthenticated,
+}: Props) => {
   const { id, aId } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
@@ -96,16 +102,37 @@ const AddDetailModal = ({ refetch, sortValue, isAuthenticated }: Props) => {
       const markdownRes = await fetch(`/api/get-markdown/${aId}`);
       const { text: markdownText } = await markdownRes.json();
 
-      // Step 3: Generate tags from Lambda
+      // Step 3: Generate tags from Lambda with retry logic
       const combinedText = `${markdownText} ${newText}`;
-      const lambdaRes = await fetch(process.env.API_GATEWAY_TAG_GENERATOR, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": process.env.API_GATEWAY_KEY,
-        },
-        body: JSON.stringify({ text: combinedText }),
-      });
+      const retryFetch = async (url, options, retries = 3, delay = 1000) => {
+        let lastError;
+        for (let i = 0; i < retries; i++) {
+          try {
+            const res = await fetch(url, options);
+            if (res.ok) {
+              return res;
+            }
+            lastError = new Error(`Failed with status: ${res.status}`);
+          } catch (err) {
+            lastError = err;
+          }
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          delay *= 2; // Exponential backoff
+        }
+        throw lastError;
+      };
+
+      const lambdaRes = await retryFetch(
+        process.env.API_GATEWAY_TAG_GENERATOR,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": process.env.API_GATEWAY_KEY,
+          },
+          body: JSON.stringify({ text: combinedText }),
+        }
+      );
 
       if (!lambdaRes.ok) {
         const errorText = await lambdaRes.text();
@@ -119,6 +146,7 @@ const AddDetailModal = ({ refetch, sortValue, isAuthenticated }: Props) => {
 
       // Step 5: Send tags to DB
       await handleSendTags(credential, rankedTags, tagId);
+      refetchTags();
     } catch (err) {
       console.error("Error in updateDynamicTags:", err);
     }
