@@ -13,7 +13,7 @@ import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArticleData } from "types/articles";
-import { editArticle } from "utils/general";
+import { editArticle, rankTagsInString } from "utils/general";
 import TagGenerator from "./TagGenerator";
 
 interface Props {
@@ -72,44 +72,12 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
       );
 
       if (!lambdaResponse.ok) {
-        handleToast("Failed to fetch tags");
         throw new Error("Failed to fetch tags");
       }
 
       return await lambdaResponse.json();
     },
   });
-
-  const rankTagsInString = (text: string, tags: string[]) => {
-    // Convert input string to lowercase for case-insensitive matching
-    const lowercasedString = text.toLowerCase();
-
-    // Create a function to count occurrences of a tag in the string
-    function countOccurrences(str, tag) {
-      const regex = new RegExp(tag, "g"); // 'g' for global search
-      const matches = str.match(regex);
-      return matches ? matches.length : 0;
-    }
-
-    // Filter tags based on their presence in the string and count their occurrences
-    const tagCounts = tags.map((tag) => {
-      const lowercasedTag = tag.toLowerCase(); // Lowercase the tag for case-insensitive matching
-      const count = countOccurrences(lowercasedString, lowercasedTag);
-      return { tag: lowercasedTag, count };
-    });
-
-    // Sort tags by count in descending order
-    tagCounts.sort((a, b) => b.count - a.count);
-
-    // Return the filtered and ranked tags (without zero occurrences)
-    return (
-      tagCounts.find(({ count }) => count > 0)
-        ? tagCounts.filter((tagCount) => tagCount.count > 0)
-        : tagCounts
-    )
-      .slice(0, 10)
-      .map(({ tag }) => tag);
-  };
 
   useEffect(() => {
     if (tagsData && tagsData.tags.length > 0) {

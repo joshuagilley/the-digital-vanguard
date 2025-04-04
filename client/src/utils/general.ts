@@ -44,3 +44,29 @@ export const editArticle = async (
     refetch();
   }
 };
+
+const countOccurrences = (str: string, tag: string) => {
+  const regex = new RegExp(tag, "g"); // 'g' for global search
+  const matches = str.match(regex);
+  return matches ? matches.length : 0;
+};
+
+export const rankTagsInString = (text: string, tags: string[]) => {
+  const lowercasedString = text.toLowerCase();
+
+  const tagCounts = tags.map((tag) => {
+    const lowercasedTag = tag.toLowerCase();
+    const count = countOccurrences(lowercasedString, lowercasedTag);
+    return { tag: lowercasedTag, count };
+  });
+
+  tagCounts.sort((a, b) => b.count - a.count);
+
+  return (
+    tagCounts.find(({ count }) => count > 0)
+      ? tagCounts.filter((tagCount) => tagCount.count > 0)
+      : tagCounts
+  )
+    .slice(0, 10)
+    .map(({ tag }) => tag);
+};
