@@ -157,6 +157,7 @@ const styles = {
     mt: "20px",
   },
   replaceDetail: {
+    ml: "4px",
     mt: "3px",
     cursor: "pointer",
     color: "brand.700",

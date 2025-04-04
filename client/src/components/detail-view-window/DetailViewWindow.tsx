@@ -168,11 +168,22 @@ const DetailViewWindow = ({
                       detailId={data[currentPage - 1]?.detailId}
                     />
                     <Box
-                      sx={styles.youtube}
+                      sx={{
+                        ...styles.youtube,
+                        ...(showDemo && {
+                          bg: "#ffb2ff",
+                          color: "white",
+                          borderRadius: "md",
+                          transform: "translateY(2px)",
+                          boxShadow: "inset 0 2px 5px rgba(0, 0, 0, 0.2)",
+                        }),
+                      }}
                       onClick={() => setShowDemo(!showDemo)}
                     >
                       <Tooltip label="Demo">
-                        <TvMinimalPlay size={24} />
+                        <Box p="1">
+                          <TvMinimalPlay size={24} />
+                        </Box>
                       </Tooltip>
                     </Box>
                   </>
@@ -353,7 +364,7 @@ const styles = {
   },
   youtube: {
     color: "brand.700",
-    mt: "3px",
+    transition: "all 0.15s ease-in-out",
     _hover: {
       color: "brand.300",
       cursor: "pointer",
