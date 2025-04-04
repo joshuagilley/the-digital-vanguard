@@ -13,7 +13,7 @@ import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArticleData } from "types/articles";
-import { editArticle, rankTagsInString } from "utils/general";
+import { editArticle } from "utils/general";
 import TagGenerator from "./TagGenerator";
 
 interface Props {
@@ -29,7 +29,6 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
   const navigate = useNavigate();
   const [articleName, setArticleName] = useState("");
   const [summary, setSummary] = useState("");
-  const [prioritizedTags, setPrioritizedTags] = useState([]);
 
   const handleToast = (issue: string) => {
     toast({
@@ -41,50 +40,13 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
     });
   };
 
-  const { data: markdown } = useQuery({
-    queryKey: ["markdown", aId], // Different unique query key
+  const { data: tags } = useQuery({
+    queryKey: ["tags", aId],
     queryFn: async () => {
-      const response = await fetch(`/api/get-markdown/${aId}`);
+      const response = await fetch(`/api/articles/${aId}/tags`);
       return await response.json();
     },
   });
-
-  // New API Call to Lambda for Tag Generation
-  const { data: tagsData } = useQuery<{
-    tags: string[];
-  }>({
-    queryKey: ["tags", id, aId],
-    queryFn: async () => {
-      if (!markdown) {
-        throw new Error("Markdown data is not available yet");
-      }
-      const { text } = markdown;
-      const lambdaResponse = await fetch(
-        process.env.API_GATEWAY_TAG_GENERATOR,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": process.env.API_GATEWAY_KEY,
-          },
-          body: JSON.stringify({ text: text }),
-        }
-      );
-
-      if (!lambdaResponse.ok) {
-        throw new Error("Failed to fetch tags");
-      }
-
-      return await lambdaResponse.json();
-    },
-  });
-
-  useEffect(() => {
-    if (tagsData && tagsData.tags.length > 0) {
-      const result = rankTagsInString(markdown?.text, tagsData?.tags);
-      setPrioritizedTags(result);
-    }
-  }, [tagsData]);
 
   useEffect(() => {
     if (data && data?.length > 0) {
@@ -152,9 +114,7 @@ const ArticleHeader = ({ id, aId, isAuth, data, refetch }: Props) => {
               <EditableInput />
             </Editable>
             <Box minH="25px">
-              {prioritizedTags.length > 0 && (
-                <TagGenerator tagsData={prioritizedTags} />
-              )}
+              {tags?.length > 0 && <TagGenerator tagsData={tags[0].tags} />}
             </Box>
           </Stack>
         </Box>

@@ -8,6 +8,7 @@ import {
   IReply,
   NewArticleBody,
   NewFileBody,
+  TagBody,
 } from "./query";
 import { simpleObjectKeyConversion } from "utils";
 import { JWT } from "../../types/auth";
@@ -22,11 +23,14 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     const client = await fastify.pg.connect();
     try {
       const { rows }: { rows: { [key: string]: string }[] } =
-        await client.query(
-          `SELECT DISTINCT t1.user_id, t1.username, t1.email
-            FROM users t1
-            LEFT JOIN articles t2 ON t1.user_id = t2.user_id
-            WHERE t2.article_id IS NOT NULL AND t1.email != 'joshgilleytest@gmail.com';`
+        await fastify.pg.query(
+          `
+        SELECT DISTINCT t1.user_id, t1.username, t1.email
+        FROM users t1
+        LEFT JOIN articles t2 ON t1.user_id = t2.user_id
+        WHERE t2.article_id IS NOT NULL AND t1.email != $1
+      `,
+          [process.env.ROOT_EMAIL]
         );
       const convertedCaseRows = rows.map((row) =>
         simpleObjectKeyConversion(row, true)
@@ -45,12 +49,22 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     Reply: IReply;
   }>("/api/users/:id/articles", async (request, reply) => {
     const { id: userId } = request.params;
-    const client = await fastify.pg.connect();
+
     try {
       const { rows }: { rows: { [key: string]: string }[] } =
-        await client.query(
-          `  SELECT t1.user_id, t1.username, t1.email, t1.picture, t2.article_id, t2.article_name, t2.summary, t2.tag FROM users t1 LEFT JOIN articles t2 ON t2.user_id = t1.user_id WHERE t1.user_id = '${userId}';`
+        await fastify.pg.query(
+          `
+        SELECT 
+          t1.user_id, t1.username, t1.email, t1.picture, 
+          t2.article_id, t2.article_name, t2.summary, t2.tag
+          FROM users t1 
+          LEFT JOIN articles t2 ON t2.user_id = t1.user_id 
+          WHERE t1.user_id = $1
+          ORDER BY t2.date ASC;
+      `,
+          [userId]
         );
+
       const convertedCaseRows =
         rows.length > 0
           ? rows.map((row) => simpleObjectKeyConversion(row, true))
@@ -58,10 +72,9 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
 
       reply.code(200).send(JSON.stringify(convertedCaseRows));
     } catch (error) {
-      console.log(error);
+      fastify.log.error(error);
       reply.code(404).send({ error: "Not found" });
     }
-    client.release();
   });
 
   fastify.get<{
@@ -74,11 +87,14 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     try {
       const { rows }: { rows: { [key: string]: string }[] } =
         await client.query(
-          `SELECT t1.article_id, t1.user_id, t1.url, t1.article_name, t1.summary, t1.tag, t2.detail_id, t2.markdown, t2.sort_value FROM articles t1
-        LEFT JOIN details t2
-        ON t2.article_id = '${articleId}'
-        WHERE t1.user_id = '${userId}' 
-        AND t1.article_id = '${articleId}';`
+          `SELECT t1.article_id, t1.user_id, t1.url, t1.article_name, t1.summary, t1.tag, 
+              t2.detail_id, t2.markdown, t2.sort_value 
+       FROM articles t1
+       LEFT JOIN details t2 ON t2.article_id = $1
+       WHERE t1.user_id = $2 
+       AND t1.article_id = $1
+       ORDER BY t2.sort_value ASC;`,
+          [articleId, userId]
         );
       const convertedCaseRows = rows.map((row) =>
         simpleObjectKeyConversion(row, true)
@@ -91,45 +107,61 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     client.release();
   });
 
-  fastify.post("/api/users/:id", {
-    handler: async (
-      request: FastifyRequest<{
-        Params: IParams;
-        Headers: { Authorization: string };
-        Body: NewArticleBody;
-      }>,
-      reply
-    ) => {
-      const { id: userId } = request.params;
-      const credential = request.headers.authorization.split(" ")[1];
-      const { articleName, articleSummary, articleUrl, tag } = request.body;
-      const client = await fastify.pg.connect();
-      const authenticatedUser = await validUserCheck(
-        client,
-        credential,
-        userId
+  fastify.get<{
+    Params: IParams;
+    Headers: IHeaders;
+    Reply: IReply;
+  }>("/api/articles/:aid/tags", async (request, reply) => {
+    const { aid: articleId } = request.params;
+    const client = await fastify.pg.connect();
+    try {
+      const { rows }: { rows: { [key: string]: string }[] } =
+        await client.query(
+          `SELECT * FROM dynamic_tags WHERE article_id = $1;`,
+          [articleId]
+        );
+      reply.code(200).send(JSON.stringify(rows));
+    } catch (error) {
+      console.log(error);
+      reply.code(404).send({ error: "Not found" });
+    }
+    client.release();
+  });
+
+  fastify.post<{
+    Params: IParams;
+    Headers: { Authorization: string };
+    Body: NewArticleBody;
+  }>("/api/users/:id", async (request, reply) => {
+    const { id: userId } = request.params;
+    const credential = request.headers.authorization?.split(" ")[1];
+    const { articleName, articleSummary, articleUrl, tag } = request.body;
+    const client = await fastify.pg.connect();
+    const authenticatedUser = await validUserCheck(client, credential, userId);
+
+    try {
+      if (!authenticatedUser) throw new Error("Unauthorized");
+
+      const response = await client.query(
+        `
+        INSERT INTO articles (user_id, url, article_name, tag, summary) 
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *
+        `,
+        [userId, articleUrl, articleName, tag, articleSummary]
       );
 
-      try {
-        if (!authenticatedUser) throw Error("Unauthorized");
-        const response = await client.query(
-          `INSERT INTO articles (user_id, url, article_name, tag, summary) 
-          VALUES (
-          '${userId}', 
-          '${articleUrl}',
-          '${articleName}',
-          '${tag}',
-          '${articleSummary}'
-          );`
-        );
-        reply.code(200).send(JSON.stringify(response));
-      } catch (error) {
-        console.log(error);
-        if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
-        else reply.code(404).send({ error: "Not found" });
+      reply.code(200).send(JSON.stringify(response));
+    } catch (error) {
+      fastify.log.error(error);
+      if (!authenticatedUser) {
+        reply.code(401).send({ error: "Unauthorized" });
+      } else {
+        reply.code(404).send({ error: "Not found" });
       }
+    } finally {
       client.release();
-    },
+    }
   });
 
   fastify.post("/api/users/:id/articles/:aid", {
@@ -154,7 +186,8 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         if (!authenticatedUser) throw Error("Unauthorized");
         const response = await client.query(
           `INSERT INTO details (article_id, markdown, sort_value) 
-            VALUES ('${articleId}', '${markdownText}', ${sortValue});`
+            VALUES ($1, $2, $3);`,
+          [articleId, markdownText, sortValue]
         );
         reply.code(200).send(JSON.stringify({ response, authenticated: true }));
       } catch (error) {
@@ -163,6 +196,55 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         else reply.code(400).send({ error: "Invalid data" });
       }
       client.release();
+    },
+  });
+
+  fastify.post("/api/users/:id/articles/:aid/generate-dynamic-tags", {
+    handler: async (
+      request: FastifyRequest<{
+        Params: IParams;
+        Headers: { Authorization: string };
+        Body: TagBody;
+      }>,
+      reply
+    ) => {
+      const { id: userId, aid: articleId } = request.params;
+      const credential = request.headers.authorization?.split(" ")[1];
+      const { tags, tagId } = request.body;
+
+      const client = await fastify.pg.connect();
+
+      try {
+        const authenticatedUser = await validUserCheck(
+          client,
+          credential,
+          userId
+        );
+        if (!authenticatedUser) {
+          return reply.code(401).send({ error: "Unauthorized" });
+        }
+
+        let queryText: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let queryValues: any[];
+
+        if (tagId === "") {
+          queryText = `INSERT INTO dynamic_tags (article_id, tags) VALUES ($1, $2)`;
+          queryValues = [articleId, tags];
+        } else {
+          queryText = `UPDATE dynamic_tags SET tags = $1 WHERE article_id = $2 AND tag_id = $3`;
+          queryValues = [tags, articleId, tagId];
+        }
+
+        const response = await client.query(queryText, queryValues);
+
+        reply.code(200).send({ response, authenticated: true });
+      } catch (error) {
+        console.error("Error generating dynamic tags:", error);
+        reply.code(400).send({ error: "Invalid data" });
+      } finally {
+        client.release();
+      }
     },
   });
 
@@ -178,7 +260,8 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     try {
       if (!authenticatedUser) throw Error("Unauthorized");
       const res = await client.query(
-        `DELETE FROM articles WHERE article_id = '${articleId}';`
+        `DELETE FROM articles WHERE article_id = $1;`,
+        [articleId]
       );
       reply.code(200).send(JSON.stringify(res));
     } catch (error) {
@@ -202,9 +285,9 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       if (!authenticatedUser) throw Error("Unauthorized");
       const res =
         authenticatedUser &&
-        (await client.query(
-          `DELETE FROM details WHERE detail_id = '${detailId}';`
-        ));
+        (await client.query(`DELETE FROM details WHERE detail_id = $1;`, [
+          detailId,
+        ]));
       reply.code(200).send(JSON.stringify(res));
     } catch (error) {
       console.log(error);
@@ -234,7 +317,8 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       try {
         if (!authenticatedUser) throw Error("Unauthorized");
         const res = await client.query(
-          `UPDATE articles SET ${property} = '${changeText}' WHERE article_id = '${articleId}';`
+          `UPDATE articles SET ${property} = $1 WHERE article_id = $2;`,
+          [changeText, articleId]
         );
         reply.code(200).send(JSON.stringify(res));
       } catch (error) {
@@ -268,7 +352,8 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
         const res = await client.query(
           ` UPDATE details
             SET sort_value = sort_value - 1
-            WHERE article_id = '${articleId}' AND sort_value > ${sortValue};`
+            WHERE article_id = $1 AND sort_value > ${sortValue};`,
+          [articleId, sortValue]
         );
         reply.code(200).send(JSON.stringify(res));
       } catch (error) {
@@ -280,36 +365,50 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
     },
   });
 
-  fastify.put("/api/users/:id/articles/:aid/details/:did", {
-    handler: async (
-      request: FastifyRequest<{
-        Params: IParams;
-        Body: { changeValue: string; property: string; sortValue: number };
-      }>,
-      reply
-    ) => {
-      const { id: userId, aid: articleId, did: detailId } = request.params;
-      const { changeValue, property, sortValue } = request.body;
-      const credential = request.headers.authorization?.split(" ")[1] || "";
-      const client = await fastify.pg.connect();
-      const authenticatedUser = await validUserCheck(
-        client,
-        credential,
-        userId
-      );
-      try {
-        if (!authenticatedUser) throw Error("Unauthorized");
-        const res = await client.query(
-          `UPDATE details SET ${property} = '${changeValue}' WHERE article_id = '${articleId}' AND detail_id = '${detailId}' AND sort_value = ${sortValue};`
-        );
-        reply.code(200).send(JSON.stringify(res));
-      } catch (error) {
-        console.log(error);
-        if (!authenticatedUser) reply.code(401).send({ error: "Unauthorized" });
-        else reply.code(404).send({ error: "Not found" });
+  fastify.put<{
+    Params: IParams;
+    Headers: { Authorization: string };
+    Body: { changeValue: string; property: string; sortValue: number };
+  }>("/api/users/:id/articles/:aid/details/:did", async (request, reply) => {
+    const { id: userId, aid: articleId, did: detailId } = request.params;
+    const { changeValue, property, sortValue } = request.body;
+    const credential = request.headers.authorization?.split(" ")[1] || "";
+
+    const client = await fastify.pg.connect();
+    const authenticatedUser = await validUserCheck(client, credential, userId);
+
+    try {
+      if (!authenticatedUser) throw new Error("Unauthorized");
+
+      // Optional: Whitelist allowed column names to prevent SQL injection
+      const allowedProperties = ["title", "content", "notes", "status"];
+      if (!allowedProperties.includes(property)) {
+        reply.code(400).send({ error: "Invalid property name" });
+        return;
       }
+
+      const res = await client.query(
+        `
+        UPDATE details 
+        SET ${property} = $1 
+        WHERE article_id = $2 
+          AND detail_id = $3 
+          AND sort_value = $4
+        `,
+        [changeValue, articleId, detailId, sortValue]
+      );
+
+      reply.code(200).send(JSON.stringify(res));
+    } catch (error) {
+      fastify.log.error(error);
+      if (!authenticatedUser) {
+        reply.code(401).send({ error: "Unauthorized" });
+      } else {
+        reply.code(404).send({ error: "Not found" });
+      }
+    } finally {
       client.release();
-    },
+    }
   });
 
   fastify.get("/api/newuser", {
@@ -324,29 +423,36 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
       const { email, picture, given_name, family_name }: JWT = await jwtDecode(
         credential
       );
+
       const client = await fastify.pg.connect();
       try {
-        const { rows }: { rows: { [key: string]: string }[] } =
-          await client.query(
-            `SELECT user_id FROM users WHERE email = '${email}';`
-          );
+        // Use parameterized query to avoid SQL injection
+        const { rows }: { rows: { user_id: string }[] } = await client.query(
+          "SELECT user_id FROM users WHERE email = $1;",
+          [email]
+        );
+
+        // If user is not found, generate a new user_id
         const userId = rows.length > 0 ? rows[0].user_id : uuidv4();
         const userNotFound = rows.length === 0;
+
         if (userNotFound) {
+          // Insert new user with parameterized query
           await client.query(
-            `INSERT INTO users (user_id, username, email, picture)
-                VALUES ('${userId}', '${given_name} ${family_name}', '${email}', '${picture}');`
+            "INSERT INTO users (user_id, username, email, picture) VALUES ($1, $2, $3, $4);",
+            [userId, `${given_name} ${family_name}`, email, picture]
           );
         }
+
         reply.code(200).send(userId);
       } catch (error) {
         console.log(error);
         reply
           .code(404)
           .send({ error: "Issue finding user or creating new user.." });
+      } finally {
+        client.release();
       }
-
-      client.release();
     },
   });
 
@@ -386,7 +492,8 @@ const articleRoutes = async (fastify: FastifyInstance<Server>) => {
           `SELECT details.markdown
             FROM details
             JOIN articles ON articles.article_id = details.article_id
-            WHERE articles.article_id = '${articleId}';`
+            WHERE articles.article_id = $1;`,
+          [articleId]
         );
       reply
         .code(200)

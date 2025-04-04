@@ -2,6 +2,7 @@ export interface IParams {
   id: string;
   aid?: string;
   did?: string;
+  dtag?: string;
 }
 
 export interface IHeaders {
@@ -25,4 +26,9 @@ export interface NewArticleBody {
 export interface NewFileBody {
   markdownText: string;
   sortValue: number;
+}
+
+export interface TagBody {
+  tags: string[];
+  tagId: string;
 }

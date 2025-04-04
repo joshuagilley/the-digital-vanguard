@@ -17,7 +17,11 @@ import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { OverlayOne } from "utils/component-utils";
-import { isFirstDigitTwo, readFileAsync } from "utils/general";
+import {
+  isFirstDigitTwo,
+  rankTagsInString,
+  readFileAsync,
+} from "utils/general";
 import { FilePlus2 } from "lucide-react";
 
 type Props = {
@@ -60,6 +64,66 @@ const AddDetailModal = ({ refetch, sortValue, isAuthenticated }: Props) => {
     }
   };
 
+  const handleSendTags = async (
+    credential: string,
+    newTags: string[],
+    tagId: string
+  ) => {
+    try {
+      await fetch(`/api/users/${id}/articles/${aId}/generate-dynamic-tags`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${credential}`,
+        },
+        body: JSON.stringify({ tags: newTags, tagId }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateDynamicTags = async (newText: string) => {
+    try {
+      const credential = localStorage.getItem("googleCredential");
+
+      // Step 1: Get existing tags
+      const hasTagsRes = await fetch(`/api/articles/${aId}/tags`);
+      const hasTags = await hasTagsRes.json();
+      const tagId = hasTags.length > 0 ? hasTags[0].tag_id : "";
+
+      // Step 2: Get markdown text
+      const markdownRes = await fetch(`/api/get-markdown/${aId}`);
+      const { text: markdownText } = await markdownRes.json();
+
+      // Step 3: Generate tags from Lambda
+      const combinedText = `${markdownText} ${newText}`;
+      const lambdaRes = await fetch(process.env.API_GATEWAY_TAG_GENERATOR, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.API_GATEWAY_KEY,
+        },
+        body: JSON.stringify({ text: combinedText }),
+      });
+
+      if (!lambdaRes.ok) {
+        const errorText = await lambdaRes.text();
+        throw new Error(`Lambda request failed: ${errorText}`);
+      }
+
+      const { tags: newTags = [] } = await lambdaRes.json();
+
+      // Step 4: Rank tags
+      const rankedTags = rankTagsInString(markdownText, newTags);
+
+      // Step 5: Send tags to DB
+      await handleSendTags(credential, rankedTags, tagId);
+    } catch (err) {
+      console.error("Error in updateDynamicTags:", err);
+    }
+  };
+
   const onSubmit = async () => {
     try {
       const credential = localStorage.getItem("googleCredential");
@@ -78,6 +142,7 @@ const AddDetailModal = ({ refetch, sortValue, isAuthenticated }: Props) => {
       if (!isFirstDigitTwo(res.status)) {
         throw new Error(`Got ${res.status} at ${res.url}`);
       }
+      updateDynamicTags(markdownText.replace(/'/g, "''"));
       refetch();
     } catch (error) {
       const description = error instanceof Error ? error.message : "";
