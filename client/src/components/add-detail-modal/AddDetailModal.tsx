@@ -89,62 +89,64 @@ const AddDetailModal = ({
     }
   };
 
+  const getExistingTagId = async (aId: string): Promise<string> => {
+    const res = await fetch(`/api/articles/${aId}/tags`);
+    const tags = await res.json();
+    return tags.length > 0 ? tags[0].tag_id : "";
+  };
+
+  const getMarkdownText = async (aId: string): Promise<string> => {
+    const res = await fetch(`/api/get-markdown/${aId}`);
+    const { text } = await res.json();
+    return text;
+  };
+
+  const retryFetch = async (
+    url: string,
+    options: RequestInit,
+    retries = 3,
+    delay = 1000
+  ): Promise<Response> => {
+    let lastError;
+    for (let i = 0; i < retries; i++) {
+      try {
+        const res = await fetch(url, options);
+        if (res.ok) return res;
+        lastError = new Error(`Failed with status: ${res.status}`);
+      } catch (err) {
+        lastError = err;
+      }
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      delay *= 2;
+    }
+    throw lastError;
+  };
+
+  const generateTagsFromLambda = async (
+    combinedText: string
+  ): Promise<string[]> => {
+    const res = await retryFetch(process.env.API_GATEWAY_TAG_GENERATOR!, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.API_GATEWAY_KEY!,
+      },
+      body: JSON.stringify({ text: combinedText }),
+    });
+
+    const { tags = [] } = await res.json();
+    return tags;
+  };
+
   const updateDynamicTags = async (newText: string) => {
     try {
       const credential = localStorage.getItem("googleCredential");
-
-      // Step 1: Get existing tags
-      const hasTagsRes = await fetch(`/api/articles/${aId}/tags`);
-      const hasTags = await hasTagsRes.json();
-      const tagId = hasTags.length > 0 ? hasTags[0].tag_id : "";
-
-      // Step 2: Get markdown text
-      const markdownRes = await fetch(`/api/get-markdown/${aId}`);
-      const { text: markdownText } = await markdownRes.json();
-
-      // Step 3: Generate tags from Lambda with retry logic
+      const tagId = await getExistingTagId(aId);
+      const markdownText = await getMarkdownText(aId);
       const combinedText = `${markdownText} ${newText}`;
-      const retryFetch = async (url, options, retries = 3, delay = 1000) => {
-        let lastError;
-        for (let i = 0; i < retries; i++) {
-          try {
-            const res = await fetch(url, options);
-            if (res.ok) {
-              return res;
-            }
-            lastError = new Error(`Failed with status: ${res.status}`);
-          } catch (err) {
-            lastError = err;
-          }
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          delay *= 2; // Exponential backoff
-        }
-        throw lastError;
-      };
-
-      const lambdaRes = await retryFetch(
-        process.env.API_GATEWAY_TAG_GENERATOR,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": process.env.API_GATEWAY_KEY,
-          },
-          body: JSON.stringify({ text: combinedText }),
-        }
-      );
-
-      if (!lambdaRes.ok) {
-        const errorText = await lambdaRes.text();
-        throw new Error(`Lambda request failed: ${errorText}`);
-      }
-
-      const { tags: newTags = [] } = await lambdaRes.json();
-
-      // Step 4: Rank tags
+      const newTags = await generateTagsFromLambda(combinedText);
       const rankedTags = rankTagsInString(markdownText, newTags);
 
-      // Step 5: Send tags to DB
       await handleSendTags(credential, rankedTags, tagId);
       refetchTags();
     } catch (err) {
