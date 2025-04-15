@@ -25,7 +25,6 @@ export default defineConfig(({ mode }) => {
         utils: "/src/utils",
         mock: "/src/mock",
         hooks: "/src/hooks",
-        public: "/public",
       },
     },
     server: {
