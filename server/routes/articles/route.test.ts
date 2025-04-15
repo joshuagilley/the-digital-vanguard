@@ -114,4 +114,20 @@ describe("Server startup", async () => {
       .set("Accept", "application/json");
     expect(response.statusCode).toBe(200);
   });
+
+  it("update article props", async () => {
+    const request = supertest(app.server);
+    const payload = {
+      sortValue: 1,
+    };
+    const response = await request
+      .put(
+        `/api/users/${process.env.TEST_USER_ID}/articles/${process.env.TEST_ARTICLE_ID}/detail-sort`
+      )
+      .send(payload)
+      .set("Content-Type", "application/json")
+      .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`)
+      .set("Accept", "application/json");
+    expect(response.statusCode).toBe(200);
+  });
 });
