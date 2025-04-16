@@ -36,6 +36,14 @@ describe("Server startup", async () => {
     expect(response.statusCode).toBe(200);
   });
 
+  it("get dynamic tags for specific article", async () => {
+    const request = supertest(app.server);
+    const response = await request.get(
+      `/api/articles/${process.env.TEST_ARTICLE_ID}/tags`
+    );
+    expect(response.statusCode).toBe(200);
+  });
+
   it("get specific article for user", async () => {
     const request = supertest(app.server);
     const response = await request.get(
