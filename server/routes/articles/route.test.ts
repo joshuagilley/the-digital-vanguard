@@ -69,6 +69,23 @@ describe("Server startup", async () => {
     expect(response.statusCode).toBe(200);
   });
 
+  it("generate new dynamic tags", async () => {
+    const request = supertest(app.server);
+    const payload = {
+      tags: ["test"],
+      tagId: process.env.TEST_TAG_ID,
+    };
+    const response = await request
+      .post(
+        `/api/users/${process.env.TEST_USER_ID}/articles/${process.env.TEST_ARTICLE_ID}/generate-dynamic-tags`
+      )
+      .send(payload)
+      .set("Content-Type", "application/json")
+      .set("Authorization", `Bearer ${process.env.JWT_CREDENTIAL_TEST}`)
+      .set("Accept", "application/json");
+    expect(response.statusCode).toBe(200);
+  });
+
   it("create new detail (markdown file) for user", async () => {
     const request = supertest(app.server);
     const payload = {
