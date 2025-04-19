@@ -36,6 +36,14 @@ describe("Server startup", async () => {
     expect(response.statusCode).toBe(200);
   });
 
+  it("get all markdown associated with article", async () => {
+    const request = supertest(app.server);
+    const response = await request.get(
+      `/api/get-markdown/${process.env.TEST_ARTICLE_ID_WITH_DETAILS}`
+    );
+    expect(response.statusCode).toBe(200);
+  });
+
   it("get dynamic tags for specific article", async () => {
     const request = supertest(app.server);
     const response = await request.get(
