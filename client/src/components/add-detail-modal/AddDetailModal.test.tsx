@@ -28,12 +28,15 @@ describe("Add Detail Modal", () => {
     useQuery({ queryKey: [], queryFn: () => Promise.resolve() })
   );
 
+  const refetchTags = vi.fn();
+
   it("renders Article Item with correct text", () => {
     render(
       <AddDetailModal
         sortValue={1}
         refetch={result.current.refetch}
         isAuthenticated
+        refetchTags={refetchTags}
       />
     );
     const textElement = screen.getByTestId("add-detail-modal");
@@ -46,6 +49,7 @@ describe("Add Detail Modal", () => {
         sortValue={1}
         refetch={result.current.refetch}
         isAuthenticated
+        refetchTags={refetchTags}
       />
     );
 
@@ -63,6 +67,7 @@ describe("Add Detail Modal", () => {
         sortValue={1}
         refetch={result.current.refetch}
         isAuthenticated
+        refetchTags={refetchTags}
       />
     );
 
@@ -84,6 +89,7 @@ describe("Add Detail Modal", () => {
         sortValue={1}
         refetch={result.current.refetch}
         isAuthenticated
+        refetchTags={refetchTags}
       />
     );
     fireEvent.click(screen.getByTestId("add-detail"));
@@ -105,6 +111,7 @@ describe("Add Detail Modal", () => {
         sortValue={1}
         refetch={result.current.refetch}
         isAuthenticated
+        refetchTags={refetchTags}
       />
     );
     fireEvent.click(screen.getByTestId("add-detail"));
