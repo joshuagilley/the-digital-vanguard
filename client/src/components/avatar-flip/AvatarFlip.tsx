@@ -35,6 +35,7 @@ const AvatarFlip = ({ username, email, avatar, isAuth }) => {
             style={{ position: "absolute", width: "100%" }}
           >
             <Avatar
+              data-testid="avatar"
               color="brand.100"
               backgroundColor="brand.700"
               size="md"
