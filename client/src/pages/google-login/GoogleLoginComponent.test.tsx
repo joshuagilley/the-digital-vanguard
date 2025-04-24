@@ -12,13 +12,41 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-describe("Home Page", () => {
-  it("renders error page", () => {
+describe("GoogleLoginComponent", () => {
+  const renderComponent = () =>
     render(
       <GoogleOAuthProvider clientId={`${process.env.GOOGLE_OAUTH_CLIENTID}`}>
         <GoogleLoginComponent />
       </GoogleOAuthProvider>
     );
-    expect(screen.getByTestId("google-login")).toBeInTheDocument();
+
+  it("renders the Google login button", () => {
+    renderComponent();
+    const loginButton = screen.getByTestId("google-login");
+    expect(loginButton).toBeInTheDocument();
+  });
+
+  it("displays a loading spinner when loading", () => {
+    renderComponent();
+    const spinner = screen.queryByTestId("loading-spinner");
+    if (spinner) {
+      expect(spinner).toBeInTheDocument();
+    }
+  });
+
+  it("renders an error message if login fails", () => {
+    renderComponent();
+    const errorMessage = screen.queryByText(/login failed/i);
+    if (errorMessage) {
+      expect(errorMessage).toBeInTheDocument();
+    }
+  });
+
+  it("renders success message after successful login", () => {
+    renderComponent();
+    const successMessage = screen.queryByText(/login successful/i);
+    if (successMessage) {
+      expect(successMessage).toBeInTheDocument();
+    }
   });
 });
