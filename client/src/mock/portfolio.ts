@@ -15,5 +15,6 @@ export const mock: PortfolioResponse[] = [
     linkedIn: "https://www.linkedin.com/in/joshuadgilley/",
     articleId: "16219867-b9ad-459d-8227-6d9f08b72731",
     articleName: "How The Digital Vanguard was built today",
+    picture: "",
   },
 ];
