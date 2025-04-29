@@ -33,7 +33,7 @@ const sendEmail = async ({
   }
 };
 
-const gatherMissingEmailRequirements = (requirements: EmailProps) => {
+export const gatherMissingEmailRequirements = (requirements: EmailProps) => {
   let requiredFields = "";
   Object.values(requirements).forEach((value, index) => {
     requiredFields +=
