@@ -15,10 +15,3 @@ export interface IReply {
   302: { url: string };
   "4xx": { error: string };
 }
-
-export interface NewArticleBody {
-  articleName: string;
-  articleSummary: string;
-  articleUrl: string;
-  tag: string;
-}

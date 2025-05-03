@@ -16,9 +16,7 @@ export interface IReply {
   "4xx": { error: string };
 }
 
-export interface NewArticleBody {
-  articleName: string;
-  articleSummary: string;
-  articleUrl: string;
-  tag: string;
+export interface NewFileBody {
+  markdownText: string;
+  sortValue: number;
 }

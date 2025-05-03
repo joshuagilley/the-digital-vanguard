@@ -1,11 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { Server } from "http";
-import articleRoutes from "routes/articles";
 import pgConnector from "config/postgres";
+import registerRoutes from "../routes";
 
 const fastifyRegister = (fastify: FastifyInstance<Server>) => {
   fastify.register(pgConnector);
-  fastify.register(articleRoutes);
+  fastify.register(registerRoutes);
 };
 
 export default fastifyRegister;
